@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_simplificat" inherit_id="formato_cotizacion.report_saleorder_document_inherit_base" priority="40">
+        
+        <!-- Reemplazar el logo estático por el logo de SimplificaT -->
+        <xpath expr="//img[@src='/formato_cotizacion/static/src/img/logo.png']" position="replace">
+            <img src="/formato_cotizacion_simplificat/static/src/img/logo.png?v=2" style="max-height: 90px; width: auto; display: block; margin-bottom: 30px;"/>
+        </xpath>
+
+        <!-- Reemplazar colores de la tabla principal (Azul Marino y Rojo SimplificaT) -->
+        <xpath expr="//thead" position="replace">
+            <thead>
+                <tr style="background-color: #04167e; color: white !important; font-weight: bold; border-bottom: 3px solid #cb1a1c;">
+                    <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important; width: 100px;">Imagen</th>
+                    <th class="text-start" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Descripción</th>
+                    <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Cantidad</th>
+                    <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Impuesto</th>
+                    <th class="text-end" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Precio</th>
+                    <th class="text-end" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Importe</th>
+                </tr>
+            </thead>
+        </xpath>
+
+        <!-- Agregar la columna de la imagen al tbody -->
+        <xpath expr="//tbody/t/tr" position="replace">
+            <tr t-if="not line.display_type" style="border-bottom: 1px solid black;">
+                <td class="text-center" style="padding: 8px; vertical-align: middle;">
+                    <span t-if="line.product_id.image_1920" t-field="line.product_id.image_1920" t-options="{'widget': 'image', 'style': 'max-height: 80px; width: auto;'}"/>
+                </td>
+                <td class="text-start" style="padding: 8px; vertical-align: middle;"><span t-field="line.name"/></td>
+                <td class="text-center" style="padding: 8px; vertical-align: middle;"><span t-esc="int(line.product_uom_qty)"/></td>
+                <td class="text-center" style="padding: 8px; vertical-align: middle;">
+                    B/. <span t-field="line.price_tax" t-options='{"widget": "float", "precision": 2}'/>
+                </td>
+                <td class="text-end" style="padding: 8px; vertical-align: middle;">B/. <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+                <td class="text-end" style="padding: 8px; vertical-align: middle;">B/. <span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+            </tr>
+        </xpath>
+
+        <!-- Reemplazar color de la fila TOTAL -->
+        <xpath expr="//div[contains(@class, 'justify-content-end')]//table/tr[3]" position="replace">
+            <tr style="background-color: #04167e; color: white; font-weight: bold; border-top: 3px solid #cb1a1c;">
+                <td class="text-start" style="padding: 8px; color: white !important;">TOTAL</td>
+                <td class="text-end" style="padding: 8px; color: white !important;">B/. <span t-field="doc.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
+            </tr>
+        </xpath>
+
+    </template>
+</odoo>
