@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Sale Order form view to hide global pricelist and add columns to order_line -->
+    <record id="view_order_form_simplificat_sale_line_pricelist" model="ir.ui.view">
+        <field name="name">sale.order.form.simplificat.sale.line.pricelist</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Hide global pricelist field -->
+            <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="readonly">not partner_id</attribute>
+            </xpath>
+
+            <!-- In case the list uses a different structure, we add it before price_unit -->
+            <!-- Let's actually add it right before price_unit instead for better flow -->
+            <!-- The next view will place them correctly before price_unit -->
+        </field>
+    </record>
+
+    <!-- Let's replace the xpath to place fields before price_unit so it's always found -->
+    <record id="view_order_form_simplificat_sale_line_pricelist_columns" model="ir.ui.view">
+        <field name="name">sale.order.form.simplificat.columns</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
+                <field name="line_pricelist_id" options="{'no_create': True, 'no_open': True}" optional="show"/>
+                <field name="internal_vendor_note" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
