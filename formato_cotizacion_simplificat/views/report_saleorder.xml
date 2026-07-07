@@ -14,8 +14,8 @@
                     <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important; width: 100px;">Imagen</th>
                     <th class="text-start" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Descripción</th>
                     <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Cantidad</th>
-                    <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Impuesto</th>
                     <th class="text-end" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Precio</th>
+                    <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Impuesto</th>
                     <th class="text-end" style="padding: 8px; border: 1px solid #04167e; color: white !important;">Importe</th>
                 </tr>
             </thead>
@@ -29,10 +29,10 @@
                 </td>
                 <td class="text-start" style="padding: 8px; vertical-align: middle;"><span t-field="line.name"/></td>
                 <td class="text-center" style="padding: 8px; vertical-align: middle;"><span t-esc="int(line.product_uom_qty)"/></td>
+                <td class="text-end" style="padding: 8px; vertical-align: middle;">B/. <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
                 <td class="text-center" style="padding: 8px; vertical-align: middle;">
                     B/. <span t-field="line.price_tax" t-options='{"widget": "float", "precision": 2}'/>
                 </td>
-                <td class="text-end" style="padding: 8px; vertical-align: middle;">B/. <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
                 <td class="text-end" style="padding: 8px; vertical-align: middle;">B/. <span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
             </tr>
         </xpath>
