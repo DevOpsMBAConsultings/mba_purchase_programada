@@ -34,7 +34,7 @@
                     <attribute name="placeholder">RUC, Cédula o Pasaporte</attribute>
                     <attribute name="readonly">0</attribute>
                 </xpath>
-                <xpath expr="//field[@name='vat']" position="after">
+                <xpath expr="//field[@name='vat']/ancestor::group[1]" position="inside">
                     <!-- Razón Social devuelta por la DGI -->
                     <field name="l10n_pa_razon_social" string="RS" invisible="not vat or not l10n_pa_razon_social" readonly="1" force_save="1"/>
                     
