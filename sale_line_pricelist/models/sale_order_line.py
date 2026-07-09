@@ -6,6 +6,9 @@ class SaleOrderLine(models.Model):
     line_pricelist_id = fields.Many2one(
         comodel_name='product.pricelist',
         string='Pricelist',
+        compute='_compute_line_pricelist_id',
+        store=True,
+        readonly=False,
         help="Pricelist applied to this specific line."
     )
     
@@ -14,18 +17,28 @@ class SaleOrderLine(models.Model):
         help="Internal note for product vendor."
     )
 
-    @api.depends('product_id', 'product_uom', 'product_uom_qty', 'line_pricelist_id')
+    @api.depends('order_id.pricelist_id')
+    def _compute_line_pricelist_id(self):
+        for line in self:
+            if not line.line_pricelist_id and line.order_id.pricelist_id:
+                line.line_pricelist_id = line.order_id.pricelist_id
+
+    @api.depends('product_id', 'product_uom', 'product_uom_qty', 'line_pricelist_id', 'order_id.pricelist_id')
     def _compute_pricelist_item_id(self):
         for line in self:
-            if not line.product_id or line.display_type or not line.line_pricelist_id:
+            if not line.product_id or line.display_type:
                 line.pricelist_item_id = False
             else:
-                line.pricelist_item_id = line.line_pricelist_id._get_product_rule(
-                    line.product_id,
-                    quantity=line.product_uom_qty or 1.0,
-                    uom=line.product_uom,
-                    date=line._get_order_date(),
-                )
+                pricelist = line.line_pricelist_id or line.order_id.pricelist_id
+                if not pricelist:
+                    line.pricelist_item_id = False
+                else:
+                    line.pricelist_item_id = pricelist._get_product_rule(
+                        line.product_id,
+                        quantity=line.product_uom_qty or 1.0,
+                        uom=line.product_uom,
+                        date=line.order_id.date_order or fields.Datetime.now(),
+                    )
 
     @api.onchange('line_pricelist_id')
     def _onchange_line_pricelist_id(self):
