@@ -33,12 +33,15 @@
         </xpath>
 
         <!-- Reemplazar color de la fila TOTAL -->
+        <!-- Reemplazar color de la fila TOTAL (Desactivado temporalmente para Odoo 18) -->
+        <!--
         <xpath expr="//div[contains(@class, 'justify-content-end')]//table/tr[3]" position="replace">
             <tr style="background-color: #04167e; color: white; font-weight: bold; border-top: 3px solid #cb1a1c;">
                 <td class="text-start" style="padding: 8px; color: white !important;">TOTAL</td>
                 <td class="text-end" style="padding: 8px; color: white !important;">B/. <span t-field="doc.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
             </tr>
         </xpath>
+        -->
 
     </template>
 </odoo>
