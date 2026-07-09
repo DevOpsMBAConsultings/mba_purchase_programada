@@ -218,3 +218,104 @@ class ResPartner(models.Model):
                         "Provincia, Distrito y Corregimiento son obligatorios "
                         "para Contribuyente y Gobierno (DGI)."
                     ))
+
+    def action_validate_dgi(self):
+        """ Core validation before getting RUC details. """
+        self.ensure_one()
+        
+        # Mapear Términos de pago (Ventas y compras) → campos DGI si no se han rellenado
+        payment_term = getattr(self.with_company(self.env.company), "property_payment_term_id", None)
+        if payment_term:
+            dgi_vals = self._dgi_payment_vals_from_payment_term(payment_term)
+            if dgi_vals:
+                self.with_context(skip_fe_validation=True).write({
+                    "dgi_payment_term_type": dgi_vals.get("dgi_payment_term_type"),
+                    "dgi_payment_method_id": dgi_vals.get("dgi_payment_method_id"),
+                    "dgi_plazo_option": dgi_vals.get("dgi_plazo_option", "30"),
+                })
+
+        if not self.id:
+            return self._dgi_notification_error(
+                "Validación incompleta",
+                "Guarde primero el contacto."
+            )
+
+        vat_value = self.vat or ""
+        ruc = vat_value.strip()
+
+        # Validaciones de campos obligatorios para DGI
+        if not self.l10n_pa_receptor_tipo:
+            return self._dgi_notification_error(
+                "Validación incompleta",
+                "Debe seleccionar el Tipo de Receptor (DGI) antes de validar."
+            )
+            
+        if self.l10n_pa_receptor_tipo == '02' and self.company_type == 'company':
+            return self._dgi_notification_error(
+                "Validación de Tipo de Receptor",
+                "No puedes declarar a una empresa (Persona Jurídica) como Consumidor Final."
+            )
+
+        if not ruc and self.l10n_pa_receptor_tipo != '02':
+            return self._dgi_notification_error(
+                "Validación incompleta", 
+                "Por favor ingrese el RUC o Cédula en el campo correspondiente antes de validar."
+            )
+            
+        if self.l10n_pa_receptor_tipo in ("01", "03"):
+            if not self.l10n_pa_provincia_id or not self.l10n_pa_distrito_id or not self.l10n_pa_corregimiento_id:
+                return self._dgi_notification_error(
+                    "Validación incompleta",
+                    "Provincia, Distrito y Corregimiento son obligatorios para Contribuyente y Gobierno (DGI)."
+                )
+            if not (self.street or self.street2 or self.city):
+                return self._dgi_notification_error(
+                    "Validación incompleta",
+                    "Favor introducir una dirección en el contacto (Calle / Ciudad). Es requerida para facturar a Contribuyente/Gobierno."
+                )
+                
+        self.invalidate_recordset()
+        if not getattr(self, "dgi_payment_method_id", False):
+            return self._dgi_notification_error(
+                "Validación incompleta",
+                "Debe seleccionar un Método de Pago (DGI) o Término de Pago antes de validar."
+            )
+
+        # Bypass API validation for Consumidor Final (02) if no RUC provided or it's "CF"
+        if self.l10n_pa_receptor_tipo == '02' and (not ruc or ruc.upper() == 'CF'):
+            vals = {
+                "l10n_pa_is_dgi_validated": True,
+            }
+            if not ruc:
+                vals["vat"] = "CF"
+                
+            raw_phone = (self.phone or "").strip()
+            if self.country_id and self.country_id.code == "PA":
+                formatted_phone = self._format_panama_phone(raw_phone, self.country_id) or False
+            else:
+                formatted_phone = self._format_dgi_phone_any_country(raw_phone) or False
+                
+            if formatted_phone:
+                vals["phone"] = formatted_phone
+                
+            if self.street:
+                vals["street"] = self.street[:100]
+                
+            self.with_context(skip_fe_validation=True).write(vals)
+            self.message_post(
+                body="✅ <b>Validación DGI completada</b><br/>Tipo: Consumidor Final (sin RUC)",
+                message_type="comment",
+                subtype_xmlid="mail.mt_note",
+            )
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Datos DGI validados",
+                    "message": "Consumidor Final validado correctamente (sin RUC).",
+                    "type": "success",
+                    "sticky": True,
+                },
+            }
+
+        return self.env.company.action_get_ruc_details(partner=self)

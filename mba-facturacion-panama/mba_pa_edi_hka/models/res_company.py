@@ -105,19 +105,27 @@ class ResCompany(models.Model):
             },
         }
 
-    def action_get_ruc_details(self):
+    def action_get_ruc_details(self, partner=None):
         """ Override of base action to get RUC details from HKA """
         self.ensure_one()
         import requests
         import re
 
-        vat_value = self.vat or ""
+        target = partner if partner else self
+        vat_value = target.vat or ""
         if not vat_value:
-            raise UserError("Por favor ingrese el RUC en el campo NIF/VAT antes de obtener los detalles.")
+            msg = "Por favor ingrese el RUC en el campo NIF/VAT antes de obtener los detalles."
+            if partner:
+                return partner._dgi_notification_error("Validación incompleta", msg)
+            raise UserError(msg)
+            
         ruc = vat_value.strip()
 
         if not self.l10n_pa_hka_user or not self.l10n_pa_hka_password:
-            raise UserError("Por favor configure las credenciales de HKA (Usuario y Contraseña) en la pestaña FE (DGI-ADMIN).")
+            msg = "Por favor configure las credenciales de HKA (Usuario y Contraseña) en la pestaña FE (DGI-ADMIN) de la Compañía."
+            if partner:
+                return partner._dgi_notification_error("Configuración faltante", msg)
+            raise UserError(msg)
 
         try:
             self.sudo().action_hka_get_token()
@@ -153,23 +161,40 @@ class ResCompany(models.Model):
                     last_error_msg = str(e)
             
             if not success_data:
-                raise UserError(f"No se pudo obtener la información del RUC. HKA respondió: {last_error_msg}")
+                msg = f"No se pudo obtener la información del RUC. HKA respondió: {last_error_msg}"
+                if partner:
+                    return partner._dgi_notification_error("Error al consultar", msg)
+                raise UserError(msg)
                 
             dv = success_data.get("dv")
             razon_social = success_data.get("razonSocial")
             tipo_ruc = str(success_data.get("tipoRuc") or "").strip()
             
-            vals = {"l10n_pa_ruc": ruc}
-            
+            vals = {}
+            if not partner:
+                vals["l10n_pa_ruc"] = ruc
+                
             if dv is not None and str(dv).strip():
                 digits = re.sub(r"\D", "", str(dv).strip())
                 vals["l10n_pa_dv"] = digits.zfill(2)[-2:] if digits else False
             else:
                 vals["l10n_pa_dv"] = False
                 
+            # Asignar tipo si la vista o modelo lo soporta, el partner base usa company_type, l10n_pa_tipo_contribuyente
             vals["l10n_pa_tipo_contribuyente"] = tipo_ruc if tipo_ruc in ("1", "2") else False
             
-            self.write(vals)
+            if partner:
+                vals["l10n_pa_is_dgi_validated"] = True
+                vals["name"] = razon_social or partner.name
+            
+            target.write(vals)
+            
+            if partner:
+                partner.message_post(
+                    body=f"✅ <b>Validación DGI completada mediante HKA</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}",
+                    message_type="comment",
+                    subtype_xmlid="mail.mt_note",
+                )
             
             return {
                 "type": "ir.actions.client",
@@ -183,4 +208,7 @@ class ResCompany(models.Model):
             }
             
         except requests.exceptions.RequestException as e:
-            raise UserError(f"Error de conexión con la API de HKA: {str(e)}")
+            msg = f"Error de conexión con la API de HKA: {str(e)}"
+            if partner:
+                return partner._dgi_notification_error("Error de red", msg)
+            raise UserError(msg)

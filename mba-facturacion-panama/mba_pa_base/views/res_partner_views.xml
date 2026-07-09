@@ -30,7 +30,7 @@
 
                 <!-- Identificación: RUC / Cédula / Pasaporte -->
                 <xpath expr="//field[@name='vat']" position="replace">
-                    <field name="vat" string="Identificación (RUC/Cédula)" placeholder="RUC, Cédula o Pasaporte" />
+                    <field name="vat" string="Identificación (RUC/Cédula)" placeholder="RUC, Cédula o Pasaporte" readonly="False" />
                     
                     <!-- Razón Social devuelta por la DGI -->
                     <field name="l10n_pa_razon_social" invisible="not vat or not l10n_pa_razon_social"/>

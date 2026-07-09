@@ -80,7 +80,7 @@ class ResCompany(models.Model):
                         "El Punto de Facturación (AI05 / PtoFactDF) debe ser alfanumérico (solo letras y números)."
                     )
 
-    def action_get_ruc_details(self):
+    def action_get_ruc_details(self, partner=None):
         """ Base method for getting RUC details. To be overridden by PAC modules. """
         self.ensure_one()
         from odoo.exceptions import UserError

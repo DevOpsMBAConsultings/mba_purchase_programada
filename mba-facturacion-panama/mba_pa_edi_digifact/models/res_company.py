@@ -12,16 +12,23 @@ class ResCompany(models.Model):
     df_fe_username = fields.Char(string='Usuario (Digifact)')
     df_fe_password = fields.Char(string='Contraseña (Digifact)')
 
-    def action_get_ruc_details(self):
+    def action_get_ruc_details(self, partner=None):
         """ Override of base action to get RUC details from Digifact """
         self.ensure_one()
         # Ensure credentials
         if not self.df_fe_username or not self.df_fe_password:
-            raise UserError("Por favor configure las credenciales de Digifact (Usuario y Contraseña) en la pestaña FE (DGI-ADMIN).")
+            msg = "Por favor configure las credenciales de Digifact (Usuario y Contraseña) en la pestaña FE (DGI-ADMIN)."
+            if partner:
+                return partner._dgi_notification_error("Configuración faltante", msg)
+            raise UserError(msg)
 
-        vat_value = self.vat or ""
+        target = partner if partner else self
+        vat_value = target.vat or ""
         if not vat_value:
-            raise UserError("Por favor ingrese el RUC en el campo NIF/VAT antes de obtener los detalles.")
+            msg = "Por favor ingrese el RUC en el campo NIF/VAT antes de obtener los detalles."
+            if partner:
+                return partner._dgi_notification_error("Validación incompleta", msg)
+            raise UserError(msg)
 
         ruc = vat_value.strip()
 
@@ -40,14 +47,19 @@ class ResCompany(models.Model):
                     continue
             
             if not data:
-                raise UserError(f"El RUC {ruc} no fue encontrado o es inválido en Digifact.")
+                msg = f"El RUC {ruc} no fue encontrado o es inválido en Digifact."
+                if partner:
+                    return partner._dgi_notification_error("Error al consultar", msg)
+                raise UserError(msg)
             
             dv = data.get("DV") or data.get("Dv") or data.get("dv") or data.get("DigitoVerificador")
             razon_social = data.get("RazonSocial") or data.get("Razon_Social") or data.get("RazonSocialFE") or data.get("Nombre") or data.get("name")
             tipo_ruc = str(data.get("TipoRuc") or data.get("TipoRUC") or data.get("TipoEmpresa") or "").strip()
             
-            # Save the related values directly to the partner
             vals = {}
+            if not partner:
+                vals["l10n_pa_ruc"] = ruc
+                
             if dv and str(dv).strip():
                 import re
                 digits = re.sub(r"\D", "", str(dv).strip())
@@ -57,15 +69,27 @@ class ResCompany(models.Model):
             
             if tipo_ruc in ("1", "2"):
                 vals["l10n_pa_tipo_contribuyente"] = tipo_ruc
-            
-            self.partner_id.write(vals)
+                
+            if partner:
+                vals["l10n_pa_is_dgi_validated"] = True
+                vals["name"] = razon_social or partner.name
+                
+            if partner:
+                partner.write(vals)
+                partner.message_post(
+                    body=f"✅ <b>Validación DGI completada mediante Digifact</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}",
+                    message_type="comment",
+                    subtype_xmlid="mail.mt_note",
+                )
+            else:
+                self.partner_id.write(vals)
 
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
                     "title": "Éxito",
-                    "message": f"Los detalles del RUC {ruc} se obtuvieron correctamente desde Digifact.",
+                    "message": f"Los detalles del RUC {ruc} se obtuvieron correctamente desde Digifact. Razón Social: {razon_social or 'No devuelta'}",
                     "type": "success",
                     "sticky": False,
                 },
@@ -73,7 +97,10 @@ class ResCompany(models.Model):
         except UserError:
             raise
         except Exception as e:
-            raise UserError(f"Error al obtener los detalles del RUC: {str(e)}")
+            msg = f"Error al obtener los detalles del RUC: {str(e)}"
+            if partner:
+                return partner._dgi_notification_error("Error", msg)
+            raise UserError(msg)
 
     def action_digifact_get_token(self):
         self.ensure_one()
