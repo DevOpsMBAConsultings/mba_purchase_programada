@@ -32,21 +32,14 @@
                 <xpath expr="//field[@name='vat']" position="attributes">
                     <attribute name="string">Identificación (RUC/Cédula)</attribute>
                     <attribute name="placeholder">RUC, Cédula o Pasaporte</attribute>
-                    <attribute name="readonly">False</attribute>
+                    <attribute name="readonly">0</attribute>
                 </xpath>
                 <xpath expr="//field[@name='vat']" position="after">
                     <!-- Razón Social devuelta por la DGI -->
-                    <label for="l10n_pa_razon_social" string="Razón Social" invisible="not vat or not l10n_pa_razon_social"/>
-                    <field name="l10n_pa_razon_social" invisible="not vat or not l10n_pa_razon_social" nolabel="1"/>
+                    <field name="l10n_pa_razon_social" string="Razón Social" invisible="not vat or not l10n_pa_razon_social" readonly="1" force_save="1"/>
                     
                     <!-- DV de Panamá (solo visible para empresas o contribuyentes) -->
-                    <label for="l10n_pa_dv" string="DV" invisible="not vat"/>
-                    <field name="l10n_pa_dv"
-                           placeholder="DV"
-                           invisible="not vat"
-                           readonly="1"
-                           force_save="1"
-                           nolabel="1"/>
+                    <field name="l10n_pa_dv" string="DV" placeholder="DV" invisible="not vat" readonly="1" force_save="1"/>
                 </xpath>
 
                 <!-- Dirección: solo Street (máx. 100 caracteres para DGI); ocultar Street 2 -->
