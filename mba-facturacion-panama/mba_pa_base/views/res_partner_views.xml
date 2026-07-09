@@ -36,7 +36,7 @@
                 </xpath>
                 <xpath expr="//field[@name='vat']" position="after">
                     <!-- Razón Social devuelta por la DGI -->
-                    <field name="l10n_pa_razon_social" string="Razón Social" invisible="not vat or not l10n_pa_razon_social" readonly="1" force_save="1"/>
+                    <field name="l10n_pa_razon_social" string="RS" invisible="not vat or not l10n_pa_razon_social" readonly="1" force_save="1"/>
                     
                     <!-- DV de Panamá (solo visible para empresas o contribuyentes) -->
                     <field name="l10n_pa_dv" string="DV" placeholder="DV" invisible="not vat" readonly="1" force_save="1"/>
