@@ -42,26 +42,31 @@ class HKAClient:
         commercial_partner = invoice.commercial_partner_id or invoice.partner_id
         contact_partner = invoice.partner_id
 
-        tipo_cliente = commercial_partner.l10n_pa_receptor_tipo or "02"
+        # Usamos los campos snapshot de la factura para consistencia
+        tipo_cliente = invoice.dgi_partner_receptor_tipo or "02"
+        partner_ruc = invoice.dgi_partner_ruc or ""
+        partner_dv = invoice.dgi_partner_dv or ""
+        partner_name = invoice.dgi_partner_name or ""
+        partner_taxpayer_type = invoice.dgi_partner_taxpayer_type or "1" # Por defecto 1 (Natural)
 
         # --- Datos del Cliente ---
         cliente_data = {
             "tipoClienteFE": tipo_cliente,
-            "numeroRUC": commercial_partner.l10n_pa_ruc or commercial_partner.vat or "",
-            "digitoVerificadorRUC": commercial_partner.l10n_pa_dv or "",
-            "razonSocial": commercial_partner.name or "",
+            "numeroRUC": partner_ruc,
+            "digitoVerificadorRUC": partner_dv,
+            "razonSocial": partner_name,
             "direccion": commercial_partner.street or "Panama",
-            "codigoUbicacion": commercial_partner.l10n_pa_corregimiento_id.code if (commercial_partner.l10n_pa_receptor_tipo != "04" and commercial_partner.l10n_pa_corregimiento_id) else ("1-1-1" if commercial_partner.l10n_pa_receptor_tipo != "04" else ""),
-            "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
-            "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
-            "corregimiento": self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
+            "codigoUbicacion": commercial_partner.l10n_pa_corregimiento_id.code if (tipo_cliente != "04" and commercial_partner.l10n_pa_corregimiento_id) else ("1-1-1" if tipo_cliente != "04" else ""),
+            "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if tipo_cliente != "04" else "",
+            "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if tipo_cliente != "04" else "",
+            "corregimiento": self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name) if tipo_cliente != "04" else "",
             "telefono1": contact_partner.phone or commercial_partner.phone or "",
             "correoElectronico1": contact_partner.email or commercial_partner.email or "",
             "pais": commercial_partner.country_id.code or "PA",
         }
 
-        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and (commercial_partner.l10n_pa_ruc or commercial_partner.vat)):
-            cliente_data["tipoContribuyente"] = commercial_partner.l10n_pa_tipo_contribuyente or "2"
+        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and partner_ruc):
+            cliente_data["tipoContribuyente"] = partner_taxpayer_type
 
         if tipo_cliente == "04":
             # Extranjero: campos de identificación extranjera

@@ -33,9 +33,9 @@ class ConfirmarEnviarWizard(models.TransientModel):
         if move_id and 'numero_df' in (fields_list or []):
             move = self.env['account.move'].browse(move_id)
             if move.exists() and move.move_type in ('out_invoice', 'out_refund'):
-                # Si la factura ya tiene un número provisional (ej. reintento tras error),
+                # Si la factura ya tiene un número provisional (ej. reintento tras error o ya aceptada por PAC),
                 # mostrarlo para que el usuario lo confirme o cambie.
-                if (move.l10n_pa_pac_status in ('error',)
+                if (move.l10n_pa_pac_status in ('error', 'accepted')
                         and move.name and move.name != '/'):
                     res['numero_df'] = move.name
                 else:
@@ -125,9 +125,11 @@ class ConfirmarEnviarWizard(models.TransientModel):
         move.write({'name': num})
 
         # ─── PAC PRIMERO ───────────────────────────────────────────────────────
-        # Si lanza UserError o cualquier excepción, la transacción se revierte:
-        # el número vuelve a '/' y la factura sigue en borrador.
-        move.action_l10n_pa_send_to_pac()
+        # Si ya fue aceptada previamente (y falló el post), no reenviar al PAC.
+        if move.l10n_pa_pac_status != 'accepted':
+            # Si lanza UserError o cualquier excepción, la transacción se revierte:
+            # el número vuelve a '/' y la factura sigue en borrador.
+            move.action_l10n_pa_send_to_pac()
 
         # ─── PUBLICAR EN ODOO (solo si el PAC aceptó) ──────────────────────────
         move.with_context(skip_pac_send=True).action_post()

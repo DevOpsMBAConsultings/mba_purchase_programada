@@ -83,6 +83,7 @@ class AccountMove(models.Model):
             "l10n_pa_pac_response": raw_resp[:5000],
             "l10n_pa_pac_request": payload_str,
         })
+        self._cr.commit()
 
         import re as _re
         attachment_ids = []

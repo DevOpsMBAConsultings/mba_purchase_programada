@@ -41,6 +41,13 @@ class AccountMove(models.Model):
             raise UserError(_("Error al generar el XML de factura electrónica: %s") % err_detail)
 
         # Enviar a Digifact
+        self.write({
+            "l10n_pa_pac_status": "error",
+            "l10n_pa_pac_error": False,
+            "l10n_pa_pac_response": False,
+        })
+        self._cr.commit()
+        
         try:
             status, response = client.certificate_fe_xml_tosign_v2(
                 xml_bytes,
@@ -94,6 +101,7 @@ class AccountMove(models.Model):
             "l10n_pa_qr_url": qr_url or self.l10n_pa_qr_url,
             "l10n_pa_pac_response": response_text[:5000],
         })
+        self._cr.commit()
 
         # Extraer Attachments
         Attachment = self.env["ir.attachment"].sudo()

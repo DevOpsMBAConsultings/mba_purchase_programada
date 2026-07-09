@@ -237,15 +237,8 @@ class AccountMove(models.Model):
         """
         Siguiente número fiscal para esta empresa/diario.
         Busca el MAX numérico entre todas las facturas HKA enviadas al PAC + 1.
-
-        IMPORTANTE: Se excluyen números > 9,999,999 para evitar contaminación
-        de esquemas legacy (ej. Digifact usa formato YYMMDDXXXX que produce
-        números como 202600009, mucho mayores que los secuenciales de HKA).
         """
         self.ensure_one()
-        # Umbral: ninguna empresa en PA emitirá más de 9 millones de facturas
-        # electrónicas, pero cualquier número Digifact supera los 200 millones.
-        MAX_VALID = 9_999_999
 
         domain = [
             ('company_id', '=', self.company_id.id),
@@ -262,8 +255,7 @@ class AccountMove(models.Model):
             digits = re.sub(r'\D', '', m['name'] or '')
             try:
                 n = int(digits) if digits else 0
-                # Ignorar números de otros esquemas (Digifact, etc.)
-                if 0 < n <= MAX_VALID and n > max_num:
+                if n > max_num:
                     max_num = n
             except (ValueError, TypeError):
                 pass

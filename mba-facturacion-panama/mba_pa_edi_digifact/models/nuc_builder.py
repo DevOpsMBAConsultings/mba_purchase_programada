@@ -477,9 +477,12 @@ class DigifactNUCBuilder(models.AbstractModel):
 
         # --- Buyer (from move snapshot dgi_partner_*) - structure aligned with NUC 17 (extranjero) ---
         buyer = SubElement(root, "Buyer")
-        tipo_receptor = move._df_receptor_tipo_code() if hasattr(move, "_df_receptor_tipo_code") else "01"
+        commercial_partner = move.commercial_partner_id or partner
+        tipo_receptor = commercial_partner.l10n_pa_receptor_tipo if hasattr(commercial_partner, "l10n_pa_receptor_tipo") else (move._df_receptor_tipo_code() if hasattr(move, "_df_receptor_tipo_code") else "01")
         receptor_type = getattr(move, "dgi_receptor_type", None) or ""
-        buyer_ruc = _str_clean(move.dgi_partner_ruc) or _str_clean(partner.vat) or ""
+        
+        # Priority: commercial_partner.l10n_pa_ruc -> commercial_partner.vat -> move snapshot
+        buyer_ruc = _str_clean(getattr(commercial_partner, "l10n_pa_ruc", "")) or _str_clean(commercial_partner.vat) or _str_clean(getattr(move, "dgi_partner_ruc", "")) or ""
         if tipo_receptor == "04":
             buyer_ruc = "EXTRANJERO"
 
@@ -497,7 +500,13 @@ class DigifactNUCBuilder(models.AbstractModel):
         else:
             SubElement(buyer, "TaxID").text = buyer_ruc or ""
 
-        tax_type = "2" if (move.dgi_partner_taxpayer_type or "").strip() == "juridico" else "1"
+        # Priority: commercial_partner.l10n_pa_tipo_contribuyente -> move snapshot
+        taxpayer_val = getattr(commercial_partner, "l10n_pa_tipo_contribuyente", "") or ""
+        if taxpayer_val:
+            tax_type = "2" if taxpayer_val == "2" else "1"
+        else:
+            tax_type = "2" if (getattr(move, "dgi_partner_taxpayer_type", "") or "").strip() == "juridico" else "1"
+            
         if tipo_receptor not in ("02", "04"):
             SubElement(buyer, "TaxIDType").text = tax_type
 
@@ -505,7 +514,7 @@ class DigifactNUCBuilder(models.AbstractModel):
         _add_info(buyer_tax_add, "TipoReceptor", _str_clean(tipo_receptor) or "01")
         # REGLA NORMA: Lo obligatorio lo enviamos. Lo no obligatorio lo enviamos solo si el usuario lo brinda. No obligamos.
         # CI02: obligatorio solo 01 y 03. Para 02 y 04: opcional; enviamos solo si hay dato.
-        buyer_dv_raw = _str_clean(getattr(partner, "df_dv", "")) or _str_clean(move.dgi_partner_dv) or ""
+        buyer_dv_raw = _str_clean(getattr(commercial_partner, "l10n_pa_dv", "")) or _str_clean(getattr(commercial_partner, "df_dv", "")) or _str_clean(getattr(move, "dgi_partner_dv", "")) or ""
         buyer_dv_formatted = _fmt_digito_verificador(buyer_dv_raw)
         if tipo_receptor in ("01", "03"):
             if not buyer_dv_formatted:
@@ -523,24 +532,24 @@ class DigifactNUCBuilder(models.AbstractModel):
             _add_info(buyer_tax_add, "DigitoVerificador", buyer_dv_formatted.zfill(2)[-2:])
         # 02 (CF): CedulaCF no obligatorio; enviamos solo si el usuario lo brindó.
         if tipo_receptor == "02":
-            cedula_cf = _str_clean(getattr(move, "dgi_partner_cedula", None)) or _str_clean(getattr(partner, "df_cedula", None)) or ""
+            cedula_cf = _str_clean(getattr(move, "dgi_partner_cedula", None)) or _str_clean(getattr(commercial_partner, "df_cedula", None)) or ""
             if cedula_cf:
                 _add_info(buyer_tax_add, "CedulaCF", cedula_cf)
         # 04 (Extranjero): CI02 no obligatorio. NumPasaporte/PaisExt solo si el usuario lo brindó.
         if tipo_receptor == "04":
-            num_pasaporte = _str_clean(getattr(move, "dgi_partner_id_pasaporte", None)) or _str_clean(getattr(partner, "df_id_pasaporte", None)) or ""
-            pais_ext = (partner.country_id and partner.country_id.code) or ""
+            num_pasaporte = _str_clean(getattr(commercial_partner, "l10n_pa_tipo_identificacion", None)) or _str_clean(getattr(move, "dgi_partner_id_pasaporte", None)) or _str_clean(getattr(commercial_partner, "df_id_pasaporte", None)) or ""
+            pais_ext = (commercial_partner.country_id and commercial_partner.country_id.code) or ""
             if num_pasaporte:
                 _add_info(buyer_tax_add, "NumPasaporte", num_pasaporte)
             if pais_ext:
                 _add_info(buyer_tax_add, "PaisExt", _str_clean(pais_ext))
         # Address Logic Preparation (Moved up to decide on CodUbi)
         # ---------------------------------------------------------
-        # 1. Harvest values
-        val_street = _nuc_sanitize_text(_str_clean(move.dgi_partner_address_text) or (partner.street or ""))
+        # 1. Harvest values (from the contact person, not commercial partner)
+        val_street = _nuc_sanitize_text(_str_clean(getattr(move, "dgi_partner_address_text", "")) or (partner.street or ""))
         
-        taxpayer_natural = (move.dgi_partner_taxpayer_type or "").strip() == "natural"
-        skip_buyer_ubicacion = receptor_type in ("consumidor_final", "extranjero") or taxpayer_natural
+        taxpayer_natural = tax_type == "1"
+        skip_buyer_ubicacion = receptor_type in ("consumidor_final", "extranjero") or taxpayer_natural or tipo_receptor in ("02", "04")
         
         # 2. Decide validation strictness (AddressInfo)
         # skip_buyer_ubicacion is True for CF (02) / Extranjero (04) / Natural
@@ -557,7 +566,10 @@ class DigifactNUCBuilder(models.AbstractModel):
         # - Optional if Receptor 02/04 AND No AddressInfo.
         
         buyer_cod_ubi = ""
-        if move.dgi_partner_corregimiento_id and getattr(move.dgi_partner_corregimiento_id, "code", None):
+        # Priority to commercial_partner's corregimiento code
+        if getattr(commercial_partner, "l10n_pa_corregimiento_id", False) and getattr(commercial_partner.l10n_pa_corregimiento_id, "code", False):
+            buyer_cod_ubi = _str_clean(commercial_partner.l10n_pa_corregimiento_id.code)
+        elif getattr(move, "dgi_partner_corregimiento_id", False) and getattr(move.dgi_partner_corregimiento_id, "code", False):
             buyer_cod_ubi = _str_clean(move.dgi_partner_corregimiento_id.code)
         
         # Only add CodUbi if we are sending address OR if we are in strict mode (01/03)
@@ -565,12 +577,12 @@ class DigifactNUCBuilder(models.AbstractModel):
         if should_send_address or not skip_buyer_ubicacion:
              _add_info(buyer_tax_add, "CodUbi", buyer_cod_ubi or "1-1-1")
 
-        buyer_name = (move.dgi_partner_name or partner.name or "CONSUMIDOR FINAL").strip()
+        buyer_name = (getattr(move, "dgi_partner_name", "") or commercial_partner.name or "CONSUMIDOR FINAL").strip()
         if buyer_name:
             SubElement(buyer, "Name").text = _nuc_sanitize_text(buyer_name)
 
         addinfo = SubElement(buyer, "AdditionlInfo")
-        buyer_country = (partner.country_id and partner.country_id.code) or "PA"
+        buyer_country = (commercial_partner.country_id and commercial_partner.country_id.code) or "PA"
         _add_info(addinfo, "PaisReceptorFE", _str_clean(buyer_country) or "PA")
 
         # AddressInfo Block
