@@ -3,7 +3,7 @@
     "version": "18.0.1.0.0",
     "category": "Accounting/Localizations",
     "summary": "Módulo core de Facturación Electrónica DGI para Panamá (Sin PAC asignado).",
-    "author": "MBA Consultings",
+    "author": "MBA Consultings, Brooks Gonzalez",
     "website": "https://www.mbaconsultings.com",
     "license": "LGPL-3",
     "depends": [
