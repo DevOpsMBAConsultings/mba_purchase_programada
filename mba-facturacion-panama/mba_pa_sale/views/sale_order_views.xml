@@ -61,6 +61,7 @@
                 <attribute name="groups">mba_pa_edi.group_digifact_user</attribute>
             </xpath>
         </field>
+    </record>
     <record id="view_order_form_inherit_dgi_readonly_taxes" model="ir.ui.view">
         <field name="name">sale.order.form.inherit.dgi.readonly.taxes</field>
         <field name="model">sale.order</field>

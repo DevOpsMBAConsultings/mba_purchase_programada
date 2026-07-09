@@ -43,11 +43,11 @@ class HKAClient:
         contact_partner = invoice.partner_id
 
         # Usamos los campos snapshot de la factura para consistencia
-        tipo_cliente = invoice.dgi_partner_receptor_tipo or "02"
-        partner_ruc = invoice.dgi_partner_ruc or ""
-        partner_dv = invoice.dgi_partner_dv or ""
-        partner_name = invoice.dgi_partner_name or ""
-        partner_taxpayer_type = invoice.dgi_partner_taxpayer_type or "1" # Por defecto 1 (Natural)
+        tipo_cliente = getattr(invoice, "dgi_partner_receptor_tipo", None) or getattr(commercial_partner, "l10n_pa_receptor_tipo", None) or "02"
+        partner_ruc = getattr(invoice, "dgi_partner_ruc", None) or getattr(commercial_partner, "l10n_pa_ruc", None) or commercial_partner.vat or ""
+        partner_dv = getattr(invoice, "dgi_partner_dv", None) or getattr(commercial_partner, "l10n_pa_dv", None) or ""
+        partner_name = getattr(invoice, "dgi_partner_name", None) or commercial_partner.name or ""
+        partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or ("2" if commercial_partner.company_type == "company" else "1")
 
         # --- Datos del Cliente ---
         cliente_data = {
