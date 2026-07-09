@@ -10,18 +10,9 @@
             <xpath expr="//field[@name='pricelist_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-
-            <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="readonly">not partner_id</attribute>
-            </xpath>
-
-            <!-- In case the list uses a different structure, we add it before price_unit -->
-            <!-- Let's actually add it right before price_unit instead for better flow -->
-            <!-- The next view will place them correctly before price_unit -->
         </field>
     </record>
 
-    <!-- Let's replace the xpath to place fields before price_unit so it's always found -->
     <record id="view_order_form_sale_line_pricelist_columns" model="ir.ui.view">
         <field name="name">sale.order.form.sale.line.pricelist.custom.columns</field>
         <field name="model">sale.order</field>
@@ -29,13 +20,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
                 <field name="line_pricelist_id" options="{'no_create': True, 'no_open': True}" optional="show"/>
-                <field name="internal_vendor_note" optional="hide"/>
-            </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
-                <attribute name="readonly">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes">
-                <attribute name="readonly">1</attribute>
+                <field name="internal_vendor_note" string="Vendor" optional="show"/>
             </xpath>
         </field>
     </record>
