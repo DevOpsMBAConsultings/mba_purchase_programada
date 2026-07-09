@@ -2,7 +2,7 @@
     "name": "Sale Line Pricelist",
     "version": "18.0.1.0.0",
     "category": "Sales",
-    "summary": "Allow selecting pricelist per sale order line",
+    "summary": "Allow selecting pricelist per sale order line | MBA Consultings",
     "author": "MBA Consultings",
     "depends": ["sale"],
     "data": [

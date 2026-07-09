@@ -2,7 +2,7 @@
     "name": "Panamá - Integración con Ventas (MBA)",
     "version": "18.0.1.0.0",
     "category": "Sales",
-    "summary": "Extensión de cotizaciones y ventas para Panamá (DGI).",
+    "summary": "Extensión de cotizaciones y ventas para Panamá (DGI). | MBA Consultings",
     "author": "MBA Consultings",
     "website": "https://www.mbaconsultings.com",
     "license": "LGPL-3",
