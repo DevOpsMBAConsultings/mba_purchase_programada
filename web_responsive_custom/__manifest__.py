@@ -8,7 +8,7 @@
     'version': '18.0.1.0.0',
     'category': 'Web',
     'author': 'MBA Consultings, Brooks Gonzalez',
-    'website': 'https://mbaconsultings.com',
+    'website': 'https://www.mbaconsultings.com',
     'depends': ['web_responsive'],
     'data': [
         'views/res_users_views.xml',
