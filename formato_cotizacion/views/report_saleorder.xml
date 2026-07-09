@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_saleorder_document_simplificat" inherit_id="formato_cotizacion.report_saleorder_document_inherit_base" priority="40">
+    <template id="report_saleorder_document_simplificat" inherit_id="sale.report_saleorder_document" priority="40">
         
-        <!-- Reemplazar el logo estático por el logo de SimplificaT -->
-        <xpath expr="//img[@src='/formato_cotizacion/static/src/img/logo.png']" position="replace">
-            <img src="/formato_cotizacion_simplificat/static/src/img/logo.png?v=2" style="max-height: 90px; width: auto; display: block; margin-bottom: 30px;"/>
-        </xpath>
-
         <!-- Reemplazar colores de la tabla principal (Azul Marino y Rojo SimplificaT) -->
         <xpath expr="//thead" position="replace">
             <thead>
