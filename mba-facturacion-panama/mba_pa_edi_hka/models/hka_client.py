@@ -39,35 +39,38 @@ class HKAClient:
             lambda l: l.display_type not in ('line_section', 'line_note', 'tax', 'rounding')
                       and not getattr(l, 'is_rounding_line', False)
         )
-        tipo_cliente = invoice.partner_id.l10n_pa_receptor_tipo or "02"
+        commercial_partner = invoice.commercial_partner_id or invoice.partner_id
+        contact_partner = invoice.partner_id
+
+        tipo_cliente = commercial_partner.l10n_pa_receptor_tipo or "02"
 
         # --- Datos del Cliente ---
         cliente_data = {
             "tipoClienteFE": tipo_cliente,
-            "numeroRUC": invoice.partner_id.l10n_pa_ruc or invoice.partner_id.vat or "",
-            "digitoVerificadorRUC": invoice.partner_id.l10n_pa_dv or "",
-            "razonSocial": invoice.partner_id.name or "",
-            "direccion": invoice.partner_id.street or "Panama",
-            "codigoUbicacion": invoice.partner_id.l10n_pa_corregimiento_id.code if (invoice.partner_id.l10n_pa_receptor_tipo != "04" and invoice.partner_id.l10n_pa_corregimiento_id) else ("1-1-1" if invoice.partner_id.l10n_pa_receptor_tipo != "04" else ""),
-            "provincia": self._clean_location_name(invoice.partner_id.l10n_pa_provincia_id.name) if invoice.partner_id.l10n_pa_receptor_tipo != "04" else "",
-            "distrito": self._clean_location_name(invoice.partner_id.l10n_pa_distrito_id.name) if invoice.partner_id.l10n_pa_receptor_tipo != "04" else "",
-            "corregimiento": self._clean_location_name(invoice.partner_id.l10n_pa_corregimiento_id.name) if invoice.partner_id.l10n_pa_receptor_tipo != "04" else "",
-            "telefono1": invoice.partner_id.phone or "",
-            "correoElectronico1": invoice.partner_id.email or "",
-            "pais": invoice.partner_id.country_id.code or "PA",
+            "numeroRUC": commercial_partner.l10n_pa_ruc or commercial_partner.vat or "",
+            "digitoVerificadorRUC": commercial_partner.l10n_pa_dv or "",
+            "razonSocial": commercial_partner.name or "",
+            "direccion": commercial_partner.street or "Panama",
+            "codigoUbicacion": commercial_partner.l10n_pa_corregimiento_id.code if (commercial_partner.l10n_pa_receptor_tipo != "04" and commercial_partner.l10n_pa_corregimiento_id) else ("1-1-1" if commercial_partner.l10n_pa_receptor_tipo != "04" else ""),
+            "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
+            "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
+            "corregimiento": self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name) if commercial_partner.l10n_pa_receptor_tipo != "04" else "",
+            "telefono1": contact_partner.phone or commercial_partner.phone or "",
+            "correoElectronico1": contact_partner.email or commercial_partner.email or "",
+            "pais": commercial_partner.country_id.code or "PA",
         }
 
-        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and (invoice.partner_id.l10n_pa_ruc or invoice.partner_id.vat)):
-            cliente_data["tipoContribuyente"] = invoice.partner_id.l10n_pa_tipo_contribuyente or "2"
+        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and (commercial_partner.l10n_pa_ruc or commercial_partner.vat)):
+            cliente_data["tipoContribuyente"] = commercial_partner.l10n_pa_tipo_contribuyente or "2"
 
         if tipo_cliente == "04":
             # Extranjero: campos de identificación extranjera
-            tipo_id = getattr(invoice.partner_id, 'l10n_pa_tipo_identificacion', None) or "01"
+            tipo_id = getattr(commercial_partner, 'l10n_pa_tipo_identificacion', None) or "01"
             cliente_data["tipoIdentificacion"] = tipo_id
-            cliente_data["nroIdentificacionExtranjero"] = invoice.partner_id.vat or ""
-            cliente_data["paisExtranjero"] = invoice.partner_id.country_id.name or ""
+            cliente_data["nroIdentificacionExtranjero"] = commercial_partner.vat or ""
+            cliente_data["paisExtranjero"] = commercial_partner.country_id.name or ""
             # Para extranjero pais no puede ser PA si destino es extranjero
-            if (invoice.partner_id.country_id.code or "PA") == "PA":
+            if (commercial_partner.country_id.code or "PA") == "PA":
                 cliente_data["pais"] = "US"  # fallback razonable
 
         # --- Forma y Tiempo de Pago ---
