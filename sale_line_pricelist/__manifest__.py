@@ -4,6 +4,7 @@
     "category": "Sales",
     "summary": "Allow selecting pricelist per sale order line | MBA Consultings",
     "author": "MBA Consultings",
+    "website": "https://www.mbaconsultings.com",
     "depends": ["sale"],
     "data": [
         "views/sale_order_views.xml",

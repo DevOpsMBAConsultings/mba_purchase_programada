@@ -3,8 +3,9 @@
     'version': '18.0.1.0.0',
     'category': 'Sales',
     'summary': 'Adapta el formato de cotización a la identidad visual de SimplificaT | MBA Consultings',
-    'author': 'DevOps MBA Consultings',
-    'depends': ['formato_cotizacion'],
+    'author': 'MBA Consultings',
+    'website': 'https://www.mbaconsultings.com',
+    'depends': ['sale'],
     'data': [
         'views/report_saleorder.xml',
     ],
