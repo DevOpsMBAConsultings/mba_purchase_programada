@@ -57,7 +57,7 @@ class HKAClient:
             "pais": invoice.partner_id.country_id.code or "PA",
         }
 
-        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and invoice.partner_id.l10n_pa_ruc):
+        if tipo_cliente in ['01', '03'] or (tipo_cliente == '02' and (invoice.partner_id.l10n_pa_ruc or invoice.partner_id.vat)):
             cliente_data["tipoContribuyente"] = invoice.partner_id.l10n_pa_tipo_contribuyente or "2"
 
         if tipo_cliente == "04":
