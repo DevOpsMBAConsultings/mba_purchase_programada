@@ -1,5 +1,5 @@
 {
-    "name": "Sale Line Pricelist",
+    "name": "Sale Line Pricelist (MBA Consultings)",
     "version": "18.0.1.0.0",
     "category": "Sales",
     "summary": "Allow selecting pricelist per sale order line | MBA Consultings",

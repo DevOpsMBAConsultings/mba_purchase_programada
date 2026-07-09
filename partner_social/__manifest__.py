@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Redes Sociales en Contactos (Panamá)',
+    'name': 'Redes Sociales en Contactos (MBA Consultings)',
     'version': '1.0',
     'category': 'Sales/CRM',
     'summary': 'Agrega enlaces de Facebook, Instagram y LinkedIn a los contactos. | MBA Consultings',

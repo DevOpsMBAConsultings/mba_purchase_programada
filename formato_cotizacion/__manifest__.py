@@ -1,5 +1,5 @@
 {
-    'name': 'Formato Cotizacion SimplificaT',
+    'name': 'Formato Cotizacion SimplificaT (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Sales',
     'summary': 'Adapta el formato de cotización a la identidad visual de SimplificaT | MBA Consultings',
