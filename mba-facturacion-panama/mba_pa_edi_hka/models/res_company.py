@@ -185,7 +185,6 @@ class ResCompany(models.Model):
             
             if partner:
                 vals["l10n_pa_is_dgi_validated"] = True
-                vals["name"] = razon_social or partner.name
             
             target.write(vals)
             
