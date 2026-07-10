@@ -40,7 +40,7 @@
                     <strong style="font-size: 11pt;"><span t-field="doc.client_order_ref"/></strong>
                 </div>
 
-                <table class="table table-sm mt-2" style="border-collapse: collapse;">
+                <table class="mt-2" style="width: 100%; border-collapse: collapse;">
                     <thead style="display: table-header-group;">
                         <tr style="background-color: #04167e; color: white !important; font-weight: bold; border-bottom: 3px solid #cb1a1c;">
                             <th class="text-center" style="padding: 8px; border: 1px solid #04167e; color: white !important; width: 80px;">Imagen</th>
