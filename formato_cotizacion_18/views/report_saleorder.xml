@@ -12,6 +12,11 @@
         
         <xpath expr="//div[@class='page']" position="replace">
             <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black; padding: 20px;">
+                <style>
+                    tr {
+                        page-break-inside: auto;
+                    }
+                </style>
                 
                 <div class="row mb-3">
                     <div class="col-6">
