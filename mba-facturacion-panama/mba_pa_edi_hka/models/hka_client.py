@@ -60,7 +60,7 @@ class HKAClient:
             "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if tipo_cliente != "04" else "",
             "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if tipo_cliente != "04" else "",
             "corregimiento": self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name) if tipo_cliente != "04" else "",
-            "telefono1": contact_partner.phone or commercial_partner.phone or "",
+            "telefono1": __import__("re").sub(r"^\+507\s*", "", contact_partner.phone or commercial_partner.phone or "").replace("+", "").strip()[:20],
             "correoElectronico1": contact_partner.email or commercial_partner.email or "",
             "pais": commercial_partner.country_id.code or "PA",
         }
