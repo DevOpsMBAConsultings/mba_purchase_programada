@@ -44,4 +44,11 @@
         -->
 
     </template>
+
+    <template id="external_layout_standard_simplificat" inherit_id="web.external_layout_standard" priority="40">
+        <!-- Reemplazar el logo de la empresa por el logo del módulo -->
+        <xpath expr="//img[@t-if='company.logo']" position="replace">
+            <img src="/formato_cotizacion/static/src/img/logo.png" style="max-height: 80px;" alt="Logo"/>
+        </xpath>
+    </template>
 </odoo>
