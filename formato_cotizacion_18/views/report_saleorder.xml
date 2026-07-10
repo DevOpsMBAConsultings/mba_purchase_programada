@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_inherit_suplidora_jc" inherit_id="sale.report_saleorder_document" priority="30">
+        
+        <xpath expr="//*[contains(@t-call, 'layout')]" position="attributes">
+            <attribute name="t-call">web.basic_layout</attribute>
+        </xpath>
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address"/>
+        </xpath>
+        
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black; padding: 20px;">
+                
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <img src="/formato_cotizacion_suplidora_jc/static/src/img/logo.jpg" style="max-height: 90px; width: auto; display: block;"/>
+                        <div class="mt-2">
+                            <strong style="font-size: 14pt;"><span t-field="res_company.name"/></strong><br/>
+                            <span t-field="res_company.street"/><br/>
+                            <span>RUC: <span t-field="res_company.vat"/></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Datos del cliente</strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Nombre:</strong> <span t-field="doc.partner_id.name"/><br/>
+                        <strong>Contacto:</strong> <span t-field="doc.partner_id.child_ids[0].name" t-if="doc.partner_id.child_ids"/><br/>
+                        <strong>Dirección:</strong> <span t-field="doc.partner_id.street"/><br/>
+                        <strong>Vendedor:</strong> <span t-field="doc.user_id.name"/>
+                    </div>
+                    
+                    <div class="col-5 offset-1">
+                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Cotización</strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Número:</strong> <span t-field="doc.name"/><br/>
+                        <strong>Fecha:</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/><br/>
+                        <strong>Expiración:</strong> <span t-field="doc.validity_date"/><br/>
+                        <strong>Condiciones de pago:</strong> <span t-field="doc.payment_term_id.name"/>
+                    </div>
+                </div>
+
+                <div t-if="doc.client_order_ref" class="mt-3 mb-2">
+                    <strong style="font-size: 11pt;"><span t-field="doc.client_order_ref"/></strong>
+                </div>
+
+                <table class="table table-sm mt-2" style="border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #2c3f90; color: white !important; font-weight: bold">
+                            <th class="text-start" style="padding: 8px; border: 1px solid #2c3f90; color: white !important;">Descripción</th>
+                            <th class="text-end" style="padding: 8px; border: 1px solid #2c3f90; color: white !important;">Cantidad</th>
+                            <th class="text-end" style="padding: 8px; border: 1px solid #2c3f90; color: white !important;">Precio</th>
+                            <th class="text-end" style="padding: 8px; border: 1px solid #2c3f90; color: white !important;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="doc.order_line" t-as="line">
+                            <tr t-if="not line.display_type" style="border-bottom: 1px solid black;">
+                                <td class="text-start" style="padding: 8px;"><span t-field="line.name"/></td>
+                                <td class="text-center" style="padding: 8px;"><span t-esc="int(line.product_uom_qty)"/></td>
+                                <td class="text-end" style="padding: 8px;">B/. <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-end" style="padding: 8px;">B/. <span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div class="row justify-content-end mt-3">
+                    <div class="col-5">
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="text-start"><strong>Subtotal</strong></td>
+                                <td class="text-end">B/. <span t-field="doc.amount_untaxed" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start"><strong>ITBMS 7%</strong></td>
+                                <td class="text-end">B/. <span t-field="doc.amount_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <tr style="background-color: #2c3f90; color: white; font-weight: bold;">
+                                <td class="text-start" style="padding: 8px; color: white !important;">TOTAL</td>
+                                <td class="text-end" style="padding: 8px; color: white !important;">B/. <span t-field="doc.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-3" t-if="doc.note">
+                    <strong style="font-size: 10pt; display: block; margin-bottom: 5px;">Términos y condiciones:</strong>
+                    <p t-field="doc.note"/>
+                </div>
+
+
+            </div>
+        </xpath>
+    </template>
+</odoo>
