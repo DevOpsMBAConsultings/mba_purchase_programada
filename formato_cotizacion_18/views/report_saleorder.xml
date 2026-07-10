@@ -12,6 +12,10 @@
         <xpath expr="//div[@class='page']" position="replace">
             <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black;">
 
+                <div class="mb-3">
+                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
+                </div>
+
                 <div class="row mb-4">
                     <div class="col-6">
                         <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Datos del cliente</strong>
@@ -49,7 +53,7 @@
                     </thead>
                     <tbody>
                         <t t-foreach="doc.order_line" t-as="line">
-                            <tr t-if="not line.display_type" style="border-bottom: 1px solid black; page-break-inside: avoid;">
+                            <tr t-if="not line.display_type" style="border-bottom: 1px solid #e0e0e0; page-break-inside: avoid;">
                                 <td class="text-center" style="padding: 4px; vertical-align: middle;">
                                     <span t-if="line.product_id.image_1920" t-field="line.product_id.image_1920" t-options="{'widget': 'image', 'style': 'max-height: 40px; width: auto;'}"/>
                                 </td>
