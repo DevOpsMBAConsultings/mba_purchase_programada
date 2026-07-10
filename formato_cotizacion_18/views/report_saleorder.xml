@@ -81,11 +81,11 @@
                                 <td class="text-end"><t t-esc="doc.currency_id.symbol"/> <span t-field="doc.amount_untaxed" t-options='{"widget": "float", "precision": 2}'/></td>
                             </tr>
                             <t t-if="doc.tax_totals">
-                                <t t-foreach="doc.tax_totals.get('subtotals_order', [])" t-as="subtotal_title">
-                                    <t t-foreach="doc.tax_totals.get('groups_by_subtotal', {}).get(subtotal_title, [])" t-as="amount_by_group">
+                                <t t-foreach="doc.tax_totals.get('subtotals', [])" t-as="subtotal">
+                                    <t t-foreach="subtotal.get('tax_groups', [])" t-as="tax_group">
                                         <tr>
-                                            <td class="text-start"><strong><t t-esc="amount_by_group['tax_group_name']"/></strong></td>
-                                            <td class="text-end"><t t-esc="doc.currency_id.symbol"/> <t t-esc="'%.2f' % amount_by_group['tax_group_amount']"/></td>
+                                            <td class="text-start"><strong><t t-esc="tax_group['group_name']"/></strong></td>
+                                            <td class="text-end"><t t-esc="doc.currency_id.symbol"/> <t t-esc="'%.2f' % tax_group['tax_amount_currency']"/></td>
                                         </tr>
                                     </t>
                                 </t>
