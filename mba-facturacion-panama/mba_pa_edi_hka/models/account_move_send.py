@@ -27,10 +27,14 @@ class AccountMoveSend(models.AbstractModel):
                 return cafe_att
         return super()._get_invoice_extra_attachments(move)
 
-    def _get_placeholder_mail_attachments_data(self, move, invoice_edi_format=None, extra_edis=None, pdf_report=None):
+    def _get_placeholder_mail_attachments_data(self, move, **kwargs):
         """
         Evita que Odoo muestre un placeholder genérico de PDF cuando ya tenemos
         el CAFE PDF de HKA adjunto.
+
+        Se aceptan **kwargs y se reenvían tal cual a super() para no romper el
+        override si el core de Odoo 18 cambia la firma del método (p. ej. añade
+        o quita 'pdf_report' entre versiones menores).
         """
         if (
             move.move_type in ("out_invoice", "out_refund")
@@ -43,9 +47,4 @@ class AccountMoveSend(models.AbstractModel):
             ], limit=1)
             if cafe_att:
                 return []
-        return super()._get_placeholder_mail_attachments_data(
-            move,
-            invoice_edi_format=invoice_edi_format,
-            extra_edis=extra_edis,
-            pdf_report=pdf_report,
-        )
+        return super()._get_placeholder_mail_attachments_data(move, **kwargs)
