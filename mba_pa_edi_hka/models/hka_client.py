@@ -49,7 +49,26 @@ class HKAClient:
         # Usamos los campos snapshot de la factura para consistencia
         tipo_cliente = getattr(invoice, "dgi_partner_receptor_tipo", None) or getattr(commercial_partner, "l10n_pa_receptor_tipo", None) or "02"
         partner_ruc = getattr(invoice, "dgi_partner_ruc", None) or getattr(commercial_partner, "l10n_pa_ruc", None) or commercial_partner.vat or ""
+        partner_ruc = (partner_ruc or "").strip()
         partner_dv = getattr(invoice, "dgi_partner_dv", None) or getattr(commercial_partner, "l10n_pa_dv", None) or ""
+
+        # HKA valida numeroRUC contra el formato de RUC/cédula panameña (error 109) y rechaza
+        # TANTO "CF" ("El campo numeroRUC es inválido") COMO el valor vacío/ausente
+        # ("El campo numeroRUC debe ser informado") — verificado con 4 pruebas reales vs HKA demo.
+        # Consumidor Final (02) = venta sin identificar al comprador: cuando el partner NO tiene una
+        # cédula/RUC real capturado (vacío, None, "CF" o cualquier placeholder sin dígitos), HKA
+        # acepta el comodín "00000". Nunca se inventa una cédula real; si el partner SÍ tiene una
+        # cédula real (con dígitos), se envía tal cual sin tocar.
+        # "CF" es la convención interna de CF sin RUC (res_partner fuerza vat="CF"), no un RUC real.
+        # NOTA: Digifact resuelve este mismo caso enviando el campo VACÍO (regla XSD DGI distinta);
+        # esa lógica es exclusiva de Digifact y NO se comparte — la API REST de HKA exige "00000".
+        if tipo_cliente == "02" and (
+            not partner_ruc
+            or partner_ruc.upper() == "CF"
+            or not any(c.isdigit() for c in partner_ruc)
+        ):
+            partner_ruc = "00000"
+            partner_dv = ""
         partner_name = getattr(invoice, "dgi_partner_name", None) or commercial_partner.name or ""
         partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or ("2" if commercial_partner.company_type == "company" else "1")
 
@@ -69,7 +88,7 @@ class HKAClient:
             "pais": commercial_partner.country_id.code or "PA",
         }
 
-        if tipo_cliente in ['01', '03']:
+        if tipo_cliente != "04":
             cliente_data["tipoContribuyente"] = partner_taxpayer_type
 
         if tipo_cliente == "04":

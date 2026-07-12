@@ -483,6 +483,11 @@ class DigifactNUCBuilder(models.AbstractModel):
         
         # Priority: commercial_partner.l10n_pa_ruc -> commercial_partner.vat -> move snapshot
         buyer_ruc = _str_clean(getattr(commercial_partner, "l10n_pa_ruc", "")) or _str_clean(commercial_partner.vat) or _str_clean(getattr(move, "dgi_partner_ruc", "")) or ""
+        # El comentario de abajo dice "enviar TaxID vacío si no hay RUC real", pero _str_clean("CF")
+        # devuelve "CF" y terminaba enviándose al XSD (error 3010). Lo normalizamos aquí de verdad:
+        # "CF" (o cualquier placeholder no numérico en CF/02) → "" para que <TaxID> vaya vacío.
+        if buyer_ruc.upper() == "CF" or (tipo_receptor == "02" and not any(c.isdigit() for c in buyer_ruc)):
+            buyer_ruc = ""
         if tipo_receptor == "04":
             buyer_ruc = "EXTRANJERO"
 
