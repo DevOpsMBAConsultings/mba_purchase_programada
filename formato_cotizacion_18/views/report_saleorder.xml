@@ -59,7 +59,7 @@
                                     <span t-if="line.product_id.image_1920" t-field="line.product_id.image_1920" t-options="{'widget': 'image', 'style': 'max-height: 40px; width: auto;'}"/>
                                 </td>
                                 <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-esc="line.product_id.default_code"/></td>
-                                <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-field="line.name"/></td>
+                                <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-esc="line.name.replace('[%s] ' % line.product_id.default_code, '', 1) if line.product_id.default_code else line.name"/></td>
                                 <td class="text-center" style="padding: 4px; vertical-align: middle;"><span t-esc="int(line.product_uom_qty)"/></td>
                                 <td class="text-end" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
                                 <td class="text-center" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_tax" t-options='{"widget": "float", "precision": 2}'/></td>
