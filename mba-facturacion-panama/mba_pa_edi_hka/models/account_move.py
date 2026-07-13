@@ -18,6 +18,7 @@ class AccountMove(models.Model):
         self.ensure_one()
 
         company = self.company_id
+        company.sudo().action_hka_get_token()
         if not company.l10n_pa_hka_url or not company.l10n_pa_hka_token:
             raise UserError(_("Debe configurar la URL y el Token de HKA en los ajustes de la compañía."))
 
@@ -133,6 +134,7 @@ class AccountMove(models.Model):
             raise UserError(_("La factura debe estar aceptada por HKA y tener un CUFE para descargar los archivos."))
             
         company = self.company_id
+        company.sudo().action_hka_get_token()
         if not company.l10n_pa_hka_url or not company.l10n_pa_hka_token:
             raise UserError(_("Debe configurar la URL y el Token de HKA en los ajustes de la compañía."))
             
@@ -192,6 +194,7 @@ class AccountMove(models.Model):
         motivo = self.env.context.get("hka_anular_motivo", "Anulacion generica")
 
         company = self.company_id
+        company.sudo().action_hka_get_token()
         if not company.l10n_pa_hka_url or not company.l10n_pa_hka_token:
             raise UserError(_(u"Debe configurar la URL y el Token de HKA en los ajustes de la compania."))
 
