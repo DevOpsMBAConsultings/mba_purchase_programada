@@ -44,6 +44,7 @@
                     <thead style="display: table-header-group;">
                         <tr style="background-color: #04167e; color: white !important; font-weight: bold; border-bottom: 3px solid #cb1a1c;">
                             <th class="text-center" style="padding: 8px; border: none; color: white !important; width: 80px;">Imagen</th>
+                            <th class="text-start" style="padding: 8px; border: none; color: white !important;">Referencia</th>
                             <th class="text-start" style="padding: 8px; border: none; color: white !important;">Descripción</th>
                             <th class="text-center" style="padding: 8px; border: none; color: white !important;">Cantidad</th>
                             <th class="text-end" style="padding: 8px; border: none; color: white !important;">Precio</th>
@@ -57,6 +58,7 @@
                                 <td class="text-center" style="padding: 4px; vertical-align: middle;">
                                     <span t-if="line.product_id.image_1920" t-field="line.product_id.image_1920" t-options="{'widget': 'image', 'style': 'max-height: 40px; width: auto;'}"/>
                                 </td>
+                                <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-esc="line.product_id.default_code"/></td>
                                 <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-field="line.name"/></td>
                                 <td class="text-center" style="padding: 4px; vertical-align: middle;"><span t-esc="int(line.product_uom_qty)"/></td>
                                 <td class="text-end" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
@@ -64,12 +66,12 @@
                                 <td class="text-end" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
                             </tr>
                             <tr t-elif="line.display_type == 'line_section'" style="background-color: #f2f2f2;">
-                                <td colspan="6" class="text-start" style="padding: 8px;">
+                                <td colspan="7" class="text-start" style="padding: 8px;">
                                     <strong style="font-size: 11pt;"><span t-field="line.name"/></strong>
                                 </td>
                             </tr>
                             <tr t-elif="line.display_type == 'line_note'">
-                                <td colspan="6" class="text-start" style="padding: 8px; font-style: italic;">
+                                <td colspan="7" class="text-start" style="padding: 8px; font-style: italic;">
                                     <span t-field="line.name"/>
                                 </td>
                             </tr>
