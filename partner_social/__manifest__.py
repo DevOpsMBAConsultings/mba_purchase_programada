@@ -8,7 +8,8 @@
 Módulo para agregar campos de redes sociales a los contactos en Odoo 18 y 19.
 Ideal para empresas en Panamá que desean tener un acceso rápido a las redes sociales de sus clientes.
     """,
-    'author': 'Brooks González / Antigravity',
+    'author': 'MBA Consultings, Brooks Gonzalez',
+    'website': 'https://www.mbaconsultings.com',
     'depends': ['base', 'contacts'],
     'data': [
         'views/res_partner_views.xml',

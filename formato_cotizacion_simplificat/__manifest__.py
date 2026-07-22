@@ -5,7 +5,8 @@
     'summary': 'Formato personalizado de cotización',
     'description': 'Base quote format for Sale Orders.',
     'category': 'Sales',
-    'author': 'Antigravity',
+    'author': 'MBA Consultings, Brooks Gonzalez',
+    'website': 'https://www.mbaconsultings.com',
     'depends': ['sale'],
     'data': [
         'views/report_saleorder.xml',
