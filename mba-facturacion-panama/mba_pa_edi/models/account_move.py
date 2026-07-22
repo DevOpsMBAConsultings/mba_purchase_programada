@@ -295,12 +295,14 @@ class AccountMove(models.Model):
             if not partner_valid:
                 partner_name = self.partner_id.name
                 warning_res = {
-                    'warning': {
-                        'title': _("Contacto no Validado con DGI"),
-                        'message': _(
-                            "El contacto '%s' no ha sido validado con la DGI.\n\n"
-                            "Puede continuar con la preparación de la factura, pero tenga en cuenta que al procesar la factura electrónica la DGI podría rechazarla si los datos fiscales del contacto no son válidos."
-                        ) % (partner_name,),
+                    'name': _("Contacto no Validado con DGI"),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'partner.dgi.warning.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_partner_name': partner_name,
+                        'default_message_type': 'invoice',
                     }
                 }
 
