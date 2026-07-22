@@ -1,4 +1,0 @@
-[submodule "mba-facturacion-panama"]
-	path = mba-facturacion-panama
-	url = https://github.com/DevOpsMBAConsultings/mba-facturacion-panama
-	branch = 18.0
