@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Developed by MBA Consultings
+    Author: Brooks Gonzalez <info@mbaconsultings.com>
+-->
+<odoo>
+    <record id="res_users_view_form_apps_menu_preferences_inherit" model="ir.ui.view">
+        <field name="name">res.users.apps.menu.preferences.form.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="web_responsive.res_users_view_form_apps_menu_preferences"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="edit">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
