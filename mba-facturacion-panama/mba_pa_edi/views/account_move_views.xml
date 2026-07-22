@@ -34,7 +34,7 @@
                 <!-- ============================================================ -->
                 <!-- RIBBON: "Anulado DGI" para facturas anuladas ante el PAC/DGI -->
                 <!-- ============================================================ -->
-                <xpath expr="//sheet" position="inside">
+                <xpath expr="//sheet" position="prepend">
                     <widget name="web_ribbon"
                             title="Anulado DGI"
                             bg_color="bg-danger"
