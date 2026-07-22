@@ -148,34 +148,35 @@ class SaleOrder(models.Model):
                 "context": {"active_id": self.id, "default_sale_order_id": self.id},
             }
 
+        # 1. Verificar si el cliente está validado con la DGI antes de crear la factura
+        partner_valid = partner.l10n_pa_is_dgi_validated if partner else True
+        if partner and not partner_valid and partner.parent_id:
+            partner_valid = partner.parent_id.l10n_pa_is_dgi_validated
+
+        if not partner_valid and not self.env.context.get('skip_dgi_warning_wizard'):
+            return {
+                'name': _("Cliente no Validado con DGI"),
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order.dgi.warning.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_sale_order_id': self.id,
+                    'default_partner_name': partner.name,
+                }
+            }
+
         invoice = self._create_invoices(final=True)
         if not invoice:
             raise UserError(_("No hay nada que facturar o la factura ya fue creada."))
         
-        action = {
+        return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'account.move',
             'res_id': invoice[0].id,
             'target': 'current',
         }
-
-        partner_valid = partner.l10n_pa_is_dgi_validated if partner else True
-        if partner and not partner_valid and partner.parent_id:
-            partner_valid = partner.parent_id.l10n_pa_is_dgi_validated
-
-        if not partner_valid:
-            action['context'] = {
-                'warning': {
-                    'title': _("Cliente no Validado con DGI"),
-                    'message': _(
-                        "El cliente '%s' no ha sido validado con la DGI.\n\n"
-                        "Se ha creado el borrador de la factura, pero tenga en cuenta que al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
-                    ) % (partner.name,),
-                }
-            }
-
-        return action
 
     @api.constrains('partner_id')
     def _check_partner_dgi_validated(self):

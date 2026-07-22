@@ -127,8 +127,6 @@ class PosOrder(models.Model):
 
             if not order.partner_id:
                 raise UserError(_("Debe seleccionar un cliente para facturar la orden POS."))
-            if not order.partner_id.l10n_pa_is_dgi_validated:
-                raise UserError(_("El cliente seleccionado no ha sido validado con la DGI. Valide al cliente antes de facturar."))
 
             move_vals = order._prepare_invoice_vals()
             new_move = order._create_invoice(move_vals)
