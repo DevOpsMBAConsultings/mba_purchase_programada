@@ -20,12 +20,14 @@ class SaleOrder(models.Model):
             if not partner_valid:
                 partner_name = self.partner_id.name
                 return {
-                    'warning': {
-                        'title': _("Cliente no Validado con DGI"),
-                        'message': _(
-                            "El cliente '%s' no ha sido validado con la DGI.\n\n"
-                            "Puede continuar creando la cotización, pero tenga en cuenta que si el cliente no está validado con la DGI, al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
-                        ) % (partner_name,),
+                    'name': _("Cliente no Validado con DGI"),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'partner.dgi.warning.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_partner_name': partner_name,
+                        'default_message_type': 'sale',
                     }
                 }
 
