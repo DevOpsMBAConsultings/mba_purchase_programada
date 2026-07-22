@@ -281,11 +281,12 @@ class AccountMove(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
         """
-        Evita usar un contacto que no ha sido validado con la DGI.
-        Si no está validado, muestra una advertencia y limpia el campo.
+        Muestra advertencia si el contacto no ha sido validado con la DGI.
+        No limpia el campo ni bloquea el documento.
         Aplica a facturas de clientes y proveedores.
         También copia las notas complementarias del contacto al borrador.
         """
+        warning_res = None
         if self.partner_id and self.move_type in ['out_invoice', 'out_refund', 'out_receipt', 'in_invoice', 'in_refund', 'in_receipt']:
             partner_valid = self.partner_id.l10n_pa_is_dgi_validated
             if not partner_valid and self.partner_id.parent_id:
@@ -293,13 +294,12 @@ class AccountMove(models.Model):
                 
             if not partner_valid:
                 partner_name = self.partner_id.name
-                self.partner_id = False
-                return {
+                warning_res = {
                     'warning': {
                         'title': _("Contacto no Validado con DGI"),
                         'message': _(
-                            "El contacto '%s' no ha sido validado con la DGI y no puede ser utilizado en facturación.\n\n"
-                            "Por favor, abra la ficha del contacto y asegúrese de que la alerta roja de validación desaparezca (Validando RUC o Método de pago si es Consumidor Final)."
+                            "El contacto '%s' no ha sido validado con la DGI.\n\n"
+                            "Puede continuar con la preparación de la factura, pero tenga en cuenta que al procesar la factura electrónica la DGI podría rechazarla si los datos fiscales del contacto no son válidos."
                         ) % (partner_name,),
                     }
                 }
@@ -315,24 +315,15 @@ class AccountMove(models.Model):
             if notes:
                 self.dgi_payment_notes = notes
 
+            if warning_res:
+                return warning_res
 
     @api.constrains('partner_id', 'move_type', 'state')
     def _check_partner_dgi_validated(self):
         """
-        No permitir facturar si el contacto no está validado con la DGI.
-        Aplica a facturas de clientes y proveedores cuando se van a publicar o guardar.
+        No bloquea la creación ni edición de facturas con contactos no validados por DGI.
         """
-        for move in self:
-            if move.move_type in ['out_invoice', 'out_refund', 'out_receipt', 'in_invoice', 'in_refund', 'in_receipt'] and move.partner_id:
-                partner_valid = move.partner_id.l10n_pa_is_dgi_validated
-                if not partner_valid and move.partner_id.parent_id:
-                    partner_valid = move.partner_id.parent_id.l10n_pa_is_dgi_validated
-                    
-                if not partner_valid:
-                    raise UserError(
-                        _("El contacto '%s' no ha sido validado con la DGI.\n\n"
-                          "Por favor, abra la ficha del contacto y valide sus datos antes de guardar la factura.") % (move.partner_id.name,)
-                    )
+        pass
 
     def action_post(self):
         if self.env.context.get('skip_pac_send'):
