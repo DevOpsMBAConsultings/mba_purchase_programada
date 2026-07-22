@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_custom" inherit_id="sale.report_saleorder_document" priority="30">
+
+        <!-- Keep external_layout (default) - DO NOT change to basic_layout -->
+        <!-- This ensures header/footer repeat on every page -->
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address"/>
+        </xpath>
+
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black;">
+
+                <div class="mb-3">
+                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Datos del cliente</strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Nombre:</strong> <span t-field="doc.partner_id.name"/><br/>
+                        <strong>Contacto:</strong> <span t-field="doc.partner_id.child_ids[0].name" t-if="doc.partner_id.child_ids"/><br/>
+                        <strong>Dirección:</strong> <span t-field="doc.partner_id.street"/><br/>
+                        <strong>Vendedor:</strong> <span t-field="doc.user_id.name"/>
+                    </div>
+
+                    <div class="col-5 offset-1">
+                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Cotización</strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Número:</strong> <span t-field="doc.name"/><br/>
+                        <strong>Fecha:</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/><br/>
+                        <strong>Expiración:</strong> <span t-field="doc.validity_date"/><br/>
+                        <strong>Condiciones de pago:</strong> <span t-field="doc.payment_term_id.name"/>
+                    </div>
+                </div>
+
+                <div t-if="doc.client_order_ref" class="mt-3 mb-2">
+                    <strong style="font-size: 11pt;"><span t-field="doc.client_order_ref"/></strong>
+                </div>
+
+                <table class="mt-2" style="width: 100%; border-collapse: collapse;">
+                    <thead style="display: table-header-group;">
+                        <tr style="background-color: #04167e; color: white !important; font-weight: bold; border-bottom: 3px solid #cb1a1c;">
+                            <th class="text-center" style="padding: 8px; border: none; color: white !important; width: 80px;">Imagen</th>
+                            <th class="text-start" style="padding: 8px; border: none; color: white !important;">Referencia</th>
+                            <th class="text-start" style="padding: 8px; border: none; color: white !important;">Descripción</th>
+                            <th class="text-center" style="padding: 8px; border: none; color: white !important;">Cantidad</th>
+                            <th class="text-end" style="padding: 8px; border: none; color: white !important;">Precio</th>
+                            <th class="text-center" style="padding: 8px; border: none; color: white !important;">Impuesto</th>
+                            <th class="text-end" style="padding: 8px; border: none; color: white !important;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="doc.order_line" t-as="line">
+                            <tr t-if="not line.display_type" style="border-bottom: 1px solid #e0e0e0; page-break-inside: avoid;">
+                                <td class="text-center" style="padding: 4px; vertical-align: middle;">
+                                    <span t-if="line.product_id.image_1920" t-field="line.product_id.image_1920" t-options="{'widget': 'image', 'style': 'max-height: 40px; width: auto;'}"/>
+                                </td>
+                                <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-esc="line.product_id.default_code"/></td>
+                                <td class="text-start" style="padding: 4px; vertical-align: middle;"><span t-esc="line.name.replace('[%s] ' % line.product_id.default_code, '', 1) if line.product_id.default_code else line.name"/></td>
+                                <td class="text-center" style="padding: 4px; vertical-align: middle;"><span t-esc="int(line.product_uom_qty)"/></td>
+                                <td class="text-end" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-center" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-end" style="padding: 4px; vertical-align: middle;"><t t-esc="doc.currency_id.symbol"/> <span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <tr t-elif="line.display_type == 'line_section'" style="background-color: #f2f2f2;">
+                                <td colspan="7" class="text-start" style="padding: 8px;">
+                                    <strong style="font-size: 11pt;"><span t-field="line.name"/></strong>
+                                </td>
+                            </tr>
+                            <tr t-elif="line.display_type == 'line_note'">
+                                <td colspan="7" class="text-start" style="padding: 8px; font-style: italic;">
+                                    <span t-field="line.name"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div class="row justify-content-end mt-3" style="page-break-inside: avoid;">
+                    <div class="col-5">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td class="text-start"><strong>Subtotal</strong></td>
+                                <td class="text-end"><t t-esc="doc.currency_id.symbol"/> <span t-field="doc.amount_untaxed" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <t t-if="doc.tax_totals">
+                                <t t-foreach="doc.tax_totals.get('subtotals', [])" t-as="subtotal">
+                                    <t t-foreach="subtotal.get('tax_groups', [])" t-as="tax_group">
+                                        <tr>
+                                            <td class="text-start"><strong><t t-esc="tax_group['group_name']"/></strong></td>
+                                            <td class="text-end"><t t-esc="doc.currency_id.symbol"/> <t t-esc="'%.2f' % tax_group['tax_amount_currency']"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </t>
+                            <tr style="background-color: #04167e; color: white; font-weight: bold; border-top: 3px solid #cb1a1c;">
+                                <td class="text-start" style="padding: 8px; color: white !important;">TOTAL</td>
+                                <td class="text-end" style="padding: 8px; color: white !important;"><t t-esc="doc.currency_id.symbol"/> <span t-field="doc.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-2" t-if="doc.note" style="font-size: 9pt;">
+                    <strong style="display: block; margin-bottom: 3px;">Términos y condiciones:</strong>
+                    <span t-field="doc.note"/>
+                </div>
+
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
