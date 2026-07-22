@@ -8,8 +8,8 @@ class SaleOrder(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
         """
-        Evita usar un cliente que no ha sido validado con la DGI.
-        Si no está validado, muestra una advertencia y limpia el campo.
+        Muestra una advertencia al seleccionar un cliente que no ha sido validado con la DGI,
+        sin limpiar el campo ni bloquear la cotización.
         """
         if self.partner_id:
             # Check if partner or parent is validated
@@ -19,13 +19,12 @@ class SaleOrder(models.Model):
                 
             if not partner_valid:
                 partner_name = self.partner_id.name
-                self.partner_id = False
                 return {
                     'warning': {
                         'title': _("Cliente no Validado con DGI"),
                         'message': _(
-                            "El cliente '%s' no ha sido validado con la DGI y no puede ser utilizado en Cotizaciones.\n\n"
-                            "Por favor, abra la ficha del contacto y asegúrese de que la alerta roja de validación desaparezca (Validando RUC o Método de pago si es Consumidor Final)."
+                            "El cliente '%s' no ha sido validado con la DGI.\n\n"
+                            "Puede continuar creando la cotización, pero tenga en cuenta que si el cliente no está validado con la DGI, al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
                         ) % (partner_name,),
                     }
                 }
@@ -33,19 +32,9 @@ class SaleOrder(models.Model):
     @api.constrains('partner_id')
     def _check_partner_dgi_validated(self):
         """
-        Capa final de validación al guardar.
+        Advertencia previa al guardar. No bloquea la creación o guardado de la cotización.
         """
-        for order in self:
-            if order.partner_id:
-                partner_valid = order.partner_id.l10n_pa_is_dgi_validated
-                if not partner_valid and order.partner_id.parent_id:
-                    partner_valid = order.partner_id.parent_id.l10n_pa_is_dgi_validated
-                    
-                if not partner_valid:
-                    raise UserError(
-                        _("El cliente '%s' no ha sido validado con la DGI.\n\n"
-                          "Por favor, abra la ficha del contacto y valide sus datos antes de guardar la cotización.") % (order.partner_id.name,)
-                    )
+        pass
 
     dgi_payment_notes = fields.Text(
         string="Notas complementarias (FE DGI)",
