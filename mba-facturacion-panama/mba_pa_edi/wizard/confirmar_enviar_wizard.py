@@ -21,6 +21,22 @@ class ConfirmarEnviarWizard(models.TransientModel):
         help='Próximo número fiscal. Puede editarlo si es necesario antes de enviar.',
         required=True,
     )
+    is_partner_unvalidated = fields.Boolean(
+        string='Contacto no validado DGI',
+        compute='_compute_is_partner_unvalidated',
+    )
+
+    @api.depends('move_id', 'move_id.partner_id')
+    def _compute_is_partner_unvalidated(self):
+        for wizard in self:
+            partner = wizard.move_id.partner_id
+            if partner:
+                valid = getattr(partner, 'l10n_pa_is_dgi_validated', False)
+                if not valid and partner.parent_id:
+                    valid = getattr(partner.parent_id, 'l10n_pa_is_dgi_validated', False)
+                wizard.is_partner_unvalidated = not valid
+            else:
+                wizard.is_partner_unvalidated = False
 
     # ----------------------------------------------------------
     # Default / Onchange
