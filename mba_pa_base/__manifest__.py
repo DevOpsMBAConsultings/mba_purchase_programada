@@ -1,6 +1,6 @@
 {
     "name": "Panamá - Catálogos Base (MBA Consultings)",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "category": "Accounting/Localizations",
     "summary": "Catálogos base de la DGI y modificaciones a Contactos para Panamá. | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",

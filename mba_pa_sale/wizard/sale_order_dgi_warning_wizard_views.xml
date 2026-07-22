@@ -12,7 +12,7 @@
                         El cliente <strong><field name="partner_name" readonly="1" class="oe_inline"/></strong> no ha sido validado con la DGI.
                     </p>
                     <p class="mb-0">
-                        Puede continuar creando el borrador de la factura, pero tenga en cuenta que al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI.
+                        Va a crear una factura borrador con un cliente que no está validado ante la DGI. Al intentar procesar o emitir la factura electrónica esta podría no ser aceptada.
                     </p>
                 </div>
                 <footer>

@@ -8,15 +8,14 @@ class SaleOrder(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
         """
-        Muestra una advertencia en pop-up amarillo al seleccionar un cliente que no ha sido validado con la DGI.
+        Muestra advertencia amarilla al seleccionar cliente no validado con la DGI.
         """
         if self.partner_id:
             partner_valid = self.partner_id.l10n_pa_is_dgi_validated
             if not partner_valid and self.partner_id.parent_id:
                 partner_valid = self.partner_id.parent_id.l10n_pa_is_dgi_validated
-                
+
             if not partner_valid:
-                partner_name = self.partner_id.name
                 return {
                     'name': _("Cliente no Validado con DGI"),
                     'type': 'ir.actions.act_window',
@@ -24,7 +23,7 @@ class SaleOrder(models.Model):
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {
-                        'default_partner_name': partner_name,
+                        'default_partner_name': self.partner_id.name,
                         'default_message_type': 'sale',
                     }
                 }
