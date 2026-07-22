@@ -8,11 +8,9 @@ class SaleOrder(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
         """
-        Muestra una advertencia al seleccionar un cliente que no ha sido validado con la DGI,
-        sin limpiar el campo ni bloquear la cotización.
+        Muestra una advertencia en pop-up amarillo al seleccionar un cliente que no ha sido validado con la DGI.
         """
         if self.partner_id:
-            # Check if partner or parent is validated
             partner_valid = self.partner_id.l10n_pa_is_dgi_validated
             if not partner_valid and self.partner_id.parent_id:
                 partner_valid = self.partner_id.parent_id.l10n_pa_is_dgi_validated
@@ -20,12 +18,14 @@ class SaleOrder(models.Model):
             if not partner_valid:
                 partner_name = self.partner_id.name
                 return {
-                    'warning': {
-                        'title': _("Cliente no Validado con DGI"),
-                        'message': _(
-                            "El cliente '%s' no ha sido validado con la DGI.\n\n"
-                            "Puede continuar creando la cotización, pero tenga en cuenta que si el cliente no está validado con la DGI, al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
-                        ) % (partner_name,),
+                    'name': _("Cliente no Validado con DGI"),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'partner.dgi.warning.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_partner_name': partner_name,
+                        'default_message_type': 'sale',
                     }
                 }
 
