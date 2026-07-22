@@ -33,11 +33,12 @@
 
                 <!-- ============================================================ -->
                 <!-- RIBBON: "Anulado DGI" para facturas anuladas ante el PAC/DGI -->
+                <!-- Va DESPUÉS de button_box, igual que los ribbons nativos de Odoo -->
                 <!-- ============================================================ -->
-                <xpath expr="//sheet" position="prepend">
+                <xpath expr="//div[@name='button_box']" position="after">
                     <widget name="web_ribbon"
                             title="Anulado DGI"
-                            bg_color="bg-danger"
+                            bg_color="text-bg-danger"
                             invisible="l10n_pa_pac_status != 'cancelled' or move_type not in ('out_invoice', 'out_refund')" />
                 </xpath>
 
