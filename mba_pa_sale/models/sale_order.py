@@ -152,14 +152,28 @@ class SaleOrder(models.Model):
         if not invoice:
             raise UserError(_("No hay nada que facturar o la factura ya fue creada."))
         
-        # Odoo 17/18 returns a recordset from _create_invoices
-        return {
+        partner_valid = partner.l10n_pa_is_dgi_validated if partner else True
+        if partner and not partner_valid and partner.parent_id:
+            partner_valid = partner.parent_id.l10n_pa_is_dgi_validated
+
+        action = {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'account.move',
             'res_id': invoice[0].id,
             'target': 'current',
         }
+
+        if not partner_valid:
+            action['warning'] = {
+                'title': _("Cliente no Validado con DGI"),
+                'message': _(
+                    "El cliente '%s' no ha sido validado con la DGI.\n\n"
+                    "Se ha creado el borrador de la factura, pero tenga en cuenta que al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
+                ) % (partner.name,),
+            }
+        
+        return action
 
     @api.constrains('partner_id')
     def _check_partner_dgi_validated(self):
