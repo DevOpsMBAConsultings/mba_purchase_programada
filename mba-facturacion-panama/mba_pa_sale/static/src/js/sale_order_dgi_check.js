@@ -53,6 +53,7 @@ patch(FormController.prototype, {
                     type: "ir.actions.act_window",
                     res_model: "partner.dgi.warning.wizard",
                     view_mode: "form",
+                    views: [[false, "form"]],
                     target: "new",
                     context: {
                         default_partner_name: partner.name,
