@@ -152,33 +152,6 @@ class SaleOrder(models.Model):
         if not invoice:
             raise UserError(_("No hay nada que facturar o la factura ya fue creada."))
         
-        partner_valid = partner.l10n_pa_is_dgi_validated if partner else True
-        if partner and not partner_valid and partner.parent_id:
-            partner_valid = partner.parent_id.l10n_pa_is_dgi_validated
-
-        if not partner_valid:
-            message = _(
-                "El cliente '%s' no ha sido validado con la DGI.\n\n"
-                "Se ha creado el borrador de la factura, pero tenga en cuenta que al intentar procesar o emitir la factura electrónica esta podría no ser aceptada por la DGI."
-            ) % (partner.name,)
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _("Cliente no Validado con DGI"),
-                    'message': message,
-                    'type': 'warning',
-                    'sticky': True,
-                    'next': {
-                        'type': 'ir.actions.act_window',
-                        'view_mode': 'form',
-                        'res_model': 'account.move',
-                        'res_id': invoice[0].id,
-                        'target': 'current',
-                    }
-                }
-            }
-
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
