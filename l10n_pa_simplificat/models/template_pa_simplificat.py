@@ -13,7 +13,7 @@ class AccountChartTemplate(models.AbstractModel):
             'property_account_payable_id': 'pa_account_220_02',
             'property_account_income_categ_id': 'pa_account_400_01',
             'property_account_expense_categ_id': 'pa_account_500_02',
-            'code_digits': 8,
+            'code_digits': 0,
         }
 
     @template('pa_simplificat', 'res.company')
@@ -21,13 +21,17 @@ class AccountChartTemplate(models.AbstractModel):
         return {
             self.env.company.id: {
                 'account_fiscal_country_id': 'base.pa',
-                'bank_account_code_prefix': '100',
-                'cash_account_code_prefix': '100',
-                'transfer_account_code_prefix': '100',
+                'bank_account_code_prefix': '100.',
+                'cash_account_code_prefix': '100.',
+                'transfer_account_code_prefix': '100.9',
                 'account_default_pos_receivable_account_id': 'pa_account_120_01',
                 'income_currency_exchange_account_id': 'pa_account_601_01',
                 'expense_currency_exchange_account_id': 'pa_account_601_01',
                 'account_journal_suspense_account_id': 'pa_account_100', # Usually 100.99 but fallback to 100
+                'account_journal_early_pay_discount_loss_account_id': 'pa_account_500_05',
+                'account_journal_early_pay_discount_gain_account_id': 'pa_account_400_07',
+                'default_cash_difference_income_account_id': 'pa_account_400_07',
+                'default_cash_difference_expense_account_id': 'pa_account_601_33',
             }
         }
 
