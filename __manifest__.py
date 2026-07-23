@@ -1,9 +1,10 @@
 {
     'name': 'Panama - Simplifica T Chart of Accounts',
-    'version': '1.0',
+    'version': '18.0.1.0.0',
     'category': 'Accounting/Localizations/Account Charts',
+    'summary': 'Plan de cuentas Simplifica T - Panamá',
     'description': 'Custom Chart of Accounts for Simplifica T, Panama',
-    'author': 'MBA Consultings',
+    'author': 'MBA Consultings, Brooks Gonzalez',
     'website': 'https://www.mbaconsultings.com',
     'depends': ['account'],
     'data': [

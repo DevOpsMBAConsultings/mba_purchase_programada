@@ -7,6 +7,8 @@ class AccountChartTemplate(models.AbstractModel):
     @template('pa_simplificat')
     def _get_pa_simplificat_template_data(self):
         return {
+            'name': 'Simplifica T (Panamá)',
+            'visible': True,
             'property_account_receivable_id': 'pa_account_120_01',
             'property_account_payable_id': 'pa_account_220_02',
             'property_account_income_categ_id': 'pa_account_400_01',
