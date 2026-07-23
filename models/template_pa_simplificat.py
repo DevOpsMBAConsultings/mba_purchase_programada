@@ -21,9 +21,9 @@ class AccountChartTemplate(models.AbstractModel):
         return {
             self.env.company.id: {
                 'account_fiscal_country_id': 'base.pa',
-                'bank_account_code_prefix': '100.',
-                'cash_account_code_prefix': '100.',
-                'transfer_account_code_prefix': '100.9',
+                'bank_account_code_prefix': '100.50',
+                'cash_account_code_prefix': '100.60',
+                'transfer_account_code_prefix': '100.99',
                 'account_default_pos_receivable_account_id': 'pa_account_120_01',
                 'income_currency_exchange_account_id': 'pa_account_601_01',
                 'expense_currency_exchange_account_id': 'pa_account_601_01',
