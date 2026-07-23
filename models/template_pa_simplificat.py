@@ -90,7 +90,7 @@ class AccountChartTemplate(models.AbstractModel):
             'pa_account_290_01': {'name': 'CUENTAS POR PAGAR - ACCIONISTA', 'code': '290.01', 'account_type': 'liability_current'},
             'pa_account_300': {'name': 'CAPITAL', 'code': '300', 'account_type': 'equity'},
             'pa_account_300_02': {'name': 'SUPERAVIT O DEFICIT ACUMULADO', 'code': '300.02', 'account_type': 'equity'},
-            'pa_account_300_03': {'name': 'GANANCIA O PERDIDA DEL PERIODO', 'code': '300.03', 'account_type': 'equity_unallocated'},
+            'pa_account_300_03': {'name': 'GANANCIA O PERDIDA DEL PERIODO', 'code': '300.03', 'account_type': 'equity'},
             'pa_account_300_04': {'name': 'CAPITAL ADICIONAL PAGADO', 'code': '300.04', 'account_type': 'equity'},
             'pa_account_400': {'name': 'INGRESOS', 'code': '400', 'account_type': 'income'},
             'pa_account_400_01': {'name': 'VENTAS', 'code': '400.01', 'account_type': 'income'},
