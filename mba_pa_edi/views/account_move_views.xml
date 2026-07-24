@@ -75,7 +75,7 @@
                             string="Enviar a DGI"
                             type="object"
                             class="oe_highlight"
-                            invisible="state != 'posted' or l10n_pa_pac_status in ('sent', 'accepted')" />
+                            invisible="move_type not in ('out_invoice', 'out_refund') or state != 'posted' or l10n_pa_pac_status in ('sent', 'accepted')" />
                 </xpath>
 
 
