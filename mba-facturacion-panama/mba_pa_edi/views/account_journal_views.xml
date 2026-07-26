@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="account.view_account_journal_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='advanced_settings']" position="after">
-                <page string="Facturación Electrónica DGI" name="dgi_fe_page">
+                <page string="Facturación Electrónica DGI" name="dgi_fe_page" invisible="type != 'sale'">
                     <group>
                         <group string="Datos de Sucursal y Punto de Facturación">
                             <field name="l10n_pa_sucursal_code"/>
