@@ -12,7 +12,6 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        "data/l10n_pa_pos_data.xml",
         "views/pos_config_views.xml",
         "views/pos_order_views.xml",
     ],

@@ -1,6 +1,6 @@
 {
     "name": "Panamá - Catálogo de Productos (MBA Consultings)",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Accounting/Localizations",
     "summary": "Manejo de códigos CPBS y Unidades de Medida DGI en productos. | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",
