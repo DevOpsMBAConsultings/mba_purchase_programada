@@ -2,7 +2,7 @@
 # Copyright 2026 MBA Consultings
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 {
-    "name": "Purchase Order Consolidation",
+    "name": "Purchase Order Consolidation (MBA Consultings)",
     "summary": "Consolidate purchase orders by supplier with delete option",
     "version": "18.0.1.0.0",
     "author": "MBA Consultings, Brooks Gonzalez",
