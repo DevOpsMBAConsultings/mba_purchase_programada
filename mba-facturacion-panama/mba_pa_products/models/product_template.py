@@ -74,6 +74,10 @@ class ProductTemplate(models.Model):
         Validación: Todos los productos vendibles deben tener al menos un impuesto positivo asignado
         para la Facturación Electrónica en Panamá.
         """
+        # Omitir validación durante instalación/actualización automática de módulos
+        if self.env.context.get('install_mode'):
+            return
+
         for rec in self:
             if rec.sale_ok:
                 if rec.dgi_charge_type in ["acarreo", "seguro", "otros_gastos"]:
