@@ -281,26 +281,25 @@ class AccountMove(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
         """
-        Muestra advertencia si el contacto no ha sido validado con la DGI.
-        No limpia el campo ni bloquea el documento.
-        Aplica a facturas de clientes y proveedores.
+        Muestra advertencia con wizard amarillo si el contacto no ha sido validado con la DGI.
+        Solo aplica a facturas de cliente (no a facturas de proveedor que son internas).
         También copia las notas complementarias del contacto al borrador.
         """
-        warning_res = None
-        if self.partner_id and self.move_type in ['out_invoice', 'out_refund', 'out_receipt', 'in_invoice', 'in_refund', 'in_receipt']:
+        if self.partner_id and self.move_type in ['out_invoice', 'out_refund']:
             partner_valid = self.partner_id.l10n_pa_is_dgi_validated
             if not partner_valid and self.partner_id.parent_id:
                 partner_valid = self.partner_id.parent_id.l10n_pa_is_dgi_validated
-                
+
             if not partner_valid:
-                partner_name = self.partner_id.name
-                warning_res = {
-                    'warning': {
-                        'title': _("Contacto no Validado con DGI"),
-                        'message': _(
-                            "El contacto '%s' no ha sido validado con la DGI.\n\n"
-                            "Puede continuar con la preparación de la factura, pero tenga en cuenta que al procesar la factura electrónica la DGI podría rechazarla si los datos fiscales del contacto no son válidos."
-                        ) % (partner_name,),
+                return {
+                    'name': _("Contacto no Validado con DGI"),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'partner.dgi.warning.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_partner_name': self.partner_id.name,
+                        'default_message_type': 'invoice',
                     }
                 }
 
@@ -314,9 +313,6 @@ class AccountMove(models.Model):
                 notes = partner.dgi_payment_notes
             if notes:
                 self.dgi_payment_notes = notes
-
-            if warning_res:
-                return warning_res
 
     @api.constrains('partner_id', 'move_type', 'state')
     def _check_partner_dgi_validated(self):

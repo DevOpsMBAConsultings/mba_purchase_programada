@@ -9,11 +9,10 @@ class SaleOrder(models.Model):
     def _onchange_partner_dgi_validated(self):
         """
         Muestra advertencia amarilla al seleccionar cliente no validado con la DGI.
+        Se dispara en cualquier contexto: crear manual o desde smart button del cliente.
         """
         if self.partner_id:
-            partner_valid = self.partner_id.l10n_pa_is_dgi_validated
-            if not partner_valid and self.partner_id.parent_id:
-                partner_valid = self.partner_id.parent_id.l10n_pa_is_dgi_validated
+            partner_valid = self._check_partner_dgi_validation(self.partner_id)
 
             if not partner_valid:
                 return {
@@ -27,6 +26,20 @@ class SaleOrder(models.Model):
                         'default_message_type': 'sale',
                     }
                 }
+
+    def _check_partner_dgi_validation(self, partner):
+        """
+        Verifica si un partner está validado con DGI.
+        Considera parent_id si el partner actual no está validado.
+        """
+        if not partner:
+            return True
+
+        partner_valid = partner.l10n_pa_is_dgi_validated
+        if not partner_valid and partner.parent_id:
+            partner_valid = partner.parent_id.l10n_pa_is_dgi_validated
+
+        return partner_valid
 
     @api.constrains('partner_id')
     def _check_partner_dgi_validated(self):

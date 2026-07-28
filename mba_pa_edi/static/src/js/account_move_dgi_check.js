@@ -9,7 +9,7 @@ patch(FormController.prototype, {
     setup() {
         super.setup(...arguments);
 
-        if (this.props.resModel !== "sale.order") {
+        if (this.props.resModel !== "account.move") {
             return;
         }
 
@@ -18,7 +18,7 @@ patch(FormController.prototype, {
         const state = useState({ lastPartnerId: null });
 
         // Función auxiliar para chequear validación DGI
-        const checkDgiValidation = async (partnerId, partnerName) => {
+        const checkDgiValidation = async (partnerId, partnerName, moveType) => {
             if (!partnerId) return;
 
             const partners = await orm.read(
@@ -44,7 +44,7 @@ patch(FormController.prototype, {
 
             if (!isValid) {
                 await actionService.doAction({
-                    name: "Cliente no Validado con DGI",
+                    name: "Contacto no Validado con DGI",
                     type: "ir.actions.act_window",
                     res_model: "partner.dgi.warning.wizard",
                     view_mode: "form",
@@ -52,7 +52,7 @@ patch(FormController.prototype, {
                     target: "new",
                     context: {
                         default_partner_name: partnerName || partner.name,
-                        default_message_type: "sale",
+                        default_message_type: "invoice",
                     },
                 });
             }
@@ -66,11 +66,17 @@ patch(FormController.prototype, {
                 return;
             }
 
+            // Solo para facturas de cliente (no de proveedor que son internas)
+            const moveType = record.data.move_type;
+            if (!['out_invoice', 'out_refund'].includes(moveType)) {
+                return;
+            }
+
             // Chequear partner pre-cargado
             if (record.data.partner_id) {
                 const partnerId = record.data.partner_id[0];
                 state.lastPartnerId = partnerId;
-                await checkDgiValidation(partnerId, record.data.partner_id[1]);
+                await checkDgiValidation(partnerId, record.data.partner_id[1], moveType);
             }
 
             // Listener para cambios posteriores del partner
@@ -81,7 +87,7 @@ patch(FormController.prototype, {
                 if (currentPartnerId !== state.lastPartnerId) {
                     state.lastPartnerId = currentPartnerId;
                     if (currentPartnerId) {
-                        await checkDgiValidation(currentPartnerId, record.data.partner_id[1]);
+                        await checkDgiValidation(currentPartnerId, record.data.partner_id[1], moveType);
                     }
                 }
             }, 500);
