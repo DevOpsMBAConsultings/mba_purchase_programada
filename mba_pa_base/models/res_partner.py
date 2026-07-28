@@ -73,7 +73,7 @@ class ResPartner(models.Model):
             rec.l10n_pa_receptor_tipo_person_ui = False
 
     l10n_pa_ruc = fields.Char(string='RUC / Cédula (DGI)', help='Número de identificación fiscal de la DGI.')
-    l10n_pa_razon_social = fields.Char(string='Razón Social (DGI)', readonly=True, force_save=True, help='Nombre legal o razón social validado por la DGI.')
+    l10n_pa_razon_social = fields.Char(string='Razón Social (DGI)', readonly=True, help='Nombre legal o razón social validado por la DGI.')
     l10n_pa_dv = fields.Char(string='Dígito Verificador (DV)', size=2)
 
     l10n_pa_provincia_id = fields.Many2one('dgi.provincia', string='Provincia')

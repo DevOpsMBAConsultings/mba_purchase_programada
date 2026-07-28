@@ -87,6 +87,7 @@ class AccountMove(models.Model):
         compute="_compute_dgi_retention_auto",
         store=True,
         readonly=False,
+        compute_sudo=False,
     )
     dgi_retention_amount = fields.Monetary(
         string="Monto Retención",
@@ -96,6 +97,8 @@ class AccountMove(models.Model):
     dgi_retention_readonly = fields.Boolean(
         string="Retención Auto-seleccionada",
         compute="_compute_dgi_retention_auto",
+        store=True,
+        compute_sudo=False,
     )
     dgi_retention_receptor_filter = fields.Char(
         string="Filtro Receptor Retención",
