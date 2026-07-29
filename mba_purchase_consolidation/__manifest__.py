@@ -1,13 +1,13 @@
 # Copyright 2022 Camptocamp SA
 # Copyright 2026 MBA Consultings
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "Purchase Order Consolidation (MBA Consultings)",
     "summary": "Consolidate purchase orders by supplier with delete option",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.2",
     "author": "MBA Consultings, Brooks Gonzalez",
     "website": "https://www.mbaconsultings.com",
-    "license": "LGPL-3",
+    "license": "AGPL-3",
     "category": "Purchase",
     "depends": ["purchase"],
     "data": [
