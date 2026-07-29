@@ -202,16 +202,25 @@ Corregido en `18.0.1.3.4.1`, después del snapshot de producción:
 
 ## Versionado
 
-Los módulos de terceros llevan un segmento adicional para las modificaciones de
-MBA, de forma que nunca colisionen con las versiones que publique el upstream:
+**La versión del manifest se congela en la de Cybrosys** (`18.0.1.3.4`). Los
+cambios de MBA se registran en este archivo y en el historial de git, no en el
+número de versión.
 
-```
-18.0.1.3.4   .1
-└─ base Cybrosys ─┘ └ parche MBA
-```
+Es una excepción deliberada a la regla de subir el patch en cada cambio, y
+tiene dos motivos:
 
-Cybrosys ya publicó su propio `18.0.1.3.5`, que es un release distinto y no
-tiene relación con `18.0.1.3.4.1`.
+1. **Odoo 18 no admite un segmento adicional.** `odoo/modules/module.py`,
+   función `adapt_version`, valida con
+   `^[0-9]+\.[0-9]+(?:\.[0-9]+)?$` sobre la versión sin el prefijo de serie.
+   Un `18.0.1.3.4.1` deja `1.3.4.1`, cuatro segmentos, y el módulo se descarta
+   con `ValueError: invalid manifest` — no aparece siquiera en la lista de
+   aplicaciones.
+2. **Cualquier incremento colisiona con el upstream.** Cybrosys ya publicó su
+   propio `18.0.1.3.5`; si MBA subiera el patch, dos releases distintos
+   compartirían número.
+
+Como el despliegue se hace siempre con `-u <módulo>` explícito, congelar la
+versión no impide actualizar.
 
 ---
 
