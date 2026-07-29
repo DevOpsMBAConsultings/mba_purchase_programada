@@ -144,20 +144,28 @@ class AccountMove(models.Model):
                     show = True
             move.dgi_show_retention_block = show
 
-    @api.depends("partner_id", "fiscal_position_id")
+    @api.depends(
+        "partner_id",
+        "partner_id.l10n_pa_receptor_tipo",
+        "partner_id.property_account_position_id",
+        "fiscal_position_id",
+        "move_type",
+    )
     def _compute_dgi_retention_auto(self):
         """
         Auto-selecciona el tipo de retención según tipo de cliente + posición fiscal.
         Bloquea el campo si es Gobierno o Contribuyente con retención 50%.
+
+        Las dependencias incluyen los campos internos del contacto
+        (l10n_pa_receptor_tipo, property_account_position_id) porque el campo es
+        almacenado: si solo se dependiera de partner_id, actualizar la
+        configuración de retención de un cliente ya existente no recalcularía
+        los documentos en borrador y quedarían con el valor viejo en la columna.
         """
-        import logging
-        _logger = logging.getLogger(__name__)
         RetType = self.env["dgi.retention.type"]
         for move in self:
-            _logger.info(f"CALCULATING DGI RETENTION AUTO FOR MOVE {move.id}, partner: {move.partner_id.name}, fp: {move.fiscal_position_id.name}")
             # Solo aplica a facturas de cliente (out_invoice, out_refund)
             if move.move_type not in ('out_invoice', 'out_refund'):
-                _logger.info("Not an out_invoice or out_refund")
                 move.dgi_retention_readonly = False
                 continue
 
