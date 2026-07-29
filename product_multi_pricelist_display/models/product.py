@@ -35,8 +35,8 @@ class ProductTemplate(models.Model):
         return res
 
     @api.model
-    def fields_get(self, allfields=None, **kwargs):
-        res = super().fields_get(allfields, **kwargs)
+    def fields_get(self, allfields=None, attributes=None):
+        res = super().fields_get(allfields, attributes)
         pricelists = self.env["product.pricelist"].search(
             [("display_in_product_list", "=", True)],
             order="sequence, id"
@@ -144,8 +144,8 @@ class ProductProduct(models.Model):
         return res
 
     @api.model
-    def fields_get(self, allfields=None, **kwargs):
-        res = super().fields_get(allfields, **kwargs)
+    def fields_get(self, allfields=None, attributes=None):
+        res = super().fields_get(allfields, attributes)
         pricelists = self.env["product.pricelist"].search(
             [("display_in_product_list", "=", True)],
             order="sequence, id"
