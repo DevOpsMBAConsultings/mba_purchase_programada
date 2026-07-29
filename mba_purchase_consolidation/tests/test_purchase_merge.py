@@ -310,10 +310,13 @@ class TestPurchaseMerge(common.TransactionCase):
     def test_merge_no_dst_and_moves_activity(self):
         """
         Test merge when no destination is set and
-        that an activity is correctly moved (testing openupgrade).
+        that an activity is correctly moved.
+
+        With no explicit destination the wizard merges into the *oldest*
+        purchase order, so ``purchase_order_1`` is the destination.
         """
-        src_po = self.purchase_order_1
-        dst_po = self.purchase_order_2
+        src_po = self.purchase_order_2
+        dst_po = self.purchase_order_1
 
         activity = self.env["mail.activity"].create(
             {
