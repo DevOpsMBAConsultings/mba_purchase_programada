@@ -1,10 +1,21 @@
 # Copyright 2022 Camptocamp SA
+# Copyright 2026 MBA Consultings
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openupgradelib import openupgrade_merge_records
+import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
+
+# Models whose references to the source purchase orders are handled explicitly
+# elsewhere (order lines are moved by ``_get_update_values``) or that must never
+# be touched (external identifiers).
+MERGE_EXCLUDED_MODELS = {
+    "purchase.order.line",
+    "ir.model.data",
+}
 
 
 class MergePurchaseAutomatic(models.TransientModel):
@@ -182,6 +193,141 @@ class MergePurchaseAutomatic(models.TransientModel):
 
         po.message_post(body=body, subject=subject)
 
+    # ----------------------------------------
+    # Reference reassignment
+    # ----------------------------------------
+
+    def _iter_concrete_models(self):
+        """Yield every stored, non-transient model of the registry."""
+        for model_name in self.env.registry:
+            if model_name in MERGE_EXCLUDED_MODELS:
+                continue
+            model = self.env[model_name]
+            if model._abstract or model._transient or not model._auto:
+                continue
+            yield model_name, model
+
+    def _reassign_many2one_refs(self, src_purchase, dst_purchase):
+        """Repoint every stored many2one aiming at a source PO to the target."""
+        for model_name, model in self._iter_concrete_models():
+            for field in model._fields.values():
+                if (
+                    field.type != "many2one"
+                    or field.comodel_name != "purchase.order"
+                    or not field.store
+                    or field.related
+                    or (field.compute and not field.inverse)
+                ):
+                    continue
+                records = (
+                    model.sudo()
+                    .with_context(active_test=False)
+                    .search([(field.name, "in", src_purchase.ids)])
+                )
+                if not records:
+                    continue
+                records.write({field.name: dst_purchase.id})
+                _logger.debug(
+                    "Merge PO: moved %s record(s) on %s.%s",
+                    len(records),
+                    model_name,
+                    field.name,
+                )
+
+    def _reassign_generic_refs(self, src_purchase, dst_purchase):
+        """Repoint generic ``res_model``/``res_id`` references.
+
+        Covers ``mail.message``, ``mail.activity``, ``mail.followers``,
+        ``ir.attachment`` and any other model using a ``Many2oneReference``.
+        """
+        for model_name, model in self._iter_concrete_models():
+            for field in model._fields.values():
+                if field.type != "many2one_reference" or not field.store:
+                    continue
+                model_field = field.model_field
+                if not model_field or model_field not in model._fields:
+                    continue
+                records = (
+                    model.sudo()
+                    .with_context(active_test=False)
+                    .search(
+                        [
+                            (model_field, "=", "purchase.order"),
+                            (field.name, "in", src_purchase.ids),
+                        ]
+                    )
+                )
+                if not records:
+                    continue
+                if model_name == "mail.followers":
+                    records = self._drop_duplicated_followers(
+                        model, records, field.name, model_field, dst_purchase
+                    )
+                    if not records:
+                        continue
+                records.write({field.name: dst_purchase.id})
+                _logger.debug(
+                    "Merge PO: moved %s record(s) on %s.%s",
+                    len(records),
+                    model_name,
+                    field.name,
+                )
+
+    def _drop_duplicated_followers(
+        self, model, records, res_id_field, model_field, dst_purchase
+    ):
+        """Unlink source followers already following the destination PO.
+
+        ``mail.followers`` has a unique constraint on
+        (res_model, res_id, partner_id), so duplicates must be removed instead
+        of moved.
+        """
+        existing = model.sudo().search(
+            [
+                (model_field, "=", "purchase.order"),
+                (res_id_field, "=", dst_purchase.id),
+                ("partner_id", "in", records.mapped("partner_id").ids),
+            ]
+        )
+        duplicated = records.filtered(
+            lambda f, partners=existing.mapped("partner_id"): f.partner_id in partners
+        )
+        duplicated.unlink()
+        return records - duplicated
+
+    def _reassign_reference_refs(self, src_purchase, dst_purchase):
+        """Repoint stored ``Reference`` fields pointing at a source PO."""
+        src_values = [f"purchase.order,{po_id}" for po_id in src_purchase.ids]
+        dst_value = f"purchase.order,{dst_purchase.id}"
+        for model_name, model in self._iter_concrete_models():
+            for field in model._fields.values():
+                if field.type != "reference" or not field.store or field.related:
+                    continue
+                records = (
+                    model.sudo()
+                    .with_context(active_test=False)
+                    .search([(field.name, "in", src_values)])
+                )
+                if not records:
+                    continue
+                records.write({field.name: dst_value})
+                _logger.debug(
+                    "Merge PO: moved %s record(s) on %s.%s",
+                    len(records),
+                    model_name,
+                    field.name,
+                )
+
+    def _reassign_references(self, src_purchase, dst_purchase):
+        """Move every reference to the source POs onto the destination PO."""
+        self._reassign_generic_refs(src_purchase, dst_purchase)
+        self._reassign_many2one_refs(src_purchase, dst_purchase)
+        self._reassign_reference_refs(src_purchase, dst_purchase)
+
+    # ----------------------------------------
+    # Merge
+    # ----------------------------------------
+
     def _merge(self, purchases, dst_purchase=None):
         """private implementation of merge purchase
         :param purchases : ids of purchase to merge
@@ -195,18 +341,15 @@ class MergePurchaseAutomatic(models.TransientModel):
         if dst_purchase and dst_purchase in purchases:
             src_purchase = purchases - dst_purchase
         else:
-            dst_purchase = self.purchase_ids[-1]
-            src_purchase = self.purchase_ids[:-1]
+            dst_purchase = self._get_ordered_purchase(purchases.ids)[-1]
+            src_purchase = purchases - dst_purchase
 
-        openupgrade_merge_records.merge_records(
-            env=self.env,
-            model_name="purchase.order",
-            record_ids=src_purchase.ids,
-            target_record_id=dst_purchase.id,
-            delete=False,
-        )
+        # Move everything pointing at the source POs (messages, activities,
+        # followers, attachments, related documents...). Done before
+        # ``_update_values`` so the merge notes posted below stay in place.
+        self._reassign_references(src_purchase, dst_purchase)
 
-        # call sub methods to do the merge
+        # Move order lines and concatenate origin / partner_ref
         self._update_values(src_purchase, dst_purchase)
 
         # delete or cancel source purchase, since they are merged
@@ -222,13 +365,19 @@ class MergePurchaseAutomatic(models.TransientModel):
     @api.model
     def _get_ordered_purchase(self, purchase_ids):
         """Helper returns a `purchase.order` recordset ordered by create_date
+
+        Newest first, so ``[-1]`` is the oldest purchase order, which is the
+        one used as merge destination by default. ``id`` is used as tie
+        breaker because purchase orders created in the same transaction share
+        the very same ``create_date``.
+
         :param purchase_ids : list of purchase ids to sort
         """
         return (
             self.env["purchase.order"]
             .browse(purchase_ids)
             .sorted(
-                key=lambda p: (p.create_date or ""),
+                key=lambda p: (p.create_date or "", p.id),
                 reverse=True,
             )
         )

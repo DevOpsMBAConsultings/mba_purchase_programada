@@ -14,6 +14,5 @@
         "security/ir.model.access.csv",
         "wizard/purchase_merge_views.xml",
     ],
-    "external_dependencies": {"python": ["openupgradelib"]},
     "installable": True,
 }
