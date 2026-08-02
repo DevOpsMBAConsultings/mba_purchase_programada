@@ -83,10 +83,6 @@
     {
      "fieldName": "amount_residual",
      "id": "amount_residual"
-    },
-    {
-     "fieldName": "__count",
-     "id": "__count"
     }
    ],
    "sortedColumn": null,
@@ -116,10 +112,6 @@
     {
      "fieldName": "amount_residual",
      "id": "amount_residual"
-    },
-    {
-     "fieldName": "__count",
-     "id": "__count"
     }
    ],
    "sortedColumn": null,
@@ -129,7 +121,117 @@
    "type": "ODOO",
    "id": "3",
    "formulaId": "3",
-   "name": "Vencido por cliente",
+   "name": "Ventas por cliente",
+   "model": "account.invoice.report",
+   "domain": [
+    "&",
+    [
+     "state",
+     "=",
+     "posted"
+    ],
+    [
+     "move_type",
+     "in",
+     [
+      "out_invoice",
+      "out_refund"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "commercial_partner_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "price_subtotal",
+     "id": "price_subtotal"
+    },
+    {
+     "fieldName": "price_margin",
+     "id": "price_margin"
+    }
+   ],
+   "sortedColumn": {
+    "groupId": [
+     [],
+     []
+    ],
+    "measure": "price_subtotal",
+    "order": "desc"
+   },
+   "fieldMatching": {
+    "8b2c1f40-0002-4d31-a7e5-periodo12meses": {
+     "chain": "invoice_date",
+     "type": "date",
+     "offset": 0
+    }
+   }
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Ventas por producto",
+   "model": "account.invoice.report",
+   "domain": [
+    "&",
+    [
+     "state",
+     "=",
+     "posted"
+    ],
+    [
+     "move_type",
+     "in",
+     [
+      "out_invoice",
+      "out_refund"
+     ]
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "product_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "price_subtotal",
+     "id": "price_subtotal"
+    },
+    {
+     "fieldName": "quantity",
+     "id": "quantity"
+    }
+   ],
+   "sortedColumn": {
+    "groupId": [
+     [],
+     []
+    ],
+    "measure": "price_subtotal",
+    "order": "desc"
+   },
+   "fieldMatching": {
+    "8b2c1f40-0002-4d31-a7e5-periodo12meses": {
+     "chain": "invoice_date",
+     "type": "date",
+     "offset": 0
+    }
+   }
+  },
+  "5": {
+   "type": "ODOO",
+   "id": "5",
+   "formulaId": "5",
+   "name": "Saldo por cliente",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -138,16 +240,16 @@
      "receivable"
     ],
     [
-     "aging_bucket",
+     "partner_id",
      "!=",
-     "not_due"
+     false
     ]
    ],
    "context": {},
    "columns": [],
    "rows": [
     {
-     "fieldName": "partner_id"
+     "fieldName": "commercial_partner_id"
     }
    ],
    "measures": [
@@ -166,11 +268,11 @@
    },
    "fieldMatching": {}
   },
-  "4": {
+  "6": {
    "type": "ODOO",
-   "id": "4",
-   "formulaId": "4",
-   "name": "Vencido por proveedor",
+   "id": "6",
+   "formulaId": "6",
+   "name": "Saldo por proveedor",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -179,16 +281,16 @@
      "payable"
     ],
     [
-     "aging_bucket",
+     "partner_id",
      "!=",
-     "not_due"
+     false
     ]
    ],
    "context": {},
    "columns": [],
    "rows": [
     {
-     "fieldName": "partner_id"
+     "fieldName": "commercial_partner_id"
     }
    ],
    "measures": [
@@ -208,43 +310,51 @@
    "fieldMatching": {}
   }
  },
- "pivotNextId": 5,
+ "pivotNextId": 7,
  "lists": {},
  "listNextId": 1,
- "globalFilters": [],
+ "globalFilters": [
+  {
+   "id": "8b2c1f40-0002-4d31-a7e5-periodo12meses",
+   "type": "date",
+   "label": "Periodo",
+   "rangeType": "relative",
+   "defaultValue": "last_year"
+  }
+ ],
  "sheets": [
   {
-   "id": "finance",
+   "id": "finanzas",
    "name": "Finanzas",
-   "colNumber": 10,
-   "rowNumber": 26,
+   "colNumber": 11,
+   "rowNumber": 29,
    "cols": {
     "0": {
-     "size": 230
+     "size": 215
     },
     "1": {
-     "size": 110
+     "size": 105
     },
     "2": {
-     "size": 80
+     "size": 90
     },
     "3": {
-     "size": 22
+     "size": 20
     },
     "4": {
-     "size": 215
+     "size": 205
     },
     "5": {
-     "size": 110
+     "size": 95
     },
     "6": {
-     "size": 60
+     "size": 95
     },
     "7": {
-     "size": 215
+     "size": 205
     },
     "8": {
-     "size": 110
+     "size": 100
     }
    },
    "rows": {
@@ -306,10 +416,10 @@
      "size": 21
     },
     "19": {
-     "size": 21
+     "size": 8
     },
     "20": {
-     "size": 21
+     "size": 30
     },
     "21": {
      "size": 21
@@ -324,6 +434,15 @@
      "size": 21
     },
     "25": {
+     "size": 21
+    },
+    "26": {
+     "size": 21
+    },
+    "27": {
+     "size": 21
+    },
+    "28": {
      "size": 21
     }
    },
@@ -347,14 +466,14 @@
     "A5": {
      "content": "Días vencido"
     },
-    "E5": {
-     "content": "Días vencido"
-    },
     "B5": {
      "content": "Monto"
     },
     "C5": {
      "content": "%"
+    },
+    "E5": {
+     "content": "Días vencido"
     },
     "F5": {
      "content": "Monto"
@@ -549,142 +668,196 @@
      "content": "=IFERROR(B19/B15,\"\")"
     },
     "E13": {
-     "content": "TOP 10 CLIENTES - VENCIDO"
+     "content": "TOP 5 CLIENTES QUE ME DEBEN"
     },
     "E14": {
      "content": "Cliente"
     },
     "F14": {
-     "content": "Vencido"
+     "content": "Saldo"
     },
     "H13": {
-     "content": "TOP 10 PROVEEDORES - VENCIDO"
+     "content": "TOP 5 PROVEEDORES A LOS QUE DEBO"
     },
     "H14": {
      "content": "Proveedor"
     },
     "I14": {
-     "content": "Vencido"
+     "content": "Saldo"
     },
     "E15": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",1)"
+     "content": "=PIVOT.HEADER(5,\"#commercial_partner_id\",1)"
     },
     "F15": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",1)"
+     "content": "=PIVOT.VALUE(5,\"amount_residual\",\"#commercial_partner_id\",1)"
     },
     "H15": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",1)"
+     "content": "=PIVOT.HEADER(6,\"#commercial_partner_id\",1)"
     },
     "I15": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",1)"
+     "content": "=PIVOT.VALUE(6,\"amount_residual\",\"#commercial_partner_id\",1)"
     },
     "E16": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",2)"
+     "content": "=PIVOT.HEADER(5,\"#commercial_partner_id\",2)"
     },
     "F16": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",2)"
+     "content": "=PIVOT.VALUE(5,\"amount_residual\",\"#commercial_partner_id\",2)"
     },
     "H16": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",2)"
+     "content": "=PIVOT.HEADER(6,\"#commercial_partner_id\",2)"
     },
     "I16": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",2)"
+     "content": "=PIVOT.VALUE(6,\"amount_residual\",\"#commercial_partner_id\",2)"
     },
     "E17": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",3)"
+     "content": "=PIVOT.HEADER(5,\"#commercial_partner_id\",3)"
     },
     "F17": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",3)"
+     "content": "=PIVOT.VALUE(5,\"amount_residual\",\"#commercial_partner_id\",3)"
     },
     "H17": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",3)"
+     "content": "=PIVOT.HEADER(6,\"#commercial_partner_id\",3)"
     },
     "I17": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",3)"
+     "content": "=PIVOT.VALUE(6,\"amount_residual\",\"#commercial_partner_id\",3)"
     },
     "E18": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",4)"
+     "content": "=PIVOT.HEADER(5,\"#commercial_partner_id\",4)"
     },
     "F18": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",4)"
+     "content": "=PIVOT.VALUE(5,\"amount_residual\",\"#commercial_partner_id\",4)"
     },
     "H18": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",4)"
+     "content": "=PIVOT.HEADER(6,\"#commercial_partner_id\",4)"
     },
     "I18": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",4)"
+     "content": "=PIVOT.VALUE(6,\"amount_residual\",\"#commercial_partner_id\",4)"
     },
     "E19": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",5)"
+     "content": "=PIVOT.HEADER(5,\"#commercial_partner_id\",5)"
     },
     "F19": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",5)"
+     "content": "=PIVOT.VALUE(5,\"amount_residual\",\"#commercial_partner_id\",5)"
     },
     "H19": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",5)"
+     "content": "=PIVOT.HEADER(6,\"#commercial_partner_id\",5)"
     },
     "I19": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",5)"
+     "content": "=PIVOT.VALUE(6,\"amount_residual\",\"#commercial_partner_id\",5)"
     },
-    "E20": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",6)"
+    "A21": {
+     "content": "TOP 5 CLIENTES POR VENTA"
     },
-    "F20": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",6)"
+    "A22": {
+     "content": "Cliente"
     },
-    "H20": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",6)"
+    "B22": {
+     "content": "Vendido"
     },
-    "I20": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",6)"
+    "C22": {
+     "content": "Margen"
     },
     "E21": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",7)"
-    },
-    "F21": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",7)"
-    },
-    "H21": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",7)"
-    },
-    "I21": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",7)"
+     "content": "TOP 5 PRODUCTOS VENDIDOS"
     },
     "E22": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",8)"
+     "content": "Producto"
     },
     "F22": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",8)"
+     "content": "Unidades"
     },
-    "H22": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",8)"
+    "G22": {
+     "content": "Vendido"
     },
-    "I22": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",8)"
+    "A23": {
+     "content": "=PIVOT.HEADER(3,\"#commercial_partner_id\",1)"
+    },
+    "B23": {
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\",\"#commercial_partner_id\",1)"
+    },
+    "C23": {
+     "content": "=PIVOT.VALUE(3,\"price_margin\",\"#commercial_partner_id\",1)"
     },
     "E23": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",9)"
+     "content": "=PIVOT.HEADER(4,\"#product_id\",1)"
     },
     "F23": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",9)"
+     "content": "=PIVOT.VALUE(4,\"quantity\",\"#product_id\",1)"
     },
-    "H23": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",9)"
+    "G23": {
+     "content": "=PIVOT.VALUE(4,\"price_subtotal\",\"#product_id\",1)"
     },
-    "I23": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",9)"
+    "A24": {
+     "content": "=PIVOT.HEADER(3,\"#commercial_partner_id\",2)"
+    },
+    "B24": {
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\",\"#commercial_partner_id\",2)"
+    },
+    "C24": {
+     "content": "=PIVOT.VALUE(3,\"price_margin\",\"#commercial_partner_id\",2)"
     },
     "E24": {
-     "content": "=PIVOT.HEADER(3,\"#partner_id\",10)"
+     "content": "=PIVOT.HEADER(4,\"#product_id\",2)"
     },
     "F24": {
-     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",10)"
+     "content": "=PIVOT.VALUE(4,\"quantity\",\"#product_id\",2)"
     },
-    "H24": {
-     "content": "=PIVOT.HEADER(4,\"#partner_id\",10)"
+    "G24": {
+     "content": "=PIVOT.VALUE(4,\"price_subtotal\",\"#product_id\",2)"
     },
-    "I24": {
-     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",10)"
+    "A25": {
+     "content": "=PIVOT.HEADER(3,\"#commercial_partner_id\",3)"
+    },
+    "B25": {
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\",\"#commercial_partner_id\",3)"
+    },
+    "C25": {
+     "content": "=PIVOT.VALUE(3,\"price_margin\",\"#commercial_partner_id\",3)"
+    },
+    "E25": {
+     "content": "=PIVOT.HEADER(4,\"#product_id\",3)"
+    },
+    "F25": {
+     "content": "=PIVOT.VALUE(4,\"quantity\",\"#product_id\",3)"
+    },
+    "G25": {
+     "content": "=PIVOT.VALUE(4,\"price_subtotal\",\"#product_id\",3)"
+    },
+    "A26": {
+     "content": "=PIVOT.HEADER(3,\"#commercial_partner_id\",4)"
+    },
+    "B26": {
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\",\"#commercial_partner_id\",4)"
+    },
+    "C26": {
+     "content": "=PIVOT.VALUE(3,\"price_margin\",\"#commercial_partner_id\",4)"
+    },
+    "E26": {
+     "content": "=PIVOT.HEADER(4,\"#product_id\",4)"
+    },
+    "F26": {
+     "content": "=PIVOT.VALUE(4,\"quantity\",\"#product_id\",4)"
+    },
+    "G26": {
+     "content": "=PIVOT.VALUE(4,\"price_subtotal\",\"#product_id\",4)"
+    },
+    "A27": {
+     "content": "=PIVOT.HEADER(3,\"#commercial_partner_id\",5)"
+    },
+    "B27": {
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\",\"#commercial_partner_id\",5)"
+    },
+    "C27": {
+     "content": "=PIVOT.VALUE(3,\"price_margin\",\"#commercial_partner_id\",5)"
+    },
+    "E27": {
+     "content": "=PIVOT.HEADER(4,\"#product_id\",5)"
+    },
+    "F27": {
+     "content": "=PIVOT.VALUE(4,\"quantity\",\"#product_id\",5)"
+    },
+    "G27": {
+     "content": "=PIVOT.VALUE(4,\"price_subtotal\",\"#product_id\",5)"
     }
    },
    "styles": {
@@ -694,9 +867,9 @@
     "E4": 3,
     "H4": 3,
     "A5": 4,
-    "E5": 4,
     "B5": 4,
     "C5": 4,
+    "E5": 4,
     "F5": 4,
     "G5": 4,
     "A6": 6,
@@ -747,16 +920,24 @@
     "H18": 6,
     "E19": 6,
     "H19": 6,
-    "E20": 6,
-    "H20": 6,
-    "E21": 6,
-    "H21": 6,
-    "E22": 6,
-    "H22": 6,
+    "A21": 3,
+    "A22": 4,
+    "B22": 4,
+    "C22": 4,
+    "E21": 3,
+    "E22": 4,
+    "F22": 4,
+    "G22": 4,
+    "A23": 6,
     "E23": 6,
-    "H23": 6,
+    "A24": 6,
     "E24": 6,
-    "H24": 6
+    "A25": 6,
+    "E25": 6,
+    "A26": 6,
+    "E26": 6,
+    "A27": 6,
+    "E27": 6
    },
    "formats": {
     "B6": 1,
@@ -804,24 +985,36 @@
     "I18": 1,
     "F19": 1,
     "I19": 1,
-    "F20": 1,
-    "I20": 1,
-    "F21": 1,
-    "I21": 1,
-    "F22": 1,
-    "I22": 1,
-    "F23": 1,
-    "I23": 1,
-    "F24": 1,
-    "I24": 1
+    "B23": 1,
+    "C23": 1,
+    "F23": 3,
+    "G23": 1,
+    "B24": 1,
+    "C24": 1,
+    "F24": 3,
+    "G24": 1,
+    "B25": 1,
+    "C25": 1,
+    "F25": 3,
+    "G25": 1,
+    "B26": 1,
+    "C26": 1,
+    "F26": 3,
+    "G26": 1,
+    "B27": 1,
+    "C27": 1,
+    "F27": 3,
+    "G27": 1
    },
    "borders": {
     "A4:C4": 1,
     "E4:G4": 1,
-    "H4:I4": 1,
+    "H4:J4": 1,
     "A13:C13": 1,
     "E13:F13": 1,
-    "H13:I13": 1
+    "H13:I13": 1,
+    "A21:C21": 1,
+    "E21:G21": 1
    },
    "conditionalFormats": [],
    "figures": [],
