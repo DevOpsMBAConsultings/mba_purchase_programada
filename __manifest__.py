@@ -1,5 +1,5 @@
 {
-    'name': 'Aged Balance Analysis',
+    'name': 'Aged Balance Analysis (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Accounting/Reporting',
     'summary': 'Pivotable ageing of receivables and payables by days past due',
