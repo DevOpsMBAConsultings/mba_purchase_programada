@@ -1,5 +1,5 @@
 {
-    'name': 'Finance Overview Dashboard',
+    'name': 'Finance Overview Dashboard (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Accounting/Reporting',
     'summary': 'Ready-made finance dashboard: ageing, position and year-to-date result',
