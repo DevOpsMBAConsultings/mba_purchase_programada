@@ -363,7 +363,7 @@
      "content": "%"
     },
     "A6": {
-     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"not_due\")"
+     "content": "Not due"
     },
     "B6": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"not_due\")"
@@ -372,7 +372,7 @@
      "content": "=IFERROR(B6/$B$11,\"\")"
     },
     "E6": {
-     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"not_due\")"
+     "content": "Not due"
     },
     "F6": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"not_due\")"
@@ -381,7 +381,7 @@
      "content": "=IFERROR(F6/$F$11,\"\")"
     },
     "A7": {
-     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_1\")"
+     "content": "1 - 30 days"
     },
     "B7": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
@@ -390,7 +390,7 @@
      "content": "=IFERROR(B7/$B$11,\"\")"
     },
     "E7": {
-     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_1\")"
+     "content": "1 - 30 days"
     },
     "F7": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
@@ -399,7 +399,7 @@
      "content": "=IFERROR(F7/$F$11,\"\")"
     },
     "A8": {
-     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_2\")"
+     "content": "31 - 60 days"
     },
     "B8": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
@@ -408,7 +408,7 @@
      "content": "=IFERROR(B8/$B$11,\"\")"
     },
     "E8": {
-     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_2\")"
+     "content": "31 - 60 days"
     },
     "F8": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
@@ -417,7 +417,7 @@
      "content": "=IFERROR(F8/$F$11,\"\")"
     },
     "A9": {
-     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_3\")"
+     "content": "61 - 90 days"
     },
     "B9": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
@@ -426,7 +426,7 @@
      "content": "=IFERROR(B9/$B$11,\"\")"
     },
     "E9": {
-     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_3\")"
+     "content": "61 - 90 days"
     },
     "F9": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
@@ -435,7 +435,7 @@
      "content": "=IFERROR(F9/$F$11,\"\")"
     },
     "A10": {
-     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_4\")"
+     "content": "Older than 90 days"
     },
     "B10": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
@@ -444,7 +444,7 @@
      "content": "=IFERROR(B10/$B$11,\"\")"
     },
     "E10": {
-     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_4\")"
+     "content": "Older than 90 days"
     },
     "F10": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
