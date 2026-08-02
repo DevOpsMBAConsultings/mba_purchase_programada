@@ -6,20 +6,20 @@ class ResCompany(models.Model):
     _inherit = "res.company"
 
     account_aging_bucket_1 = fields.Integer(
-        string="First Ageing Bucket (days)",
+        string="Primer tramo de antigüedad (días)",
         default=30,
-        help="Upper bound, in days past due, of the first ageing bucket.",
+        help="Límite superior, en días vencidos, del primer tramo.",
     )
     account_aging_bucket_2 = fields.Integer(
-        string="Second Ageing Bucket (days)",
+        string="Segundo tramo de antigüedad (días)",
         default=60,
-        help="Upper bound, in days past due, of the second ageing bucket.",
+        help="Límite superior, en días vencidos, del segundo tramo.",
     )
     account_aging_bucket_3 = fields.Integer(
-        string="Third Ageing Bucket (days)",
+        string="Tercer tramo de antigüedad (días)",
         default=90,
-        help="Upper bound, in days past due, of the third ageing bucket. "
-        "Anything older falls into the last bucket.",
+        help="Límite superior, en días vencidos, del tercer tramo. "
+        "Todo lo más antiguo cae en el último tramo.",
     )
 
     @api.constrains(
@@ -36,12 +36,12 @@ class ResCompany(models.Model):
             )
             if bounds[0] < 1:
                 raise ValidationError(
-                    _("The first ageing bucket must be at least 1 day.")
+                    _("El primer tramo de antigüedad debe ser de al menos 1 día.")
                 )
             if not bounds[0] < bounds[1] < bounds[2]:
                 raise ValidationError(
                     _(
-                        "Ageing buckets must be strictly increasing "
-                        "(for example 30, 60 and 90 days)."
+                        "Los tramos de antigüedad deben ser estrictamente "
+                        "crecientes (por ejemplo 30, 60 y 90 días)."
                     )
                 )
