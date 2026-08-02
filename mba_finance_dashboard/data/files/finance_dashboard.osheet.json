@@ -1,0 +1,839 @@
+{
+ "version": 21,
+ "odooVersion": 12,
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "code": "en_US",
+   "name": "English (US)",
+   "dateFormat": "mm/dd/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "decimalSeparator": ".",
+   "thousandsSeparator": ",",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "styles": {
+  "1": {
+   "bold": true,
+   "fontSize": 18,
+   "textColor": "#01666b"
+  },
+  "2": {
+   "fontSize": 9,
+   "textColor": "#8a8a8a"
+  },
+  "3": {
+   "bold": true,
+   "fontSize": 11,
+   "textColor": "#01666b",
+   "verticalAlign": "middle"
+  },
+  "4": {
+   "bold": true,
+   "fontSize": 9,
+   "textColor": "#434343"
+  },
+  "5": {
+   "bold": true,
+   "textColor": "#434343"
+  },
+  "6": {
+   "textColor": "#434343"
+  }
+ },
+ "formats": {
+  "1": "#,##0.00",
+  "2": "0.0%",
+  "3": "#,##0"
+ },
+ "borders": {
+  "1": {
+   "bottom": {
+    "color": "#01666b",
+    "style": "thin"
+   }
+  }
+ },
+ "customTableStyles": {},
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Aged receivable by bucket",
+   "model": "account.aging.analysis",
+   "domain": [
+    [
+     "ledger",
+     "=",
+     "receivable"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "aging_bucket"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "amount_residual",
+     "id": "amount_residual"
+    },
+    {
+     "fieldName": "__count",
+     "id": "__count"
+    }
+   ],
+   "sortedColumn": null,
+   "fieldMatching": {}
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Aged payable by bucket",
+   "model": "account.aging.analysis",
+   "domain": [
+    [
+     "ledger",
+     "=",
+     "payable"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "aging_bucket"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "amount_residual",
+     "id": "amount_residual"
+    },
+    {
+     "fieldName": "__count",
+     "id": "__count"
+    }
+   ],
+   "sortedColumn": null,
+   "fieldMatching": {}
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Overdue by customer",
+   "model": "account.aging.analysis",
+   "domain": [
+    [
+     "ledger",
+     "=",
+     "receivable"
+    ],
+    [
+     "aging_bucket",
+     "!=",
+     "not_due"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "partner_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "amount_residual",
+     "id": "amount_residual"
+    }
+   ],
+   "sortedColumn": {
+    "groupId": [
+     [],
+     []
+    ],
+    "measure": "amount_residual",
+    "order": "desc"
+   },
+   "fieldMatching": {}
+  },
+  "4": {
+   "type": "ODOO",
+   "id": "4",
+   "formulaId": "4",
+   "name": "Overdue by vendor",
+   "model": "account.aging.analysis",
+   "domain": [
+    [
+     "ledger",
+     "=",
+     "payable"
+    ],
+    [
+     "aging_bucket",
+     "!=",
+     "not_due"
+    ]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "partner_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "amount_residual",
+     "id": "amount_residual"
+    }
+   ],
+   "sortedColumn": {
+    "groupId": [
+     [],
+     []
+    ],
+    "measure": "amount_residual",
+    "order": "desc"
+   },
+   "fieldMatching": {}
+  }
+ },
+ "pivotNextId": 5,
+ "lists": {},
+ "listNextId": 1,
+ "globalFilters": [],
+ "sheets": [
+  {
+   "id": "finance",
+   "name": "Finance",
+   "colNumber": 10,
+   "rowNumber": 26,
+   "cols": {
+    "0": {
+     "size": 230
+    },
+    "1": {
+     "size": 110
+    },
+    "2": {
+     "size": 80
+    },
+    "3": {
+     "size": 22
+    },
+    "4": {
+     "size": 215
+    },
+    "5": {
+     "size": 110
+    },
+    "6": {
+     "size": 60
+    },
+    "7": {
+     "size": 215
+    },
+    "8": {
+     "size": 110
+    }
+   },
+   "rows": {
+    "0": {
+     "size": 34
+    },
+    "1": {
+     "size": 18
+    },
+    "2": {
+     "size": 8
+    },
+    "3": {
+     "size": 30
+    },
+    "4": {
+     "size": 21
+    },
+    "5": {
+     "size": 21
+    },
+    "6": {
+     "size": 21
+    },
+    "7": {
+     "size": 21
+    },
+    "8": {
+     "size": 21
+    },
+    "9": {
+     "size": 21
+    },
+    "10": {
+     "size": 21
+    },
+    "11": {
+     "size": 8
+    },
+    "12": {
+     "size": 30
+    },
+    "13": {
+     "size": 21
+    },
+    "14": {
+     "size": 21
+    },
+    "15": {
+     "size": 21
+    },
+    "16": {
+     "size": 21
+    },
+    "17": {
+     "size": 21
+    },
+    "18": {
+     "size": 21
+    },
+    "19": {
+     "size": 21
+    },
+    "20": {
+     "size": 21
+    },
+    "21": {
+     "size": 21
+    },
+    "22": {
+     "size": 21
+    },
+    "23": {
+     "size": 21
+    },
+    "24": {
+     "size": 21
+    },
+    "25": {
+     "size": 21
+    }
+   },
+   "merges": [],
+   "cells": {
+    "A1": {
+     "content": "FINANCE OVERVIEW"
+    },
+    "A2": {
+     "content": "Live data from Odoo. Ageing buckets follow the company configuration."
+    },
+    "A4": {
+     "content": "AGED RECEIVABLE"
+    },
+    "E4": {
+     "content": "AGED PAYABLE"
+    },
+    "H4": {
+     "content": "POSITION"
+    },
+    "A5": {
+     "content": "Days overdue"
+    },
+    "E5": {
+     "content": "Days overdue"
+    },
+    "B5": {
+     "content": "Amount"
+    },
+    "C5": {
+     "content": "%"
+    },
+    "F5": {
+     "content": "Amount"
+    },
+    "G5": {
+     "content": "%"
+    },
+    "A6": {
+     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"not_due\")"
+    },
+    "B6": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"not_due\")"
+    },
+    "C6": {
+     "content": "=IFERROR(B6/$B$11,\"\")"
+    },
+    "E6": {
+     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"not_due\")"
+    },
+    "F6": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"not_due\")"
+    },
+    "G6": {
+     "content": "=IFERROR(F6/$F$11,\"\")"
+    },
+    "A7": {
+     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_1\")"
+    },
+    "B7": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
+    },
+    "C7": {
+     "content": "=IFERROR(B7/$B$11,\"\")"
+    },
+    "E7": {
+     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_1\")"
+    },
+    "F7": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
+    },
+    "G7": {
+     "content": "=IFERROR(F7/$F$11,\"\")"
+    },
+    "A8": {
+     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_2\")"
+    },
+    "B8": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
+    },
+    "C8": {
+     "content": "=IFERROR(B8/$B$11,\"\")"
+    },
+    "E8": {
+     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_2\")"
+    },
+    "F8": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
+    },
+    "G8": {
+     "content": "=IFERROR(F8/$F$11,\"\")"
+    },
+    "A9": {
+     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_3\")"
+    },
+    "B9": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
+    },
+    "C9": {
+     "content": "=IFERROR(B9/$B$11,\"\")"
+    },
+    "E9": {
+     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_3\")"
+    },
+    "F9": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
+    },
+    "G9": {
+     "content": "=IFERROR(F9/$F$11,\"\")"
+    },
+    "A10": {
+     "content": "=PIVOT.HEADER(1,\"aging_bucket\",\"bucket_4\")"
+    },
+    "B10": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
+    },
+    "C10": {
+     "content": "=IFERROR(B10/$B$11,\"\")"
+    },
+    "E10": {
+     "content": "=PIVOT.HEADER(2,\"aging_bucket\",\"bucket_4\")"
+    },
+    "F10": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
+    },
+    "G10": {
+     "content": "=IFERROR(F10/$F$11,\"\")"
+    },
+    "A11": {
+     "content": "Total"
+    },
+    "B11": {
+     "content": "=PIVOT.VALUE(1,\"amount_residual\")"
+    },
+    "E11": {
+     "content": "Total"
+    },
+    "F11": {
+     "content": "=PIVOT.VALUE(2,\"amount_residual\")"
+    },
+    "H5": {
+     "content": "Receivable"
+    },
+    "I5": {
+     "content": "=B11"
+    },
+    "H6": {
+     "content": "Payable"
+    },
+    "I6": {
+     "content": "=F11"
+    },
+    "H7": {
+     "content": "Net position"
+    },
+    "I7": {
+     "content": "=B11-F11"
+    },
+    "H8": {
+     "content": "Coverage"
+    },
+    "I8": {
+     "content": "=IFERROR(B11/F11,\"\")"
+    },
+    "H10": {
+     "content": "Overdue receivable"
+    },
+    "I10": {
+     "content": "=B11-B6"
+    },
+    "H11": {
+     "content": "Overdue payable"
+    },
+    "I11": {
+     "content": "=F11-F6"
+    },
+    "A13": {
+     "content": "PROFIT & LOSS - YEAR TO DATE"
+    },
+    "A14": {
+     "content": "Line"
+    },
+    "B14": {
+     "content": "Amount"
+    },
+    "C14": {
+     "content": "% of revenue"
+    },
+    "A15": {
+     "content": "Revenue"
+    },
+    "B15": {
+     "content": "=-ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"income\"),YEAR(TODAY()))"
+    },
+    "A16": {
+     "content": "Cost of revenue"
+    },
+    "B16": {
+     "content": "=ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"expense_direct_cost\"),YEAR(TODAY()))"
+    },
+    "A17": {
+     "content": "Gross profit"
+    },
+    "B17": {
+     "content": "=B15-B16"
+    },
+    "C17": {
+     "content": "=IFERROR(B17/B15,\"\")"
+    },
+    "A18": {
+     "content": "Operating expenses"
+    },
+    "B18": {
+     "content": "=ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"expense\"),YEAR(TODAY()))"
+    },
+    "A19": {
+     "content": "Net result"
+    },
+    "B19": {
+     "content": "=B17-B18"
+    },
+    "C19": {
+     "content": "=IFERROR(B19/B15,\"\")"
+    },
+    "E13": {
+     "content": "TOP 10 CUSTOMERS - OVERDUE"
+    },
+    "E14": {
+     "content": "Customer"
+    },
+    "F14": {
+     "content": "Overdue"
+    },
+    "H13": {
+     "content": "TOP 10 VENDORS - OVERDUE"
+    },
+    "H14": {
+     "content": "Vendor"
+    },
+    "I14": {
+     "content": "Overdue"
+    },
+    "E15": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",1)"
+    },
+    "F15": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",1)"
+    },
+    "H15": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",1)"
+    },
+    "I15": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",1)"
+    },
+    "E16": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",2)"
+    },
+    "F16": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",2)"
+    },
+    "H16": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",2)"
+    },
+    "I16": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",2)"
+    },
+    "E17": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",3)"
+    },
+    "F17": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",3)"
+    },
+    "H17": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",3)"
+    },
+    "I17": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",3)"
+    },
+    "E18": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",4)"
+    },
+    "F18": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",4)"
+    },
+    "H18": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",4)"
+    },
+    "I18": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",4)"
+    },
+    "E19": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",5)"
+    },
+    "F19": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",5)"
+    },
+    "H19": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",5)"
+    },
+    "I19": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",5)"
+    },
+    "E20": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",6)"
+    },
+    "F20": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",6)"
+    },
+    "H20": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",6)"
+    },
+    "I20": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",6)"
+    },
+    "E21": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",7)"
+    },
+    "F21": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",7)"
+    },
+    "H21": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",7)"
+    },
+    "I21": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",7)"
+    },
+    "E22": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",8)"
+    },
+    "F22": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",8)"
+    },
+    "H22": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",8)"
+    },
+    "I22": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",8)"
+    },
+    "E23": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",9)"
+    },
+    "F23": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",9)"
+    },
+    "H23": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",9)"
+    },
+    "I23": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",9)"
+    },
+    "E24": {
+     "content": "=PIVOT.HEADER(3,\"#partner_id\",10)"
+    },
+    "F24": {
+     "content": "=PIVOT.VALUE(3,\"amount_residual\",\"#partner_id\",10)"
+    },
+    "H24": {
+     "content": "=PIVOT.HEADER(4,\"#partner_id\",10)"
+    },
+    "I24": {
+     "content": "=PIVOT.VALUE(4,\"amount_residual\",\"#partner_id\",10)"
+    }
+   },
+   "styles": {
+    "A1": 1,
+    "A2": 2,
+    "A4": 3,
+    "E4": 3,
+    "H4": 3,
+    "A5": 4,
+    "E5": 4,
+    "B5": 4,
+    "C5": 4,
+    "F5": 4,
+    "G5": 4,
+    "A6": 6,
+    "E6": 6,
+    "A7": 6,
+    "E7": 6,
+    "A8": 6,
+    "E8": 6,
+    "A9": 6,
+    "E9": 6,
+    "A10": 6,
+    "E10": 6,
+    "A11": 5,
+    "B11": 5,
+    "E11": 5,
+    "F11": 5,
+    "H5": 6,
+    "H6": 6,
+    "H7": 5,
+    "I7": 5,
+    "H8": 6,
+    "H10": 6,
+    "H11": 6,
+    "A13": 3,
+    "A14": 4,
+    "B14": 4,
+    "C14": 4,
+    "A15": 6,
+    "A16": 6,
+    "A17": 5,
+    "B17": 5,
+    "A18": 6,
+    "A19": 5,
+    "B19": 5,
+    "E13": 3,
+    "E14": 4,
+    "F14": 4,
+    "H13": 3,
+    "H14": 4,
+    "I14": 4,
+    "E15": 6,
+    "H15": 6,
+    "E16": 6,
+    "H16": 6,
+    "E17": 6,
+    "H17": 6,
+    "E18": 6,
+    "H18": 6,
+    "E19": 6,
+    "H19": 6,
+    "E20": 6,
+    "H20": 6,
+    "E21": 6,
+    "H21": 6,
+    "E22": 6,
+    "H22": 6,
+    "E23": 6,
+    "H23": 6,
+    "E24": 6,
+    "H24": 6
+   },
+   "formats": {
+    "B6": 1,
+    "C6": 2,
+    "F6": 1,
+    "G6": 2,
+    "B7": 1,
+    "C7": 2,
+    "F7": 1,
+    "G7": 2,
+    "B8": 1,
+    "C8": 2,
+    "F8": 1,
+    "G8": 2,
+    "B9": 1,
+    "C9": 2,
+    "F9": 1,
+    "G9": 2,
+    "B10": 1,
+    "C10": 2,
+    "F10": 1,
+    "G10": 2,
+    "B11": 1,
+    "F11": 1,
+    "I5": 1,
+    "I6": 1,
+    "I7": 1,
+    "I8": 2,
+    "I10": 1,
+    "I11": 1,
+    "B15": 1,
+    "B16": 1,
+    "B17": 1,
+    "C17": 2,
+    "B18": 1,
+    "B19": 1,
+    "C19": 2,
+    "F15": 1,
+    "I15": 1,
+    "F16": 1,
+    "I16": 1,
+    "F17": 1,
+    "I17": 1,
+    "F18": 1,
+    "I18": 1,
+    "F19": 1,
+    "I19": 1,
+    "F20": 1,
+    "I20": 1,
+    "F21": 1,
+    "I21": 1,
+    "F22": 1,
+    "I22": 1,
+    "F23": 1,
+    "I23": 1,
+    "F24": 1,
+    "I24": 1
+   },
+   "borders": {
+    "A4:C4": 1,
+    "E4:G4": 1,
+    "H4:I4": 1,
+    "A13:C13": 1,
+    "E13:F13": 1,
+    "H13:I13": 1
+   },
+   "conditionalFormats": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "dataValidationRules": [],
+   "comments": {}
+  }
+ ]
+}
