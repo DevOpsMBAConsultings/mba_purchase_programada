@@ -14,152 +14,202 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#. module: mba_account_aging
 msgid "Aged Balance"
 msgstr "Antigüedad de saldos"
 
+#. module: mba_account_aging
 msgid "Aged Balance Analysis"
 msgstr "Análisis de antigüedad de saldos"
 
+#. module: mba_account_aging
 msgid "Aged Payable"
 msgstr "Antigüedad de cuentas por pagar"
 
+#. module: mba_account_aging
 msgid "Aged Receivable"
 msgstr "Antigüedad de cuentas por cobrar"
 
+#. module: mba_account_aging
 msgid "Ageing Bucket"
 msgstr "Tramo de antigüedad"
 
+#. module: mba_account_aging
 msgid "Ageing Buckets"
 msgstr "Tramos de antigüedad"
 
+#. module: mba_account_aging
 msgid "Ageing buckets must be strictly increasing (for example 30, 60 and 90 days)."
 msgstr "Los tramos de antigüedad deben ser estrictamente crecientes (por ejemplo 30, 60 y 90 días)."
 
+#. module: mba_account_aging
 msgid "Account"
 msgstr "Cuenta"
 
+#. module: mba_account_aging
 msgid "Amount Due"
 msgstr "Saldo pendiente"
 
+#. module: mba_account_aging
 msgid "Commercial Entity"
 msgstr "Empresa matriz"
 
+#. module: mba_account_aging
 msgid "Company"
 msgstr "Compañía"
 
+#. module: mba_account_aging
 msgid "Currency"
 msgstr "Moneda"
 
+#. module: mba_account_aging
 msgid "Date"
 msgstr "Fecha"
 
+#. module: mba_account_aging
 msgid "Days Overdue"
 msgstr "Días vencido"
 
+#. module: mba_account_aging
 msgid "Document"
 msgstr "Documento"
 
+#. module: mba_account_aging
 msgid "Due Date"
 msgstr "Fecha de vencimiento"
 
+#. module: mba_account_aging
 msgid "First Ageing Bucket (days)"
 msgstr "Primer tramo de antigüedad (días)"
 
+#. module: mba_account_aging
 msgid "First bucket"
 msgstr "Primer tramo"
 
+#. module: mba_account_aging
 msgid "First bucket up to"
 msgstr "Primer tramo hasta"
 
+#. module: mba_account_aging
 msgid "Group By"
 msgstr "Agrupar por"
 
+#. module: mba_account_aging
 msgid "Journal"
 msgstr "Diario"
 
+#. module: mba_account_aging
 msgid "Journal Entry"
 msgstr "Asiento contable"
 
+#. module: mba_account_aging
 msgid "Ledger"
 msgstr "Libro"
 
+#. module: mba_account_aging
 msgid "Not due"
 msgstr "Por vencer"
 
+#. module: mba_account_aging
 msgid "Oldest bucket"
 msgstr "Tramo más antiguo"
 
+#. module: mba_account_aging
 msgid "Older than %s days"
 msgstr "Más de %s días"
 
+#. module: mba_account_aging
 msgid "Open customer items, classified by how many days they are past their due date."
 msgstr "Apuntes abiertos de clientes, clasificados según los días transcurridos desde su vencimiento."
 
+#. module: mba_account_aging
 msgid "Open vendor items, classified by how many days they are past their due date."
 msgstr "Apuntes abiertos de proveedores, clasificados según los días transcurridos desde su vencimiento."
 
+#. module: mba_account_aging
 msgid "Overdue"
 msgstr "Vencido"
 
+#. module: mba_account_aging
 msgid "Partner"
 msgstr "Empresa"
 
+#. module: mba_account_aging
 msgid "Payable"
 msgstr "Por pagar"
 
+#. module: mba_account_aging
 msgid "Receivable"
 msgstr "Por cobrar"
 
+#. module: mba_account_aging
 msgid "Reference"
 msgstr "Referencia"
 
+#. module: mba_account_aging
 msgid "Salesperson"
 msgstr "Vendedor"
 
+#. module: mba_account_aging
 msgid "Second Ageing Bucket (days)"
 msgstr "Segundo tramo de antigüedad (días)"
 
+#. module: mba_account_aging
 msgid "Second bucket"
 msgstr "Segundo tramo"
 
+#. module: mba_account_aging
 msgid "Second bucket up to"
 msgstr "Segundo tramo hasta"
 
+#. module: mba_account_aging
 msgid "Third Ageing Bucket (days)"
 msgstr "Tercer tramo de antigüedad (días)"
 
+#. module: mba_account_aging
 msgid "Third bucket"
 msgstr "Tercer tramo"
 
+#. module: mba_account_aging
 msgid "Third bucket up to"
 msgstr "Tercer tramo hasta"
 
+#. module: mba_account_aging
 msgid "Thresholds in days past due used to classify open customer and vendor items."
 msgstr "Umbrales en días vencidos que se usan para clasificar los apuntes abiertos de clientes y proveedores."
 
+#. module: mba_account_aging
 msgid "The first ageing bucket must be at least 1 day."
 msgstr "El primer tramo de antigüedad debe ser de al menos 1 día."
 
+#. module: mba_account_aging
 msgid "No outstanding customer balances"
 msgstr "No hay saldos de clientes pendientes"
 
+#. module: mba_account_aging
 msgid "No outstanding vendor balances"
 msgstr "No hay saldos de proveedores pendientes"
 
+#. module: mba_account_aging
 msgid "days"
 msgstr "días"
 
+#. module: mba_account_aging
 msgid "1 - %s days"
 msgstr "1 - %s días"
 
+#. module: mba_account_aging
 msgid "%(start)s - %(end)s days"
 msgstr "%(start)s - %(end)s días"
 
+#. module: mba_account_aging
 msgid "Upper bound, in days past due, of the first ageing bucket."
 msgstr "Límite superior, en días vencidos, del primer tramo de antigüedad."
 
+#. module: mba_account_aging
 msgid "Upper bound, in days past due, of the second ageing bucket."
 msgstr "Límite superior, en días vencidos, del segundo tramo de antigüedad."
 
+#. module: mba_account_aging
 msgid "Upper bound, in days past due, of the third ageing bucket. Anything older falls into the last bucket."
 msgstr "Límite superior, en días vencidos, del tercer tramo de antigüedad. Lo más antiguo cae en el último tramo."
