@@ -3,6 +3,12 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 import re
 
+# Namespace propio para pg_advisory_xact_lock. La primera clave identifica al
+# módulo (para no chocar con los advisory locks que usa el core de Odoo) y la
+# segunda es el diario sobre el que se serializa la asignación de consecutivo.
+PA_NUMERO_LOCK_NS = 190378
+
+
 class AccountMove(models.Model):
     _inherit = "account.move"
 
@@ -264,30 +270,75 @@ class AccountMove(models.Model):
         """
         Siguiente número fiscal para esta empresa/diario.
         Busca el MAX numérico entre todas las facturas HKA enviadas al PAC + 1.
+
+        Se resuelve en una sola consulta SQL en vez de traer el 'name' de todas
+        las facturas del diario a Python: la lógica es idéntica (se extraen los
+        dígitos del nombre y se toma el máximo), pero el tiempo deja de crecer
+        con el volumen histórico de facturas.
+
+        NOTA: al ser SQL directo no ve escrituras pendientes en la caché del ORM,
+        por eso el flush previo.
+
+        Es intencional que el máximo NO sea "la última factura + 1": si el
+        cliente se saltó un consecutivo, ese hueco queda libre para usarlo
+        manualmente después desde el wizard.
         """
         self.ensure_one()
 
-        domain = [
-            ('company_id', '=', self.company_id.id),
-            ('journal_id', '=', self.journal_id.id),
-            ('move_type', 'in', ('out_invoice', 'out_refund')),
-            ('l10n_pa_pac_status', 'in', ('sent', 'accepted', 'cancelled', 'error')),
-            ('name', '!=', False),
-            ('name', '!=', '/'),
-        ]
-        moves = self.sudo().search_read(domain, ['name'], order='id desc')
+        self.env['account.move'].flush_model(
+            ['name', 'l10n_pa_pac_status', 'journal_id', 'company_id', 'move_type']
+        )
 
-        max_num = 0
-        for m in moves:
-            digits = re.sub(r'\D', '', m['name'] or '')
-            try:
-                n = int(digits) if digits else 0
-                if n > max_num:
-                    max_num = n
-            except (ValueError, TypeError):
-                pass
+        self.env.cr.execute(
+            r"""
+            SELECT COALESCE(MAX(digits::bigint), 0)
+              FROM (
+                    SELECT NULLIF(regexp_replace(name, '\D', '', 'g'), '') AS digits
+                      FROM account_move
+                     WHERE company_id = %s
+                       AND journal_id = %s
+                       AND move_type IN ('out_invoice', 'out_refund')
+                       AND l10n_pa_pac_status IN ('sent', 'accepted', 'cancelled', 'error')
+                       AND name IS NOT NULL
+                       AND name != '/'
+                   ) sub
+             WHERE digits IS NOT NULL
+               AND length(digits) <= 18
+            """,
+            (self.company_id.id, self.journal_id.id),
+        )
+        max_num = self.env.cr.fetchone()[0] or 0
 
         return str(max_num + 1).zfill(10)
+
+    def _pa_reserve_numero(self, numero=None):
+        """
+        Reserva el número fiscal escribiéndolo en la factura de forma atómica.
+
+        Toma un advisory lock por diario antes de calcular el consecutivo, para
+        que dos procesos simultáneos (dos cajas de POS, o el POS y un futuro cron
+        de facturación recurrente) no lleguen al mismo MAX+1 y colisionen.
+
+        El lock es de transacción: PostgreSQL lo libera solo al hacer commit o
+        rollback, sin necesidad de liberarlo a mano. En la práctica se suelta en
+        el primer commit dentro de action_l10n_pa_send_to_pac(), es decir antes
+        de la llamada HTTP al PAC — de modo que no se retiene durante la espera
+        de red, pero sí durante todo el tramo crítico de calcular y escribir.
+
+        :param numero: número ya normalizado a usar. Si se omite, se calcula el
+                       siguiente disponible. Permite que el flujo manual imponga
+                       un consecutivo reservado y el automático tome el que sigue.
+        """
+        self.ensure_one()
+
+        self.env.cr.execute(
+            "SELECT pg_advisory_xact_lock(%s, %s)",
+            (PA_NUMERO_LOCK_NS, self.journal_id.id),
+        )
+
+        num = numero or self._pa_next_numero()
+        self.write({'name': num})
+        return num
 
     @api.onchange('partner_id')
     def _onchange_partner_dgi_validated(self):
