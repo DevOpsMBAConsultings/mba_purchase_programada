@@ -13,27 +13,27 @@
                 element is the one part of this view that stays put.
             -->
             <xpath expr="//app[@name='account']" position="inside">
-                <block title="Aged Balance" id="account_aging_analysis">
-                    <setting string="Ageing Buckets"
-                             help="Thresholds in days past due used to classify open customer and vendor items.">
+                <block title="Antigüedad de Saldos" id="account_aging_analysis">
+                    <setting string="Tramos de antigüedad"
+                             help="Umbrales en días vencidos para clasificar los apuntes abiertos de clientes y proveedores.">
                         <div class="content-group">
                             <div class="row mt8">
-                                <label for="account_aging_bucket_1" string="First bucket up to"
+                                <label for="account_aging_bucket_1" string="Primer tramo hasta"
                                        class="col-lg-5 o_light_label"/>
                                 <field name="account_aging_bucket_1" class="oe_inline"/>
-                                <span class="oe_inline ms-1">days</span>
+                                <span class="oe_inline ms-1">días</span>
                             </div>
                             <div class="row">
-                                <label for="account_aging_bucket_2" string="Second bucket up to"
+                                <label for="account_aging_bucket_2" string="Segundo tramo hasta"
                                        class="col-lg-5 o_light_label"/>
                                 <field name="account_aging_bucket_2" class="oe_inline"/>
-                                <span class="oe_inline ms-1">days</span>
+                                <span class="oe_inline ms-1">días</span>
                             </div>
                             <div class="row">
-                                <label for="account_aging_bucket_3" string="Third bucket up to"
+                                <label for="account_aging_bucket_3" string="Tercer tramo hasta"
                                        class="col-lg-5 o_light_label"/>
                                 <field name="account_aging_bucket_3" class="oe_inline"/>
-                                <span class="oe_inline ms-1">days</span>
+                                <span class="oe_inline ms-1">días</span>
                             </div>
                         </div>
                     </setting>

@@ -1,6 +1,6 @@
 from odoo import _, fields, models
 
-DEFAULT_BUCKETS = (30, 60, 90)
+TRAMOS_POR_DEFECTO = (30, 60, 90)
 
 
 class AccountAgingAnalysis(models.Model):
@@ -14,51 +14,51 @@ class AccountAgingAnalysis(models.Model):
     """
 
     _name = "account.aging.analysis"
-    _description = "Aged Balance Analysis"
+    _description = "Antigüedad de Saldos"
     _auto = False
     _order = "days_overdue desc"
     _rec_name = "move_name"
 
-    move_id = fields.Many2one("account.move", string="Journal Entry", readonly=True)
-    move_name = fields.Char(string="Document", readonly=True)
-    ref = fields.Char(string="Reference", readonly=True)
-    partner_id = fields.Many2one("res.partner", string="Partner", readonly=True)
+    move_id = fields.Many2one("account.move", string="Asiento", readonly=True)
+    move_name = fields.Char(string="Documento", readonly=True)
+    ref = fields.Char(string="Referencia", readonly=True)
+    partner_id = fields.Many2one("res.partner", string="Empresa", readonly=True)
     commercial_partner_id = fields.Many2one(
-        "res.partner", string="Commercial Entity", readonly=True
+        "res.partner", string="Empresa matriz", readonly=True
     )
-    invoice_user_id = fields.Many2one("res.users", string="Salesperson", readonly=True)
-    account_id = fields.Many2one("account.account", string="Account", readonly=True)
-    journal_id = fields.Many2one("account.journal", string="Journal", readonly=True)
-    company_id = fields.Many2one("res.company", string="Company", readonly=True)
-    currency_id = fields.Many2one("res.currency", string="Currency", readonly=True)
+    invoice_user_id = fields.Many2one("res.users", string="Vendedor", readonly=True)
+    account_id = fields.Many2one("account.account", string="Cuenta", readonly=True)
+    journal_id = fields.Many2one("account.journal", string="Diario", readonly=True)
+    company_id = fields.Many2one("res.company", string="Compañía", readonly=True)
+    currency_id = fields.Many2one("res.currency", string="Moneda", readonly=True)
 
     ledger = fields.Selection(
-        [("receivable", "Receivable"), ("payable", "Payable")],
-        string="Ledger",
+        [("receivable", "Por cobrar"), ("payable", "Por pagar")],
+        string="Libro",
         readonly=True,
     )
-    date = fields.Date(string="Date", readonly=True)
-    date_maturity = fields.Date(string="Due Date", readonly=True)
-    days_overdue = fields.Integer(string="Days Overdue", readonly=True)
+    date = fields.Date(string="Fecha", readonly=True)
+    date_maturity = fields.Date(string="Fecha de vencimiento", readonly=True)
+    days_overdue = fields.Integer(string="Días vencido", readonly=True)
     aging_bucket = fields.Selection(
-        selection="_selection_aging_bucket", string="Ageing Bucket", readonly=True
+        selection="_selection_aging_bucket", string="Tramo", readonly=True
     )
     amount_residual = fields.Monetary(
-        string="Amount Due", currency_field="currency_id", readonly=True
+        string="Saldo pendiente", currency_field="currency_id", readonly=True
     )
 
     def _selection_aging_bucket(self):
-        """Bucket labels follow the thresholds configured on the company."""
+        """Las etiquetas siguen los umbrales configurados en la compañía."""
         company = self.env.company
-        b1 = company.account_aging_bucket_1 or DEFAULT_BUCKETS[0]
-        b2 = company.account_aging_bucket_2 or DEFAULT_BUCKETS[1]
-        b3 = company.account_aging_bucket_3 or DEFAULT_BUCKETS[2]
+        b1 = company.account_aging_bucket_1 or TRAMOS_POR_DEFECTO[0]
+        b2 = company.account_aging_bucket_2 or TRAMOS_POR_DEFECTO[1]
+        b3 = company.account_aging_bucket_3 or TRAMOS_POR_DEFECTO[2]
         return [
-            ("not_due", _("Not due")),
-            ("bucket_1", _("1 - %s days", b1)),
-            ("bucket_2", _("%(start)s - %(end)s days", start=b1 + 1, end=b2)),
-            ("bucket_3", _("%(start)s - %(end)s days", start=b2 + 1, end=b3)),
-            ("bucket_4", _("Older than %s days", b3)),
+            ("not_due", _("Por vencer")),
+            ("bucket_1", _("1 - %s días", b1)),
+            ("bucket_2", _("%(desde)s - %(hasta)s días", desde=b1 + 1, hasta=b2)),
+            ("bucket_3", _("%(desde)s - %(hasta)s días", desde=b2 + 1, hasta=b3)),
+            ("bucket_4", _("Más de %s días", b3)),
         ]
 
     @property

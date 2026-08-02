@@ -1,11 +1,12 @@
 {
-    'name': 'Aged Balance Analysis (MBA Consultings)',
+    'name': 'Antigüedad de Saldos (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Accounting/Reporting',
-    'summary': 'Pivotable ageing of receivables and payables by days past due',
-    'description': 'Open customer and vendor items classified into configurable '
-                   'ageing buckets, computed live in SQL and usable in pivots, '
-                   'graphs, spreadsheets and dashboards.',
+    'summary': 'Antigüedad de cuentas por cobrar y por pagar, analizable en pivote',
+    'description': 'Clasifica los apuntes abiertos de clientes y proveedores en '
+                   'tramos de días vencidos configurables, calculados en vivo '
+                   'sobre una vista SQL y usables en pivotes, gráficos, hojas '
+                   'de cálculo y tableros.',
     'author': 'MBA Consultings, Brooks Gonzalez',
     'website': 'https://mbaconsultings.com',
     'depends': ['account'],
