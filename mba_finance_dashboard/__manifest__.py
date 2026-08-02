@@ -1,11 +1,11 @@
 {
-    'name': 'Finance Overview Dashboard (MBA Consultings)',
+    'name': 'Tablero Financiero (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Accounting/Reporting',
-    'summary': 'Ready-made finance dashboard: ageing, position and year-to-date result',
-    'description': 'Pre-built spreadsheet dashboard showing aged receivables and '
-                   'payables, net position, year-to-date profit and loss, and top '
-                   'overdue partners. Installs ready to use.',
+    'summary': 'Tablero financiero listo para usar: antigüedad, posición y resultado del año',
+    'description': 'Tablero que se instala armado, con antigüedad de cuentas por '
+                   'cobrar y por pagar, posición neta, estado de resultados del '
+                   'año y top de empresas con saldo vencido.',
     'author': 'MBA Consultings, Brooks Gonzalez',
     'website': 'https://mbaconsultings.com',
     'depends': [

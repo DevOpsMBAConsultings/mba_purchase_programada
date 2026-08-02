@@ -5,9 +5,9 @@
  "uniqueFigureIds": true,
  "settings": {
   "locale": {
-   "code": "en_US",
-   "name": "English (US)",
-   "dateFormat": "mm/dd/yyyy",
+   "code": "es_PA",
+   "name": "Español (Panamá)",
+   "dateFormat": "dd/mm/yyyy",
    "timeFormat": "hh:mm:ss",
    "decimalSeparator": ".",
    "thousandsSeparator": ",",
@@ -63,7 +63,7 @@
    "type": "ODOO",
    "id": "1",
    "formulaId": "1",
-   "name": "Aged receivable by bucket",
+   "name": "Antigüedad por cobrar",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -96,7 +96,7 @@
    "type": "ODOO",
    "id": "2",
    "formulaId": "2",
-   "name": "Aged payable by bucket",
+   "name": "Antigüedad por pagar",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -129,7 +129,7 @@
    "type": "ODOO",
    "id": "3",
    "formulaId": "3",
-   "name": "Overdue by customer",
+   "name": "Vencido por cliente",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -170,7 +170,7 @@
    "type": "ODOO",
    "id": "4",
    "formulaId": "4",
-   "name": "Overdue by vendor",
+   "name": "Vencido por proveedor",
    "model": "account.aging.analysis",
    "domain": [
     [
@@ -215,7 +215,7 @@
  "sheets": [
   {
    "id": "finance",
-   "name": "Finance",
+   "name": "Finanzas",
    "colNumber": 10,
    "rowNumber": 26,
    "cols": {
@@ -330,40 +330,40 @@
    "merges": [],
    "cells": {
     "A1": {
-     "content": "FINANCE OVERVIEW"
+     "content": "TABLERO FINANCIERO"
     },
     "A2": {
-     "content": "Live data from Odoo. Ageing buckets follow the company configuration."
+     "content": "Datos en vivo desde Odoo. Los tramos siguen la configuración de la compañía."
     },
     "A4": {
-     "content": "AGED RECEIVABLE"
+     "content": "CUENTAS POR COBRAR"
     },
     "E4": {
-     "content": "AGED PAYABLE"
+     "content": "CUENTAS POR PAGAR"
     },
     "H4": {
-     "content": "POSITION"
+     "content": "POSICIÓN"
     },
     "A5": {
-     "content": "Days overdue"
+     "content": "Días vencido"
     },
     "E5": {
-     "content": "Days overdue"
+     "content": "Días vencido"
     },
     "B5": {
-     "content": "Amount"
+     "content": "Monto"
     },
     "C5": {
      "content": "%"
     },
     "F5": {
-     "content": "Amount"
+     "content": "Monto"
     },
     "G5": {
      "content": "%"
     },
     "A6": {
-     "content": "Not due"
+     "content": "Por vencer"
     },
     "B6": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"not_due\")"
@@ -372,7 +372,7 @@
      "content": "=IFERROR(B6/$B$11,\"\")"
     },
     "E6": {
-     "content": "Not due"
+     "content": "Por vencer"
     },
     "F6": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"not_due\")"
@@ -381,7 +381,7 @@
      "content": "=IFERROR(F6/$F$11,\"\")"
     },
     "A7": {
-     "content": "1 - 30 days"
+     "content": "1 - 30 días"
     },
     "B7": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
@@ -390,7 +390,7 @@
      "content": "=IFERROR(B7/$B$11,\"\")"
     },
     "E7": {
-     "content": "1 - 30 days"
+     "content": "1 - 30 días"
     },
     "F7": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_1\")"
@@ -399,7 +399,7 @@
      "content": "=IFERROR(F7/$F$11,\"\")"
     },
     "A8": {
-     "content": "31 - 60 days"
+     "content": "31 - 60 días"
     },
     "B8": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
@@ -408,7 +408,7 @@
      "content": "=IFERROR(B8/$B$11,\"\")"
     },
     "E8": {
-     "content": "31 - 60 days"
+     "content": "31 - 60 días"
     },
     "F8": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_2\")"
@@ -417,7 +417,7 @@
      "content": "=IFERROR(F8/$F$11,\"\")"
     },
     "A9": {
-     "content": "61 - 90 days"
+     "content": "61 - 90 días"
     },
     "B9": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
@@ -426,7 +426,7 @@
      "content": "=IFERROR(B9/$B$11,\"\")"
     },
     "E9": {
-     "content": "61 - 90 days"
+     "content": "61 - 90 días"
     },
     "F9": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_3\")"
@@ -435,7 +435,7 @@
      "content": "=IFERROR(F9/$F$11,\"\")"
     },
     "A10": {
-     "content": "Older than 90 days"
+     "content": "Más de 90 días"
     },
     "B10": {
      "content": "=PIVOT.VALUE(1,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
@@ -444,7 +444,7 @@
      "content": "=IFERROR(B10/$B$11,\"\")"
     },
     "E10": {
-     "content": "Older than 90 days"
+     "content": "Más de 90 días"
     },
     "F10": {
      "content": "=PIVOT.VALUE(2,\"amount_residual\",\"aging_bucket\",\"bucket_4\")"
@@ -465,67 +465,67 @@
      "content": "=PIVOT.VALUE(2,\"amount_residual\")"
     },
     "H5": {
-     "content": "Receivable"
+     "content": "Por cobrar"
     },
     "I5": {
      "content": "=B11"
     },
     "H6": {
-     "content": "Payable"
+     "content": "Por pagar"
     },
     "I6": {
      "content": "=F11"
     },
     "H7": {
-     "content": "Net position"
+     "content": "Posición neta"
     },
     "I7": {
      "content": "=B11-F11"
     },
     "H8": {
-     "content": "Coverage"
+     "content": "Cobertura"
     },
     "I8": {
      "content": "=IFERROR(B11/F11,\"\")"
     },
     "H10": {
-     "content": "Overdue receivable"
+     "content": "Por cobrar vencido"
     },
     "I10": {
      "content": "=B11-B6"
     },
     "H11": {
-     "content": "Overdue payable"
+     "content": "Por pagar vencido"
     },
     "I11": {
      "content": "=F11-F6"
     },
     "A13": {
-     "content": "PROFIT & LOSS - YEAR TO DATE"
+     "content": "ESTADO DE RESULTADOS - AÑO EN CURSO"
     },
     "A14": {
-     "content": "Line"
+     "content": "Concepto"
     },
     "B14": {
-     "content": "Amount"
+     "content": "Monto"
     },
     "C14": {
-     "content": "% of revenue"
+     "content": "% s/ventas"
     },
     "A15": {
-     "content": "Revenue"
+     "content": "Ingresos"
     },
     "B15": {
      "content": "=-ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"income\"),YEAR(TODAY()))"
     },
     "A16": {
-     "content": "Cost of revenue"
+     "content": "Costo de ventas"
     },
     "B16": {
      "content": "=ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"expense_direct_cost\"),YEAR(TODAY()))"
     },
     "A17": {
-     "content": "Gross profit"
+     "content": "Utilidad bruta"
     },
     "B17": {
      "content": "=B15-B16"
@@ -534,13 +534,13 @@
      "content": "=IFERROR(B17/B15,\"\")"
     },
     "A18": {
-     "content": "Operating expenses"
+     "content": "Gastos operativos"
     },
     "B18": {
      "content": "=ODOO.BALANCE(ODOO.ACCOUNT.GROUP(\"expense\"),YEAR(TODAY()))"
     },
     "A19": {
-     "content": "Net result"
+     "content": "Resultado neto"
     },
     "B19": {
      "content": "=B17-B18"
@@ -549,22 +549,22 @@
      "content": "=IFERROR(B19/B15,\"\")"
     },
     "E13": {
-     "content": "TOP 10 CUSTOMERS - OVERDUE"
+     "content": "TOP 10 CLIENTES - VENCIDO"
     },
     "E14": {
-     "content": "Customer"
+     "content": "Cliente"
     },
     "F14": {
-     "content": "Overdue"
+     "content": "Vencido"
     },
     "H13": {
-     "content": "TOP 10 VENDORS - OVERDUE"
+     "content": "TOP 10 PROVEEDORES - VENCIDO"
     },
     "H14": {
-     "content": "Vendor"
+     "content": "Proveedor"
     },
     "I14": {
-     "content": "Overdue"
+     "content": "Vencido"
     },
     "E15": {
      "content": "=PIVOT.HEADER(3,\"#partner_id\",1)"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="finance_overview_dashboard" model="spreadsheet.dashboard">
-        <field name="name">Finance Overview</field>
+        <field name="name">Tablero Financiero</field>
         <field name="dashboard_group_id"
                ref="spreadsheet_dashboard.spreadsheet_dashboard_group_finance"/>
         <field name="sequence">1</field>
