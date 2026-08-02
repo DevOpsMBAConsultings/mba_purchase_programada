@@ -137,9 +137,10 @@ class PosOrder(models.Model):
             if not new_move.invoice_date:
                 new_move.invoice_date = fields.Date.context_today(self)
 
-            # 1. Asignar siguiente número fiscal disponible
-            num = new_move._pa_next_numero()
-            new_move.write({'name': num})
+            # 1. Reservar siguiente número fiscal disponible.
+            #    _pa_reserve_numero() toma un advisory lock por diario, así dos
+            #    cajas facturando a la vez no calculan el mismo consecutivo.
+            new_move._pa_reserve_numero()
 
             # 2. Enviar al PAC sincrónicamente (si falla, lanza UserError y hace rollback)
             new_move.action_l10n_pa_send_to_pac()

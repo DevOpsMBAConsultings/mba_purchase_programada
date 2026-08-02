@@ -103,6 +103,19 @@ class AccountMove(models.Model):
             })
             attachment_ids.append(pdf_att.id)
             self.message_main_attachment_id = pdf_att.id
+
+            # IMPORTANTE: 'invoice_pdf_report_id' es un campo computado que
+            # busca un ir.attachment por (res_model, res_id, res_field). El
+            # ORM no sabe automaticamente que acabamos de crear ese adjunto
+            # "por fuera" (no via el pipeline normal de account_move_send),
+            # asi que su cache queda desactualizado en este mismo request.
+            # Si algo despues (p.ej. pos_order.py -> _generate_and_send())
+            # revisa 'invoice_pdf_report_id' antes de que se invalide, lo ve
+            # vacio y genera un PDF generico de respaldo que termina
+            # "ganandole" al CAFE real. Odoo mismo hace este invalidate en
+            # su propio flujo equivalente (account_move_send.py,
+            # _link_invoice_documents, linea ~444) justo por esta razon.
+            self.invalidate_recordset(fnames=["invoice_pdf_report_id", "invoice_pdf_report_file"])
         else:
             _logger.warning("No se pudo descargar PDF CAFE para %s: %s", self.name, pdf_res.get("error_message"))
 
