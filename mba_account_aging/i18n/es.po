@@ -1,0 +1,165 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mba_account_aging
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: MBA Consultings\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Aged Balance"
+msgstr "Antigüedad de saldos"
+
+msgid "Aged Balance Analysis"
+msgstr "Análisis de antigüedad de saldos"
+
+msgid "Aged Payable"
+msgstr "Antigüedad de cuentas por pagar"
+
+msgid "Aged Receivable"
+msgstr "Antigüedad de cuentas por cobrar"
+
+msgid "Ageing Bucket"
+msgstr "Tramo de antigüedad"
+
+msgid "Ageing Buckets"
+msgstr "Tramos de antigüedad"
+
+msgid "Ageing buckets must be strictly increasing (for example 30, 60 and 90 days)."
+msgstr "Los tramos de antigüedad deben ser estrictamente crecientes (por ejemplo 30, 60 y 90 días)."
+
+msgid "Account"
+msgstr "Cuenta"
+
+msgid "Amount Due"
+msgstr "Saldo pendiente"
+
+msgid "Commercial Entity"
+msgstr "Empresa matriz"
+
+msgid "Company"
+msgstr "Compañía"
+
+msgid "Currency"
+msgstr "Moneda"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Days Overdue"
+msgstr "Días vencido"
+
+msgid "Document"
+msgstr "Documento"
+
+msgid "Due Date"
+msgstr "Fecha de vencimiento"
+
+msgid "First Ageing Bucket (days)"
+msgstr "Primer tramo de antigüedad (días)"
+
+msgid "First bucket"
+msgstr "Primer tramo"
+
+msgid "First bucket up to"
+msgstr "Primer tramo hasta"
+
+msgid "Group By"
+msgstr "Agrupar por"
+
+msgid "Journal"
+msgstr "Diario"
+
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+msgid "Ledger"
+msgstr "Libro"
+
+msgid "Not due"
+msgstr "Por vencer"
+
+msgid "Oldest bucket"
+msgstr "Tramo más antiguo"
+
+msgid "Older than %s days"
+msgstr "Más de %s días"
+
+msgid "Open customer items, classified by how many days they are past their due date."
+msgstr "Apuntes abiertos de clientes, clasificados según los días transcurridos desde su vencimiento."
+
+msgid "Open vendor items, classified by how many days they are past their due date."
+msgstr "Apuntes abiertos de proveedores, clasificados según los días transcurridos desde su vencimiento."
+
+msgid "Overdue"
+msgstr "Vencido"
+
+msgid "Partner"
+msgstr "Empresa"
+
+msgid "Payable"
+msgstr "Por pagar"
+
+msgid "Receivable"
+msgstr "Por cobrar"
+
+msgid "Reference"
+msgstr "Referencia"
+
+msgid "Salesperson"
+msgstr "Vendedor"
+
+msgid "Second Ageing Bucket (days)"
+msgstr "Segundo tramo de antigüedad (días)"
+
+msgid "Second bucket"
+msgstr "Segundo tramo"
+
+msgid "Second bucket up to"
+msgstr "Segundo tramo hasta"
+
+msgid "Third Ageing Bucket (days)"
+msgstr "Tercer tramo de antigüedad (días)"
+
+msgid "Third bucket"
+msgstr "Tercer tramo"
+
+msgid "Third bucket up to"
+msgstr "Tercer tramo hasta"
+
+msgid "Thresholds in days past due used to classify open customer and vendor items."
+msgstr "Umbrales en días vencidos que se usan para clasificar los apuntes abiertos de clientes y proveedores."
+
+msgid "The first ageing bucket must be at least 1 day."
+msgstr "El primer tramo de antigüedad debe ser de al menos 1 día."
+
+msgid "No outstanding customer balances"
+msgstr "No hay saldos de clientes pendientes"
+
+msgid "No outstanding vendor balances"
+msgstr "No hay saldos de proveedores pendientes"
+
+msgid "days"
+msgstr "días"
+
+msgid "1 - %s days"
+msgstr "1 - %s días"
+
+msgid "%(start)s - %(end)s days"
+msgstr "%(start)s - %(end)s días"
+
+msgid "Upper bound, in days past due, of the first ageing bucket."
+msgstr "Límite superior, en días vencidos, del primer tramo de antigüedad."
+
+msgid "Upper bound, in days past due, of the second ageing bucket."
+msgstr "Límite superior, en días vencidos, del segundo tramo de antigüedad."
+
+msgid "Upper bound, in days past due, of the third ageing bucket. Anything older falls into the last bucket."
+msgstr "Límite superior, en días vencidos, del tercer tramo de antigüedad. Lo más antiguo cae en el último tramo."
