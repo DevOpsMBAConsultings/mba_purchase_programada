@@ -11,6 +11,12 @@
 
         <xpath expr="//div[@class='page']" position="replace">
             <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black;">
+                <style>
+                    .header div[name="company_address"],
+                    .header ul[name="company_address_list"] {
+                        display: none !important;
+                    }
+                </style>
 
                 <div class="mb-3">
                     <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
