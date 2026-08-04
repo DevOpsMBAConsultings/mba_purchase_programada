@@ -80,3 +80,26 @@ class TestPdfQuotationImport(TransactionCase):
         self.assertEqual(order.partner_id.name, 'Consumidor Final')
         self.assertTrue(order.has_import_warnings)
         self.assertIn('SERVIESTIBA S.A.', order.origin_customer_name)
+
+    def test_04_native_attachment_upload_creates_order(self):
+        """Valida que la importación nativa de Odoo vía Subir Archivo (_create_order_from_attachment) sea interceptada y cree las líneas."""
+        if not os.path.exists(self.pdf_54345):
+            self.skipTest('Archivo de muestra 54345.pdf no encontrado.')
+
+        with open(self.pdf_54345, 'rb') as f:
+            pdf_bytes = f.read()
+
+        attachment = self.env['ir.attachment'].create({
+            'name': '54345.pdf',
+            'type': 'binary',
+            'datas': base64.b64encode(pdf_bytes),
+        })
+
+        orders = self.env['sale.order']._create_order_from_attachment(attachment.ids)
+        self.assertEqual(len(orders), 1)
+        order = orders[0]
+        self.assertTrue(order.imported_from_pdf)
+        self.assertEqual(order.legacy_quotation_number, '54345')
+        self.assertEqual(len(order.order_line), 21)
+        self.assertNotEqual(order.partner_id.id, self.env.user.partner_id.id)
+        self.assertEqual(order.partner_id.name, 'Consumidor Final')
