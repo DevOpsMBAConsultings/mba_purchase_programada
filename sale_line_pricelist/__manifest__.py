@@ -15,7 +15,7 @@
     """,
     "author": "MBA Consultings, Brooks Gonzalez",
     "website": "https://www.mbaconsultings.com",
-    "depends": ["sale"],
+    "depends": ["sale", "sale_stock"],
     "data": [
         "views/sale_order_views.xml",
     ],

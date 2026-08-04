@@ -29,11 +29,12 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.product_id:
                 product = line.product_id
-                if line.order_id.warehouse_id:
+                if 'warehouse_id' in line.order_id._fields and line.order_id.warehouse_id:
                     product = product.with_context(warehouse=line.order_id.warehouse_id.id)
                 line.free_qty_available = getattr(product, 'free_qty', getattr(product, 'qty_available', 0.0))
             else:
                 line.free_qty_available = 0.0
+
 
 
     @api.depends('order_id.pricelist_id')
