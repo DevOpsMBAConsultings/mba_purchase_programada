@@ -39,8 +39,11 @@ class SaleOrder(models.Model):
 
     @api.model
     def _create_sale_order_from_quotation_pdf(self, parsed, filename, pdf_bytes, attachment=False):
-        """Crea una orden de venta en 2 pasos (encabezado primero con partner_id, y luego líneas)
-        para garantizar compatibilidad completa con módulos de fiscalización y localización (Panamá)."""
+        """Crea una orden de venta importada desde PDF.
+        Importa exclusivamente el cliente y los productos/cantidades/precios,
+        permitiendo que Odoo asigne automáticamente los vendedores, términos de pago,
+        impuestos y listas de precios configurados nativamente en el sistema.
+        """
         warnings = []
 
         # 1. Homologación de Cliente (Partner) -> Si no existe, usar Consumidor Final
@@ -66,63 +69,13 @@ class SaleOrder(models.Model):
             orig_name = customer_name or _('Desconocido en PDF')
             warnings.append(_('• Cliente no encontrado en el catálogo: se asignó Consumidor Final (Cliente original en PDF: "%s").') % orig_name)
 
-        # 2. Homologación de Vendedor
-        user_id = self.env.user.id
-        salesperson = parsed.get('salesperson')
-        if salesperson:
-            user = self.env['res.users'].search([
-                ('name', '=ilike', salesperson.strip()),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
-            if user:
-                user_id = user.id
-
-        # 3. Homologación de Término de Pago
-        payment_term_id = False
-        payment_term_str = parsed.get('payment_term')
-        if payment_term_str:
-            term = self.env['account.payment.term'].search([
-                ('name', '=ilike', payment_term_str.strip()),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
-            if term:
-                payment_term_id = term.id
-
-        # 4. Homologación de Líneas de Pedido (con Opción 1: producto no encontrado -> sin product_id + warning)
+        # 2. Homologación de Líneas de Pedido (Cliente y Productos alineados; impuestos/vendedor lo gestiona Odoo)
         order_lines = []
-        zero_tax = self.env['account.tax'].search([
-            ('type_tax_use', '=', 'sale'),
-            ('amount', '=', 0.0),
-            ('company_id', 'in', [self.env.company.id, False]),
-            '|',
-            ('description', '=', 'Exento 0% Venta'),
-            ('name', '=', '0%'),
-        ], limit=1)
-
-        if not zero_tax:
-            zero_tax = self.env['account.tax'].search([
-                ('type_tax_use', '=', 'sale'),
-                ('amount', '=', 0.0),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
-
-        default_sale_tax = self.env['account.tax'].search([
-            ('type_tax_use', '=', 'sale'),
-            ('company_id', 'in', [self.env.company.id, False]),
-        ], limit=1)
-
         for line in parsed.get('lines', []):
             code = line.get('code', '').strip()
             desc = line.get('description', '').strip()
             qty = line.get('qty', 1.0)
             price_unit = line.get('price_unit', 0.0)
-            tax_exempt = line.get('tax_exempt', False)
-
-            # Determinar impuesto (si es exento, se asigna el impuesto 0% de Panamá requerido por la DGI)
-            if tax_exempt:
-                tax_ids = zero_tax.ids if zero_tax else []
-            else:
-                tax_ids = []
 
             product = False
             if code:
@@ -133,41 +86,28 @@ class SaleOrder(models.Model):
                 ], limit=1)
 
             if product:
-                line_desc = product.get_product_multiline_description_sale() or desc
-                if not tax_exempt:
-                    prod_taxes = product.taxes_id.filtered(lambda t: t.company_id == self.env.company)
-                    tax_ids = prod_taxes.ids if prod_taxes else (default_sale_tax.ids if default_sale_tax else [])
-
                 order_lines.append((0, 0, {
                     'product_id': product.id,
-                    'name': line_desc,
                     'product_uom_qty': qty,
                     'price_unit': price_unit,
-                    'tax_id': [(6, 0, tax_ids)],
                 }))
             else:
                 missing_code_label = code if code else _('SIN CÓDIGO')
                 line_desc = _('[%s - NO ENCONTRADO EN CATÁLOGO] %s') % (missing_code_label, desc)
                 warnings.append(_('• Producto no encontrado en catálogo: [%s] %s (Cantidad: %s, Precio: %s).') % (missing_code_label, desc, qty, price_unit))
 
-                if not tax_exempt:
-                    tax_ids = default_sale_tax.ids if default_sale_tax else []
-
                 order_lines.append((0, 0, {
                     'name': line_desc,
                     'product_uom_qty': qty,
                     'price_unit': price_unit,
-                    'tax_id': [(6, 0, tax_ids)],
                 }))
 
         has_warnings = bool(warnings)
         warning_msgs = "\n".join(warnings) if warnings else False
 
-        # PASO 1: Crear encabezado del pedido con el cliente (partner_id) primero
+        # Encabezado del pedido: Cliente y datos de auditoría (vendedor y término de pago se heredan de Odoo)
         order_vals = {
             'partner_id': partner.id,
-            'user_id': user_id,
-            'payment_term_id': payment_term_id,
             'date_order': parsed.get('date_order') or fields.Date.context_today(self),
             'imported_from_pdf': True,
             'origin_customer_name': customer_name if customer_name and partner.name == 'Consumidor Final' else False,
@@ -178,7 +118,7 @@ class SaleOrder(models.Model):
         }
         order = self.create(order_vals)
 
-        # PASO 2: Agregar las líneas después de que el partner y reglas DGI/impuestos estén establecidos
+        # Agregar las líneas (Odoo computará automáticamente impuestos y totales nativos)
         if order_lines:
             order.write({'order_line': order_lines})
 
