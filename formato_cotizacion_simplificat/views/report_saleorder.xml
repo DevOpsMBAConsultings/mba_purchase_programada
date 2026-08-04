@@ -12,8 +12,7 @@
         <xpath expr="//div[@class='page']" position="replace">
             <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black;">
                 <style>
-                    .header div[name="company_address"],
-                    .header ul[name="company_address_list"] {
+                    .header div[name="company_address"] {
                         display: none !important;
                     }
                 </style>
