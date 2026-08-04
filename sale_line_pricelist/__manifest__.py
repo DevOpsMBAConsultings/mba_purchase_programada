@@ -1,8 +1,8 @@
 {
     "name": "Sale Line Pricelist (MBA Consultings)",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Sales",
-    "summary": "Selección de lista de precios por línea de cotización con precio calculado visible en paréntesis.",
+    "summary": "Selección de lista de precios por línea de cotización y columna de stock disponible.",
     "description": """
         Módulo de selección de Tarifas / Listas de Precios por línea de venta en Odoo 18.
 
@@ -11,6 +11,7 @@
         2. Muestra de Precios en Paréntesis: Al desplegar la lista de tarifas en cada línea, muestra el nombre de la tarifa junto con el precio calculado para ese producto y cantidad entre paréntesis (ej. 'Detal (PAB) (6.10 B/.)').
         3. Ocultamiento de Tarifa Global: Oculta el campo de tarifa global en la cabecera de la cotización para dar prioridad al cálculo por línea.
         4. Campo Nota de Proveedor: Añade el campo de nota interna de proveedor (internal_vendor_note) en las líneas de la orden.
+        5. Columna Stock Disponible: Muestra las unidades libres disponibles en inventario (free_qty_available) como una columna dedicada por línea considerando el almacén de la orden.
     """,
     "author": "MBA Consultings, Brooks Gonzalez",
     "website": "https://www.mbaconsultings.com",
