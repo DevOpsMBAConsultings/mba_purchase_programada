@@ -2,8 +2,9 @@
 <odoo>
     <template id="report_saleorder_document_custom" inherit_id="sale.report_saleorder_document" priority="30">
 
-        <!-- Keep external_layout (default) - DO NOT change to basic_layout -->
-        <!-- This ensures header/footer repeat on every page -->
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">web.basic_layout</attribute>
+        </xpath>
 
         <xpath expr="//t[@t-set='address']" position="replace">
             <t t-set="address"/>
