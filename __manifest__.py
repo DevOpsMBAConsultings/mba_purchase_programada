@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'MBA - Importador de Cotizaciones PDF',
+    'name': 'MBA - Importador de Cotizaciones PDF (MBA Consultings)',
     'version': '18.0.1.0.0',
     'category': 'Sales/Sales',
     'summary': 'Importación automática y agnóstica de cotizaciones en PDF con homologación y alertas de auditoría',
