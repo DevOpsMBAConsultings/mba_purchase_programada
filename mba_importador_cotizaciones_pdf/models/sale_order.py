@@ -69,7 +69,24 @@ class SaleOrder(models.Model):
             orig_name = customer_name or _('Desconocido en PDF')
             warnings.append(_('• Cliente no encontrado en el catálogo: se asignó Consumidor Final (Cliente original en PDF: "%s").') % orig_name)
 
-        # 2. Homologación de Líneas de Pedido (Cliente y Productos alineados; impuestos/vendedor lo gestiona Odoo)
+        # 2. Homologación de Vendedor (Salesperson)
+        user_id = False
+        salesperson = parsed.get('salesperson')
+        if salesperson:
+            user = self.env['res.users'].search([
+                ('name', '=ilike', salesperson.strip()),
+                ('company_id', 'in', [self.env.company.id, False]),
+            ], limit=1)
+            if user:
+                user_id = user.id
+            else:
+                warnings.append(_('• Vendedor extraído del PDF ("%s") no fue encontrado en los usuarios de Odoo.') % salesperson)
+
+        # Si no vino en el PDF o no se encontró, tomar el vendedor asignado a la ficha del cliente
+        if not user_id and partner.user_id:
+            user_id = partner.user_id.id
+
+        # 3. Homologación de Líneas de Pedido (Cliente y Productos alineados)
         order_lines = []
         for line in parsed.get('lines', []):
             code = line.get('code', '').strip()
@@ -105,7 +122,7 @@ class SaleOrder(models.Model):
         has_warnings = bool(warnings)
         warning_msgs = "\n".join(warnings) if warnings else False
 
-        # Encabezado del pedido: Cliente y datos de auditoría (vendedor y término de pago se heredan de Odoo)
+        # Encabezado del pedido: Cliente, Vendedor y datos de auditoría
         order_vals = {
             'partner_id': partner.id,
             'date_order': parsed.get('date_order') or fields.Date.context_today(self),
@@ -116,6 +133,9 @@ class SaleOrder(models.Model):
             'has_import_warnings': has_warnings,
             'import_warning_message': warning_msgs,
         }
+        if user_id:
+            order_vals['user_id'] = user_id
+
         order = self.create(order_vals)
 
         # Agregar las líneas (Odoo computará automáticamente impuestos y totales nativos)
