@@ -22,7 +22,10 @@
                 <attribute name="readonly">not partner_id</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
-                <field name="line_pricelist_id" options="{'no_create': True, 'no_open': True}" optional="show"/>
+                <field name="line_pricelist_id"
+                       context="{'product_id': product_id, 'product_uom_qty': product_uom_qty, 'product_uom': product_uom, 'show_price_in_pricelist_name': True}"
+                       options="{'no_create': True, 'no_open': True}"
+                       optional="show"/>
                 <field name="internal_vendor_note" string="Vendor" optional="show"/>
             </xpath>
         </field>
