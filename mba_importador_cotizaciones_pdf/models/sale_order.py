@@ -94,7 +94,17 @@ class SaleOrder(models.Model):
             ('type_tax_use', '=', 'sale'),
             ('amount', '=', 0.0),
             ('company_id', 'in', [self.env.company.id, False]),
+            '|',
+            ('description', '=', 'Exento 0% Venta'),
+            ('name', '=', '0%'),
         ], limit=1)
+
+        if not zero_tax:
+            zero_tax = self.env['account.tax'].search([
+                ('type_tax_use', '=', 'sale'),
+                ('amount', '=', 0.0),
+                ('company_id', 'in', [self.env.company.id, False]),
+            ], limit=1)
 
         default_sale_tax = self.env['account.tax'].search([
             ('type_tax_use', '=', 'sale'),
