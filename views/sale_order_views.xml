@@ -27,6 +27,8 @@
                        options="{'no_create': True, 'no_open': True}"
                        optional="show"/>
                 <field name="internal_vendor_note" string="Vendor" optional="show"/>
+                <field name="free_qty_available" string="Stock Disp." optional="show"/>
+
             </xpath>
         </field>
     </record>
