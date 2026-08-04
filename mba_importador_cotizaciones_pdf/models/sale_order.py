@@ -90,12 +90,29 @@ class SaleOrder(models.Model):
 
         # 4. Homologación de Líneas de Pedido (con Opción 1: producto no encontrado -> sin product_id + warning)
         order_lines = []
+        zero_tax = self.env['account.tax'].search([
+            ('type_tax_use', '=', 'sale'),
+            ('amount', '=', 0.0),
+            ('company_id', 'in', [self.env.company.id, False]),
+        ], limit=1)
+
+        default_sale_tax = self.env['account.tax'].search([
+            ('type_tax_use', '=', 'sale'),
+            ('company_id', 'in', [self.env.company.id, False]),
+        ], limit=1)
+
         for line in parsed.get('lines', []):
             code = line.get('code', '').strip()
             desc = line.get('description', '').strip()
             qty = line.get('qty', 1.0)
             price_unit = line.get('price_unit', 0.0)
             tax_exempt = line.get('tax_exempt', False)
+
+            # Determinar impuesto (si es exento, se asigna el impuesto 0% de Panamá requerido por la DGI)
+            if tax_exempt:
+                tax_ids = zero_tax.ids if zero_tax else []
+            else:
+                tax_ids = []
 
             product = False
             if code:
@@ -107,11 +124,10 @@ class SaleOrder(models.Model):
 
             if product:
                 line_desc = product.get_product_multiline_description_sale() or desc
-                taxes = product.taxes_id.filtered(lambda t: t.company_id == self.env.company)
-                if tax_exempt:
-                    tax_ids = []
-                else:
-                    tax_ids = taxes.ids
+                if not tax_exempt:
+                    prod_taxes = product.taxes_id.filtered(lambda t: t.company_id == self.env.company)
+                    tax_ids = prod_taxes.ids if prod_taxes else (default_sale_tax.ids if default_sale_tax else [])
+
                 order_lines.append((0, 0, {
                     'product_id': product.id,
                     'name': line_desc,
@@ -123,14 +139,10 @@ class SaleOrder(models.Model):
                 missing_code_label = code if code else _('SIN CÓDIGO')
                 line_desc = _('[%s - NO ENCONTRADO EN CATÁLOGO] %s') % (missing_code_label, desc)
                 warnings.append(_('• Producto no encontrado en catálogo: [%s] %s (Cantidad: %s, Precio: %s).') % (missing_code_label, desc, qty, price_unit))
-                tax_ids = []
+
                 if not tax_exempt:
-                    default_tax = self.env['account.tax'].search([
-                        ('type_tax_use', '=', 'sale'),
-                        ('company_id', '=', self.env.company.id),
-                    ], limit=1)
-                    if default_tax:
-                        tax_ids = default_tax.ids
+                    tax_ids = default_sale_tax.ids if default_sale_tax else []
+
                 order_lines.append((0, 0, {
                     'name': line_desc,
                     'product_uom_qty': qty,
