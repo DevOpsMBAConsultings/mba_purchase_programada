@@ -1,6 +1,6 @@
 {
     "name": "Sale Line Pricelist (MBA Consultings)",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Sales",
     "summary": "Selección de lista de precios por línea de cotización con precio calculado visible en paréntesis.",
     "description": """
