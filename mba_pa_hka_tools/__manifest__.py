@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MBA - HKA Tools Importador (MBA Consultings)',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'category': 'Accounting/Localizations',
     'summary': 'Utilidades para descargar e importar facturas electrónicas desde HKA por CUFE.',
     'author': 'MBA Consultings, Brooks González',

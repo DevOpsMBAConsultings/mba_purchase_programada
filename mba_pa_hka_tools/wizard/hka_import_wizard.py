@@ -68,8 +68,8 @@ class HKAImportWizard(models.TransientModel):
             return found[0].text if found else default
 
         # 1. Extraer datos del emisor y receptor
-        ruc_receptor = get_node_text(root, 'numeroRUC')
-        nombre_receptor = get_node_text(root, 'razonSocial')
+        ruc_receptor = get_node_text(root, 'dRuc')
+        nombre_receptor = get_node_text(root, 'dNombRec')
         
         # Buscar el cliente en Odoo
         partner = self.env['res.partner'].search([('vat', '=', ruc_receptor)], limit=1)
@@ -87,7 +87,7 @@ class HKAImportWizard(models.TransientModel):
                 })
 
         # 2. Extraer fecha
-        fecha_emision_str = get_node_text(root, 'fechaEmision')
+        fecha_emision_str = get_node_text(root, 'dFechaEm')
         invoice_date = False
         if fecha_emision_str:
             try:
@@ -102,7 +102,7 @@ class HKAImportWizard(models.TransientModel):
         # creamos una sola línea global por el subtotal y aplicamos el ITBMS global, 
         # a menos que requieran detalle por línea.
         # Buscaremos items
-        items = root.xpath("//*[local-name()='item']")
+        items = root.xpath("//*[local-name()='gItem']")
         invoice_lines = []
         
         # Buscar el impuesto ITBMS base de compras (7%)
@@ -115,10 +115,10 @@ class HKAImportWizard(models.TransientModel):
         ], limit=1)
 
         for item in items:
-            desc = get_node_text(item, 'descripcion', 'Item')
-            qty = float(get_node_text(item, 'cantidad', '1.0'))
-            price = float(get_node_text(item, 'precioUnitario', '0.0'))
-            tasa_itbms = get_node_text(item, 'tasaITBMS', '00')
+            desc = get_node_text(item, 'dDescProd', 'Item')
+            qty = float(get_node_text(item, 'dCantCodInt', '1.0'))
+            price = float(get_node_text(item, 'dPrUnit', '0.0'))
+            tasa_itbms = get_node_text(item, 'dTasaITBMS', '00')
             
             line_vals = {
                 'name': desc,
@@ -132,7 +132,7 @@ class HKAImportWizard(models.TransientModel):
 
         if not invoice_lines:
             # Fallback a una sola línea si no hay items legibles
-            total_neto = float(get_node_text(root, 'totalPrecioNeto', '0.0'))
+            total_neto = float(get_node_text(root, 'dTotNeto', '0.0'))
             invoice_lines.append((0, 0, {
                 'name': 'Importación Global Factura',
                 'quantity': 1,
@@ -140,7 +140,7 @@ class HKAImportWizard(models.TransientModel):
             }))
 
         # 4. Crear la factura (account.move)
-        numero_documento = get_node_text(root, 'numeroDocumentoFiscal', '')
+        numero_documento = get_node_text(root, 'dNroDF', '')
         
         move_vals = {
             'move_type': 'out_invoice',
