@@ -19,6 +19,7 @@ Este módulo personaliza el comportamiento de la columna Proveedor en el Reabast
         'purchase_stock',
     ],
     'data': [
+        'data/server_action.xml',
         'views/stock_warehouse_orderpoint_views.xml',
     ],
     'installable': True,
