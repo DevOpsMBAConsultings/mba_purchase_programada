@@ -18,7 +18,7 @@
                     }
                 </style>
 
-                <div class="mb-3">
+                <div class="mb-5" style="margin-bottom: 40px !important;">
                     <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
                 </div>
 
