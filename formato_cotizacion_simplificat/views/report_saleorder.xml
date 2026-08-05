@@ -35,8 +35,7 @@
                         </t>
                         <strong>Dirección:</strong> <span t-field="doc.partner_id.street"/><br/>
                         <strong>Teléfono:</strong> <span t-field="doc.partner_id.phone"/><br/>
-                        <strong>Correo:</strong> <span t-field="doc.partner_id.email"/><br/>
-                        <strong>Vendedor:</strong> <span t-field="doc.user_id.name"/>
+                        <strong>Correo:</strong> <span t-field="doc.partner_id.email"/>
                     </div>
 
                     <div class="col-5 offset-1">
@@ -44,7 +43,8 @@
                         <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
                         <strong>Fecha:</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/><br/>
                         <strong>Expiración:</strong> <span t-field="doc.validity_date"/><br/>
-                        <strong>Condiciones de pago:</strong> <span t-field="doc.payment_term_id.name"/>
+                        <strong>Condiciones de pago:</strong> <span t-field="doc.payment_term_id.name"/><br/>
+                        <strong>Vendedor:</strong> <span t-field="doc.user_id.name"/>
                     </div>
                 </div>
 
