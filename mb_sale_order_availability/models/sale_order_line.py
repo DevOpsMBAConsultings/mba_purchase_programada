@@ -6,7 +6,7 @@ class SaleOrderLine(models.Model):
     free_qty_available = fields.Float(
         string='Stock Disp.',
         compute='_compute_free_qty_available',
-        digits='Product Unit of Measure',
+        digits=(16, 0),
         help="Cantidad disponible libre en inventario para este producto en el almacén de la cotización."
     )
 
