@@ -140,6 +140,8 @@ class HKAImportWizard(models.TransientModel):
             }))
 
         # 4. Crear la factura (account.move)
+        numero_documento = get_node_text(root, 'numeroDocumentoFiscal', '')
+        
         move_vals = {
             'move_type': 'out_invoice',
             'partner_id': partner.id,
@@ -147,14 +149,18 @@ class HKAImportWizard(models.TransientModel):
             'invoice_line_ids': invoice_lines,
         }
         
-        # Guardar CUFE si el módulo base lo soporta
+        if numero_documento:
+            move_vals['name'] = numero_documento
+            
+        # Guardar CUFE y estado PAC si el módulo base lo soporta
         if hasattr(self.env['account.move'], 'l10n_pa_cufe'):
             move_vals['l10n_pa_cufe'] = self.cufe
+            move_vals['l10n_pa_pac_status'] = 'accepted'
         
         move = self.env['account.move'].create(move_vals)
         
-        # 5. Publicar
-        move.action_post()
+        # 5. Publicar (Bypass de validación local DGI para facturas importadas)
+        move.with_context(skip_pac_send=True).action_post()
         
         # 6. Adjuntar XML
         filename = f"{self.cufe}.xml"
