@@ -28,12 +28,8 @@
                         <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
                         <strong>Contacto:</strong> <span t-field="o.partner_id.child_ids[0].name" t-if="o.partner_id.child_ids"/><br/>
                         <strong>Dirección:</strong> <span t-field="o.partner_id.street"/><br/>
-                        <t t-if="o.partner_id.phone">
-                            <strong>Teléfono:</strong> <span t-field="o.partner_id.phone"/><br/>
-                        </t>
-                        <t t-if="o.partner_id.email">
-                            <strong>Correo:</strong> <span t-field="o.partner_id.email"/><br/>
-                        </t>
+                        <strong>Teléfono:</strong> <span t-field="o.partner_id.phone"/><br/>
+                        <strong>Correo:</strong> <span t-field="o.partner_id.email"/><br/>
                     </div>
 
                     <div class="col-5 offset-1">
