@@ -64,7 +64,7 @@ class HKAImportWizard(models.TransientModel):
         
         # Función auxiliar para buscar nodos sin importar el namespace
         def get_node_text(node, tag_name, default=""):
-            found = node.xpath(f"//*[local-name()='{tag_name}']")
+            found = node.xpath(f".//*[local-name()='{tag_name}']")
             return found[0].text if found else default
 
         # 1. Extraer datos del emisor y receptor
@@ -164,7 +164,7 @@ class HKAImportWizard(models.TransientModel):
         
         # 6. Adjuntar XML
         filename = f"{self.cufe}.xml"
-        self.env['ir.attachment'].create({
+        xml_att = self.env['ir.attachment'].create({
             'name': filename,
             'type': 'binary',
             'datas': xml_base64,
@@ -172,6 +172,45 @@ class HKAImportWizard(models.TransientModel):
             'res_id': move.id,
             'mimetype': 'application/xml',
         })
+        
+        attachment_ids = [xml_att.id]
+        
+        # 7. Descargar PDF también
+        pdf_payload = {
+            "cufe": self.cufe.strip(),
+            "tipoArchivo": "PDF"
+        }
+        try:
+            url = f"{self.env.company.l10n_pa_hka_url.rstrip('/')}/Descarga"
+            headers = {
+                'Authorization': f'Bearer {self.env.company.l10n_pa_hka_token}',
+                'Content-Type': 'application/json'
+            }
+            pdf_res = requests.post(url, json=pdf_payload, headers=headers, timeout=30)
+            if pdf_res.status_code == 200:
+                pdf_data = pdf_res.json()
+                if str(pdf_data.get("Codigo")) == "0" and pdf_data.get("Archivo"):
+                    pdf_att = self.env['ir.attachment'].create({
+                        'name': f"{self.cufe}_CAFE.pdf",
+                        'type': 'binary',
+                        'datas': pdf_data.get("Archivo"),
+                        'res_model': 'account.move',
+                        'res_id': move.id,
+                        'mimetype': 'application/pdf',
+                    })
+                    attachment_ids.append(pdf_att.id)
+        except Exception as e:
+            _logger.warning("No se pudo descargar el PDF: %s", str(e))
+            
+        # DEBUG: Extraer los primeros 50 tags del XML para saber su estructura real
+        all_tags = [str(el.tag).split('}')[-1] for el in root.iter()][:50]
+        debug_msg = f"Tags encontrados en el XML (debug): {', '.join(all_tags)}"
+
+        # 8. Publicar en el chatter
+        move.message_post(
+            body=_(f"Factura importada desde HKA.<br/>{debug_msg}"),
+            attachment_ids=attachment_ids
+        )
 
         # Retornar vista de la factura creada
         return {
