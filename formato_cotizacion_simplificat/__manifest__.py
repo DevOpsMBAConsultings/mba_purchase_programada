@@ -1,6 +1,6 @@
 {
     'name': 'Formato Cotización (MBA Consultings)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'license': 'LGPL-3',
     'summary': 'Formato personalizado de cotización | MBA Consultings',
     'description': 'Base quote format for Sale Orders.',
