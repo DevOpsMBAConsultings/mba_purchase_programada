@@ -21,9 +21,6 @@
             <xpath expr="//field[@name='order_line']" position="attributes">
                 <attribute name="readonly">not partner_id</attribute>
             </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom']" position="before">
-                <field name="free_qty_available" string="Stock Disp." optional="show"/>
-            </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
                 <field name="line_pricelist_id"
                        context="{'product_id': product_id, 'product_uom_qty': product_uom_qty, 'product_uom': product_uom, 'show_price_in_pricelist_name': True}"
@@ -31,7 +28,6 @@
                        optional="show"/>
                 <field name="internal_vendor_note" string="Vendor" optional="show"/>
             </xpath>
-
         </field>
     </record>
 </odoo>
