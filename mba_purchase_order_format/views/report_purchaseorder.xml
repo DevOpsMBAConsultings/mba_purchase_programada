@@ -24,9 +24,16 @@
 
                 <div class="row mb-4">
                     <div class="col-6">
-                        <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Proveedor: <span t-field="o.partner_id.name"/></strong>
-                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
-                        <strong>Contacto:</strong> <span t-field="o.partner_id.child_ids[0].name" t-if="o.partner_id.child_ids"/><br/>
+                        <t t-if="o.partner_id.parent_id">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Proveedor: <span t-field="o.partner_id.parent_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                            <strong>Contacto:</strong> <span t-field="o.partner_id.name"/><br/>
+                        </t>
+                        <t t-else="">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Proveedor: <span t-field="o.partner_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                            <strong>Contacto:</strong> <span t-field="o.partner_id.child_ids[0].name" t-if="o.partner_id.child_ids"/><br/>
+                        </t>
                         <strong>Dirección:</strong> <span t-field="o.partner_id.street"/><br/>
                         <strong>Teléfono:</strong> <span t-field="o.partner_id.phone"/><br/>
                         <strong>Correo:</strong> <span t-field="o.partner_id.email"/><br/>
