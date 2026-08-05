@@ -24,18 +24,24 @@
 
                 <div class="row mb-4">
                     <div class="col-6">
-                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Datos del cliente</strong>
-                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
-                        <strong>Nombre:</strong> <span t-field="doc.partner_id.name"/><br/>
-                        <strong>Contacto:</strong> <span t-field="doc.partner_id.child_ids[0].name" t-if="doc.partner_id.child_ids"/><br/>
+                        <t t-if="doc.partner_id.parent_id">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Cliente: <span t-field="doc.partner_id.parent_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                            <strong>Contacto:</strong> <span t-field="doc.partner_id.name"/><br/>
+                        </t>
+                        <t t-else="">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Cliente: <span t-field="doc.partner_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        </t>
                         <strong>Dirección:</strong> <span t-field="doc.partner_id.street"/><br/>
+                        <strong>Teléfono:</strong> <span t-field="doc.partner_id.phone"/><br/>
+                        <strong>Correo:</strong> <span t-field="doc.partner_id.email"/><br/>
                         <strong>Vendedor:</strong> <span t-field="doc.user_id.name"/>
                     </div>
 
                     <div class="col-5 offset-1">
-                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Cotización</strong>
+                        <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Cotización: <span t-field="doc.name"/></strong>
                         <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
-                        <strong>Número:</strong> <span t-field="doc.name"/><br/>
                         <strong>Fecha:</strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/><br/>
                         <strong>Expiración:</strong> <span t-field="doc.validity_date"/><br/>
                         <strong>Condiciones de pago:</strong> <span t-field="doc.payment_term_id.name"/>
