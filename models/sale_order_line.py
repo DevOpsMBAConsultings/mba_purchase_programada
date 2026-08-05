@@ -12,7 +12,7 @@ class SaleOrderLine(models.Model):
         help="Pricelist applied to this specific line."
     )
     
-    internal_vendor_note = fields.Char(
+    internal_vendor_note = fields.Text(
         string='Vendor',
         compute='_compute_internal_vendor_note',
         store=True,
@@ -27,7 +27,7 @@ class SaleOrderLine(models.Model):
                 vendors = line.product_id.seller_ids.mapped('partner_id.name')
                 # Remove duplicates while preserving order
                 unique_vendors = list(dict.fromkeys(vendors))
-                line.internal_vendor_note = ', '.join(unique_vendors)
+                line.internal_vendor_note = '\n'.join(unique_vendors)
             else:
                 line.internal_vendor_note = False
 
