@@ -19,10 +19,6 @@ Módulo para Odoo 18 CE que permite la selección individual de listas de precio
 4. **Nota Interna de Proveedor (`internal_vendor_note`)**:
    - Añade una columna `Vendor` en la tabla de líneas de venta.
 
-5. **Disponibilidad de Inventario en Columna (`free_qty_available`)**:
-   - Muestra las unidades disponibles libres (`Stock Disp.`) como una columna independiente en la tabla de líneas de cotización, calculada automáticamente según el almacén asignado a la orden.
-
 ## Autor y Licencia
 - **Autor**: MBA Consultings, Brooks Gonzalez
 - **Licencia**: LGPL-3
-
