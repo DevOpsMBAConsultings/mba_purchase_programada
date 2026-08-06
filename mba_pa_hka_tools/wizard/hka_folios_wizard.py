@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from mba_pa_edi_hka.models.hka_client import HKAClient
+from odoo.addons.mba_pa_edi_hka.models.hka_client import HKAClient
+
 
 
 class HKAFoliosWizard(models.TransientModel):
