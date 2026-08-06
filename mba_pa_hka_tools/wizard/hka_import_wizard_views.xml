@@ -10,6 +10,7 @@
                 </div>
                 <group>
                     <field name="cufe" placeholder="Ej: FE01100000..."/>
+                    <field name="partner_id" placeholder="Seleccione el cliente (opcional)..." options="{'no_create': True}"/>
                 </group>
                 <footer>
                     <button name="action_import_invoice" string="Descargar e Importar" type="object" class="btn-primary"/>
