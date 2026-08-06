@@ -77,56 +77,51 @@ class HKAImportWizard(models.TransientModel):
             partner = self.partner_id
         else:
             partner = False
-
-        # 1. Extraer datos del receptor (gDatRec) si no fue seleccionado manualmente
-        if not partner:
+            # 1. Extraer datos del receptor (gDatRec)
             receptor_nodes = root.xpath(".//*[local-name()='gDatRec']")
-        if receptor_nodes:
-            rec_node = receptor_nodes[0]
-            ruc_receptor = get_node_text(rec_node, 'dRuc')
-            nombre_receptor = get_node_text(rec_node, 'dNombRec')
-        else:
-            ruc_receptor = get_node_text(root, 'dRuc')
-            nombre_receptor = get_node_text(root, 'dNombRec')
-        
-        ruc_receptor = (ruc_receptor or '').strip()
-        nombre_receptor = (nombre_receptor or '').strip()
+            if receptor_nodes:
+                rec_node = receptor_nodes[0]
+                ruc_receptor = get_node_text(rec_node, 'dRuc')
+                nombre_receptor = get_node_text(rec_node, 'dNombRec')
+            else:
+                ruc_receptor = get_node_text(root, 'dRuc')
+                nombre_receptor = get_node_text(root, 'dNombRec')
+            
+            ruc_receptor = (ruc_receptor or '').strip()
+            nombre_receptor = (nombre_receptor or '').strip()
 
-        # Evitar asignar la propia empresa si por alguna razón el RUC coincide con el emisor
-        company_vat = (self.env.company.vat or self.env.company.partner_id.vat or '').strip()
-        if ruc_receptor and company_vat and ruc_receptor == company_vat and nombre_receptor and nombre_receptor.upper() != self.env.company.name.upper():
-            # Si el RUC dio la propia empresa pero el nombre del receptor es distinto, priorizar búsqueda por nombre
-            partner = self.env['res.partner'].search([
-                ('name', '=ilike', nombre_receptor),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
-        else:
-            partner = False
-
-        if not partner and ruc_receptor:
-            partner = self.env['res.partner'].search([
-                ('vat', '=', ruc_receptor),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
-            if not partner and hasattr(self.env['res.partner'], 'l10n_pa_ruc'):
+            # Evitar asignar la propia empresa si por alguna razón el RUC coincide con el emisor
+            company_vat = (self.env.company.vat or self.env.company.partner_id.vat or '').strip()
+            if ruc_receptor and company_vat and ruc_receptor == company_vat and nombre_receptor and nombre_receptor.upper() != self.env.company.name.upper():
                 partner = self.env['res.partner'].search([
-                    ('l10n_pa_ruc', '=', ruc_receptor),
+                    ('name', '=ilike', nombre_receptor),
                     ('company_id', 'in', [self.env.company.id, False]),
                 ], limit=1)
 
-        if not partner and nombre_receptor:
-            partner = self.env['res.partner'].search([
-                ('name', '=ilike', nombre_receptor),
-                ('company_id', 'in', [self.env.company.id, False]),
-            ], limit=1)
+            if not partner and ruc_receptor:
+                partner = self.env['res.partner'].search([
+                    ('vat', '=', ruc_receptor),
+                    ('company_id', 'in', [self.env.company.id, False]),
+                ], limit=1)
+                if not partner and hasattr(self.env['res.partner'], 'l10n_pa_ruc'):
+                    partner = self.env['res.partner'].search([
+                        ('l10n_pa_ruc', '=', ruc_receptor),
+                        ('company_id', 'in', [self.env.company.id, False]),
+                    ], limit=1)
 
-        if not partner:
-            partner = self.env['res.partner'].create({
-                'name': nombre_receptor or f'Cliente {ruc_receptor}',
-                'vat': ruc_receptor,
-                'company_type': 'company',
-                'company_id': self.env.company.id,
-            })
+            if not partner and nombre_receptor:
+                partner = self.env['res.partner'].search([
+                    ('name', '=ilike', nombre_receptor),
+                    ('company_id', 'in', [self.env.company.id, False]),
+                ], limit=1)
+
+            if not partner:
+                partner = self.env['res.partner'].create({
+                    'name': nombre_receptor or f'Cliente {ruc_receptor}',
+                    'vat': ruc_receptor,
+                    'company_type': 'company',
+                    'company_id': self.env.company.id,
+                })
 
         # 2. Extraer fecha
         fecha_emision_str = get_node_text(root, 'dFechaEm')
