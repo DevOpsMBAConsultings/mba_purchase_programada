@@ -117,10 +117,18 @@ class SaleOrder(models.Model):
             
         if self.env.context.get("dgi_payment_method_other_desc") is not None:
             vals["dgi_payment_method_other_desc"] = self.env.context["dgi_payment_method_other_desc"]
-        # Notas complementarias: preferir las de la cotización; si no, las del contacto
-        notes = self.dgi_payment_notes or self.partner_id.dgi_payment_notes or ''
-        if notes:
-            vals["dgi_payment_notes"] = notes
+        # Notas complementarias: incluir número de cotización de origen y notas del pedido/contacto
+        quote_ref = f"Cotización: {self.name}"
+        existing_notes = (self.dgi_payment_notes or self.partner_id.dgi_payment_notes or "").strip()
+        if existing_notes:
+            if quote_ref not in existing_notes:
+                notes = f"{quote_ref}\n{existing_notes}"
+            else:
+                notes = existing_notes
+        else:
+            notes = quote_ref
+
+        vals["dgi_payment_notes"] = notes
         if self.dgi_retention_type_id:
             vals["dgi_retention_type_id"] = self.dgi_retention_type_id.id
         return vals
