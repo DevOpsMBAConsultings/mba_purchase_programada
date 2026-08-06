@@ -12,6 +12,20 @@ class ProductTemplate(models.Model):
             arch_el = etree.fromstring(res['arch'])
             target = arch_el.xpath("//field[@name='list_price']") or arch_el.xpath("//field[@name='lst_price']") or arch_el.xpath("//field[@name='name']")
             if target:
+                qty_node = arch_el.xpath("//field[@name='qty_available']")
+                if qty_node:
+                    qty_el = qty_node[0]
+                    qty_el.getparent().remove(qty_el)
+                    qty_el.attrib['optional'] = 'show'
+                else:
+                    qty_el = etree.Element('field', name='qty_available', optional='show')
+                target[0].addprevious(qty_el)
+
+                if 'models' in res and self._name in res['models']:
+                    fields_list = list(res['models'][self._name])
+                    if 'qty_available' not in fields_list:
+                        res['models'][self._name] = tuple(fields_list + ['qty_available'])
+
                 pricelists = self.env["product.pricelist"].search(
                     [("display_in_product_list", "=", True)],
                     order="sequence, id"
@@ -121,6 +135,20 @@ class ProductProduct(models.Model):
             arch_el = etree.fromstring(res['arch'])
             target = arch_el.xpath("//field[@name='list_price']") or arch_el.xpath("//field[@name='lst_price']") or arch_el.xpath("//field[@name='name']")
             if target:
+                qty_node = arch_el.xpath("//field[@name='qty_available']")
+                if qty_node:
+                    qty_el = qty_node[0]
+                    qty_el.getparent().remove(qty_el)
+                    qty_el.attrib['optional'] = 'show'
+                else:
+                    qty_el = etree.Element('field', name='qty_available', optional='show')
+                target[0].addprevious(qty_el)
+
+                if 'models' in res and self._name in res['models']:
+                    fields_list = list(res['models'][self._name])
+                    if 'qty_available' not in fields_list:
+                        res['models'][self._name] = tuple(fields_list + ['qty_available'])
+
                 pricelists = self.env["product.pricelist"].search(
                     [("display_in_product_list", "=", True)],
                     order="sequence, id"
