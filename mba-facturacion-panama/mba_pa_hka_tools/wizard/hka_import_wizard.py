@@ -15,6 +15,11 @@ class HKAImportWizard(models.TransientModel):
     _description = 'Asistente para Importar Factura desde HKA'
 
     cufe = fields.Char(string='CUFE', required=True, help="Código Único de Factura Electrónica (66 caracteres)")
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Cliente (Opcional)',
+        help="Si selecciona un cliente, la factura importada se asignará a este contacto en lugar de autodetectarlo del XML."
+    )
 
     def action_import_invoice(self):
         self.ensure_one()
@@ -67,8 +72,15 @@ class HKAImportWizard(models.TransientModel):
             found = node.xpath(f".//*[local-name()='{tag_name}']")
             return found[0].text if found else default
 
-        # 1. Extraer datos del receptor (gDatRec)
-        receptor_nodes = root.xpath(".//*[local-name()='gDatRec']")
+        # 0. Si el usuario seleccionó manualmente el cliente en el wizard, usarlo directamente
+        if self.partner_id:
+            partner = self.partner_id
+        else:
+            partner = False
+
+        # 1. Extraer datos del receptor (gDatRec) si no fue seleccionado manualmente
+        if not partner:
+            receptor_nodes = root.xpath(".//*[local-name()='gDatRec']")
         if receptor_nodes:
             rec_node = receptor_nodes[0]
             ruc_receptor = get_node_text(rec_node, 'dRuc')
