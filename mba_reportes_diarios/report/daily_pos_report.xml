@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Acción de Reporte: Cierre de Caja Diario (POS)
+         ══════════════════════════════════════════════════════════════════ -->
+    <record id="action_report_daily_pos" model="ir.actions.report">
+        <field name="name">Cierre de Caja - POS</field>
+        <field name="model">mba.daily.pos.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mba_reportes_diarios.daily_pos_report_template</field>
+        <field name="report_file">mba_reportes_diarios.daily_pos_report_template</field>
+        <!-- Concatenacion en vez de % para no mezclar formateo dentro del
+             eval del campo. object.date_report es el dia 1 en modo mensual. -->
+        <field
+            name="print_report_name"
+        >('Cierre Mensual - ' + object.date_report.strftime('%Y-%m')) if object.period_type == 'month' else ('Cierre Diario - ' + str(object.date_report))</field>
+    </record>
+
+</odoo>
