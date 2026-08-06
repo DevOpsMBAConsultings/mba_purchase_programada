@@ -547,3 +547,52 @@ class HKAClient:
                 "success": False,
                 "error_message": str(e)
             }
+
+    def get_folios_restantes(self):
+        """
+        Consulta los folios restantes disponibles en HKA.
+        Endpoint: GET /api/FoliosRestantes
+        """
+        endpoint = f"{self.base_url}/FoliosRestantes"
+        headers = {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": f"Bearer {self.token}"
+        }
+        try:
+            response = requests.get(endpoint, headers=headers, timeout=30)
+            response.raise_for_status()
+
+            data = response.json()
+            codigo = str(data.get("codigo", data.get("Codigo", "")))
+            resultado = str(data.get("resultado", data.get("Resultado", ""))).lower()
+
+            is_success = (codigo in ("200", "0")) or (resultado in ("exito", "exitoso", "ok"))
+
+            if not is_success:
+                return {
+                    "success": False,
+                    "error_message": f"Código {codigo}: {data.get('mensaje', data.get('Mensaje', 'Error al consultar folios'))}",
+                    "raw_response": json.dumps(data, indent=2, ensure_ascii=False)
+                }
+
+            return {
+                "success": True,
+                "licencia": data.get("licencia", data.get("Licencia", "")),
+                "fecha_licencia": data.get("fechaLicencia", data.get("FechaLicencia", "")),
+                "ciclo": data.get("ciclo", data.get("Ciclo", "")),
+                "fecha_ciclo": data.get("fechaCiclo", data.get("FechaCiclo", "")),
+                "folios_totales_ciclo": str(data.get("foliosTotalesCiclo", data.get("FoliosTotalesCiclo", "0"))),
+                "folios_utilizados_ciclo": str(data.get("foliosUtilizadosCiclo", data.get("FoliosUtilizadosCiclo", "0"))),
+                "folios_disponibles_ciclo": str(data.get("foliosDisponibleCiclo", data.get("FoliosDisponibleCiclo", "0"))),
+                "folios_totales": str(data.get("foliosTotales", data.get("FoliosTotales", "0"))),
+                "folios_totales_disponibles": str(data.get("foliosTotalesDisponibles", data.get("FoliosTotalesDisponibles", "0"))),
+                "mensaje": data.get("mensaje", data.get("Mensaje", "")),
+                "raw_response": json.dumps(data, indent=2, ensure_ascii=False)
+            }
+        except requests.exceptions.RequestException as e:
+            _logger.error("Error consultando folios HKA: %s", e)
+            return {
+                "success": False,
+                "error_message": str(e)
+            }
+

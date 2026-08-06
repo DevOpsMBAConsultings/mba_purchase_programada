@@ -28,7 +28,7 @@
     </record>
 
     <menuitem id="menu_hka_tools_root"
-              name="Utilidades HKA"
+              name="Herramientas PAC"
               parent="account.menu_finance_entries"
               sequence="50"/>
 
@@ -37,4 +37,10 @@
               parent="menu_hka_tools_root"
               action="action_hka_import_wizard"
               sequence="10"/>
+
+    <menuitem id="menu_hka_folios_restantes"
+              name="Consultar Folios Restantes HKA"
+              parent="menu_hka_tools_root"
+              action="action_hka_folios_wizard"
+              sequence="20"/>
 </odoo>
