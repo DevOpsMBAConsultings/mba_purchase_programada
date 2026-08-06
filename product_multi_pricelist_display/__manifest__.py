@@ -2,7 +2,7 @@
     "name": "Product Multi Pricelist Display",
     "version": "18.0.1.0.1",
     "category": "Sales",
-    "depends": ["product", "sale"],
+    "depends": ["product", "sale", "stock"],
     "data": [
         "views/pricelist_views.xml",
         "views/product_views.xml",
