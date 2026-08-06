@@ -505,13 +505,9 @@ class DigifactNUCBuilder(models.AbstractModel):
         else:
             SubElement(buyer, "TaxID").text = buyer_ruc or ""
 
-        # Priority: commercial_partner.l10n_pa_tipo_contribuyente -> move snapshot
-        taxpayer_val = getattr(commercial_partner, "l10n_pa_tipo_contribuyente", "") or ""
-        if taxpayer_val:
-            tax_type = "2" if taxpayer_val == "2" else "1"
-        else:
-            tax_type = "2" if (getattr(move, "dgi_partner_taxpayer_type", "") or "").strip() == "juridico" else "1"
-            
+        # Priority: move snapshot -> commercial_partner.l10n_pa_tipo_contribuyente -> company_type
+        taxpayer_val = getattr(move, "dgi_partner_taxpayer_type", None) or getattr(commercial_partner, "l10n_pa_tipo_contribuyente", None) or ("2" if commercial_partner.company_type == "company" else "1")
+        tax_type = "2" if str(taxpayer_val) == "2" or str(taxpayer_val).strip().lower() == "juridico" else "1"
         if tipo_receptor not in ("02", "04"):
             SubElement(buyer, "TaxIDType").text = tax_type
 
