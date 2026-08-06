@@ -46,14 +46,40 @@ class SaleOrder(models.Model):
         """
         warnings = []
 
-        # 1. Homologación de Cliente (Partner) -> Si no existe, usar Consumidor Final
+        # 1. Homologación de Cliente (Partner) -> Si viene RUC o Nombre en PDF
         partner = False
         customer_name = parsed.get('customer_name')
-        if customer_name:
+        customer_ruc = parsed.get('customer_ruc')
+        customer_dv = parsed.get('customer_dv')
+
+        if customer_ruc:
+            partner = self.env['res.partner'].search([
+                ('vat', '=', customer_ruc.strip()),
+                ('company_id', 'in', [self.env.company.id, False]),
+            ], limit=1)
+            if not partner and hasattr(self.env['res.partner'], 'l10n_pa_ruc'):
+                partner = self.env['res.partner'].search([
+                    ('l10n_pa_ruc', '=', customer_ruc.strip()),
+                    ('company_id', 'in', [self.env.company.id, False]),
+                ], limit=1)
+
+        if not partner and customer_name:
             partner = self.env['res.partner'].search([
                 ('name', '=ilike', customer_name.strip()),
                 ('company_id', 'in', [self.env.company.id, False]),
             ], limit=1)
+
+        if not partner and (customer_name or customer_ruc):
+            partner_vals = {
+                'name': customer_name or f'Cliente {customer_ruc}',
+                'company_type': 'company',
+                'company_id': self.env.company.id,
+            }
+            if customer_ruc:
+                partner_vals['vat'] = customer_ruc.strip()
+            if customer_dv and hasattr(self.env['res.partner'], 'l10n_pa_dv'):
+                partner_vals['l10n_pa_dv'] = customer_dv.strip()
+            partner = self.env['res.partner'].create(partner_vals)
 
         if not partner:
             partner = self.env['res.partner'].search([
