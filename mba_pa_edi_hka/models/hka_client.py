@@ -70,7 +70,7 @@ class HKAClient:
             partner_ruc = "00000"
             partner_dv = ""
         partner_name = getattr(invoice, "dgi_partner_name", None) or commercial_partner.name or ""
-        partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or ("2" if commercial_partner.company_type == "company" else "1")
+        partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or getattr(commercial_partner, "l10n_pa_tipo_contribuyente", None) or ("2" if commercial_partner.company_type == "company" else "1")
 
         # --- Datos del Cliente ---
         cliente_data = {

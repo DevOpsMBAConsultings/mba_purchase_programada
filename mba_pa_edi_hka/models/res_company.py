@@ -189,18 +189,21 @@ class ResCompany(models.Model):
             target.write(vals)
             
             if partner:
+                tipo_str = "Persona Natural" if tipo_ruc == "1" else ("Persona Jurídica" if tipo_ruc == "2" else "Desconocido")
                 partner.message_post(
-                    body=f"✅ <b>Validación DGI completada mediante HKA</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}",
+                    body=f"✅ <b>Validación DGI completada mediante HKA</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}<br/>Tipo DGI: {tipo_str}<br/><i>ℹ️ Esta información ha sido guardada y será la que se utilice oficialmente al confirmar la factura.</i>",
                     message_type="comment",
                     subtype_xmlid="mail.mt_note",
                 )
             
+            # Use tipo_str for notification too, define it if partner was None
+            tipo_str_notif = "Persona Natural" if tipo_ruc == "1" else ("Persona Jurídica" if tipo_ruc == "2" else "Desconocido")
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
                     "title": "Éxito",
-                    "message": f"Detalles actualizados correctamente. Razón Social: {razon_social or 'No devuelta'}",
+                    "message": f"Detalles actualizados correctamente. Razón Social: {razon_social or 'No devuelta'} | Tipo DGI: {tipo_str_notif}",
                     "type": "success",
                     "sticky": False,
                 },

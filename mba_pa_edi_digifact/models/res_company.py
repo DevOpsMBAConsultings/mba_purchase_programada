@@ -75,20 +75,22 @@ class ResCompany(models.Model):
                 
             if partner:
                 partner.write(vals)
+                tipo_str = "Persona Natural" if tipo_ruc == "1" else ("Persona Jurídica" if tipo_ruc == "2" else "Desconocido")
                 partner.message_post(
-                    body=f"✅ <b>Validación DGI completada mediante Digifact</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}",
+                    body=f"✅ <b>Validación DGI completada mediante Digifact</b><br/>DV: {vals.get('l10n_pa_dv') or 'N/A'}<br/>Razón Social: {razon_social or 'No devuelta'}<br/>Tipo DGI: {tipo_str}<br/><i>ℹ️ Esta información ha sido guardada y será la que se utilice oficialmente al confirmar la factura.</i>",
                     message_type="comment",
                     subtype_xmlid="mail.mt_note",
                 )
             else:
                 self.partner_id.write(vals)
 
+            tipo_str_notif = "Persona Natural" if tipo_ruc == "1" else ("Persona Jurídica" if tipo_ruc == "2" else "Desconocido")
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
                     "title": "Éxito",
-                    "message": f"Los detalles del RUC {ruc} se obtuvieron correctamente desde Digifact. Razón Social: {razon_social or 'No devuelta'}",
+                    "message": f"Los detalles del RUC {ruc} se obtuvieron correctamente desde Digifact. Razón Social: {razon_social or 'No devuelta'} | Tipo DGI: {tipo_str_notif}",
                     "type": "success",
                     "sticky": False,
                 },
