@@ -24,22 +24,22 @@
             -->
             <xpath expr="//field[@name='qty_on_hand']" position="after">
                 <field name="mba_sold_m1"
-                       string="M-1"
+                       string="M(-1)"
                        help="Unidades vendidas el mes anterior (más reciente)"
                        optional="show"
                        readonly="1"/>
                 <field name="mba_sold_m2"
-                       string="M-2"
+                       string="M(-2)"
                        help="Unidades vendidas hace 2 meses"
                        optional="show"
                        readonly="1"/>
                 <field name="mba_sold_m3"
-                       string="M-3"
+                       string="M(-3)"
                        help="Unidades vendidas hace 3 meses"
                        optional="show"
                        readonly="1"/>
                 <field name="mba_sold_m4"
-                       string="M-4"
+                       string="M(-4)"
                        help="Unidades vendidas hace 4 meses (mes más antiguo)"
                        optional="show"
                        readonly="1"/>

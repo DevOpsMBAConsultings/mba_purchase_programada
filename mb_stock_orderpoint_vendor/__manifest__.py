@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MBA - Proveedor en Reabastecimiento de Inventario (MBA Consultings)',
-    'version': '18.0.1.0.3',
+    'version': '18.0.1.0.4',
     'category': 'Inventory/Inventory',
     'summary': 'Asignación automática y filtrado de proveedor en reglas de reabastecimiento según la pestaña de compras del producto.',
     'description': """
