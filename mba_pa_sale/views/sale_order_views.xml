@@ -10,6 +10,35 @@
                 <attribute name="readonly">1</attribute>
                 <attribute name="options">{'no_open': True}</attribute>
             </xpath>
+            <!-- Hide Standard Odoo Totals (tax_totals) ONLY when showing our DGI custom block -->
+            <xpath expr="//field[@name='tax_totals']" position="attributes">
+                <attribute name="invisible">dgi_show_retention_block</attribute>
+            </xpath>
+            <!-- DGI Totals: Right aligned (after taxes block) - Simplified: Subtotal, ITBMS, Total (No Retention line) -->
+            <xpath expr="//field[@name='tax_totals']" position="after">
+                <group class="oe_subtotal_footer oe_right"
+                       invisible="not dgi_show_retention_block">
+                    <field name="dgi_show_retention_block" invisible="1"/>
+                    
+                    <!-- 1. Subtotal -->
+                    <field name="dgi_amount_untaxed" 
+                           string="Subtotal" 
+                           widget="monetary" 
+                           options="{'currency_field': 'currency_id'}"/>
+
+                    <!-- 2. ITBMS (Positive Taxes) -->
+                    <field name="dgi_amount_taxes" 
+                           string="Impuesto" 
+                           widget="monetary" 
+                           options="{'currency_field': 'currency_id'}"/>
+
+                    <!-- 3. DGI Gross Total -->
+                    <field name="dgi_amount_total" 
+                           string="Total" 
+                           widget="monetary" 
+                           options="{'currency_field': 'currency_id'}"/>
+                </group>
+            </xpath>
         </field>
     </record>
 
