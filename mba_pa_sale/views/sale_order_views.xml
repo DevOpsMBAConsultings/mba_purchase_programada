@@ -18,6 +18,10 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <!-- Mostrar Disposición fiscal como solo lectura debajo del cliente en la cotización -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="fiscal_position_id" string="Disposición fiscal" readonly="1" options="{'no_open': True}"/>
+            </xpath>
             <xpath expr="//field[@name='client_order_ref']" position="after">
                 <group string="Datos FE (DGI)" name="group_dgi_notes">
                     <field name="dgi_payment_notes"
