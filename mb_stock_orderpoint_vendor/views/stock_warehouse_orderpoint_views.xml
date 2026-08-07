@@ -23,14 +23,9 @@
                 Las columnas de ventas se insertan inmediatamente después del stock disponible.
             -->
             <xpath expr="//field[@name='qty_on_hand']" position="after">
-                <field name="mba_sold_m4"
-                       string="M-4"
-                       help="Unidades vendidas en el mes más antiguo del período (4 meses atrás)"
-                       optional="show"
-                       readonly="1"/>
-                <field name="mba_sold_m3"
-                       string="M-3"
-                       help="Unidades vendidas hace 3 meses"
+                <field name="mba_sold_m1"
+                       string="M-1"
+                       help="Unidades vendidas el mes anterior (más reciente)"
                        optional="show"
                        readonly="1"/>
                 <field name="mba_sold_m2"
@@ -38,9 +33,14 @@
                        help="Unidades vendidas hace 2 meses"
                        optional="show"
                        readonly="1"/>
-                <field name="mba_sold_m1"
-                       string="M-1"
-                       help="Unidades vendidas el mes anterior (más reciente)"
+                <field name="mba_sold_m3"
+                       string="M-3"
+                       help="Unidades vendidas hace 3 meses"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m4"
+                       string="M-4"
+                       help="Unidades vendidas hace 4 meses (mes más antiguo)"
                        optional="show"
                        readonly="1"/>
                 <field name="mba_sold_total_4m"
