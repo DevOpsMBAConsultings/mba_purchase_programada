@@ -1,3 +1,4 @@
 .DS_Store
 .agents/
 rules.md
+__pycache__/
