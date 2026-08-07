@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MBA - Proveedor en Reabastecimiento de Inventario (MBA Consultings)',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'category': 'Inventory/Inventory',
     'summary': 'Asignación automática y filtrado de proveedor en reglas de reabastecimiento según la pestaña de compras del producto.',
     'description': """
-MBA - Proveedor en Reabastecimiento de Inventario
-=================================================
-Este módulo personaliza el comportamiento de la columna Proveedor en el Reabastecimiento de Inventario (stock.warehouse.orderpoint) para Odoo 18.0 CE:
-- Asigna automáticamente como proveedor por defecto el primero configurado en la pestaña de Compras del producto.
-- Restringe el menú desplegable (domain) del campo Proveedor exclusivamente a los proveedores configurados para el producto seleccionado.
+MBA - Proveedor y Historial de Ventas en Reabastecimiento de Inventario
+=======================================================================
+Este módulo personaliza el comportamiento del Reabastecimiento de Inventario
+(stock.warehouse.orderpoint) para Odoo 18.0 CE:
+
+- Asigna automáticamente el proveedor principal del producto.
+- Restringe el selector de proveedor a los configurados en el producto.
+- Muestra columnas opcionales con el historial de ventas de los últimos 4 meses
+  (rolling window automático: M-4, M-3, M-2, M-1, Total 4M).
+- Los datos históricos se importan desde Sage; a futuro se calculan desde Odoo.
     """,
     'author': 'MBA Consultings, Brooks González',
     'website': 'https://www.mbaconsultings.com',
@@ -19,6 +24,7 @@ Este módulo personaliza el comportamiento de la columna Proveedor en el Reabast
         'purchase_stock',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/server_action.xml',
         'views/stock_warehouse_orderpoint_views.xml',
     ],

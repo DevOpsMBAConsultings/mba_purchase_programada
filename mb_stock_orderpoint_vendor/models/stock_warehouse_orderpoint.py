@@ -13,6 +13,26 @@ class StockWarehouseOrderpoint(models.Model):
         readonly=False
     )
 
+    # --- MBA: Historial de ventas de Sage (rolling window 4 meses) ---
+    mba_sold_m1 = fields.Float(
+        related='product_tmpl_id.mba_sold_m1', store=True, readonly=True)
+    mba_sold_m2 = fields.Float(
+        related='product_tmpl_id.mba_sold_m2', store=True, readonly=True)
+    mba_sold_m3 = fields.Float(
+        related='product_tmpl_id.mba_sold_m3', store=True, readonly=True)
+    mba_sold_m4 = fields.Float(
+        related='product_tmpl_id.mba_sold_m4', store=True, readonly=True)
+    mba_sold_total_4m = fields.Float(
+        related='product_tmpl_id.mba_sold_total_4m', store=True, readonly=True)
+    mba_label_m1 = fields.Char(
+        related='product_tmpl_id.mba_label_m1', store=True, readonly=True)
+    mba_label_m2 = fields.Char(
+        related='product_tmpl_id.mba_label_m2', store=True, readonly=True)
+    mba_label_m3 = fields.Char(
+        related='product_tmpl_id.mba_label_m3', store=True, readonly=True)
+    mba_label_m4 = fields.Char(
+        related='product_tmpl_id.mba_label_m4', store=True, readonly=True)
+
     @api.depends('product_id', 'product_tmpl_id.seller_ids', 'company_id')
     def _compute_supplier_id(self):
         for orderpoint in self:
