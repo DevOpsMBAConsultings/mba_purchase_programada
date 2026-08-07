@@ -221,7 +221,12 @@ class SaleOrder(models.Model):
     @api.depends('partner_id', 'fiscal_position_id')
     def _compute_dgi_show_retention_block(self):
         for order in self:
-            is_retenedor = getattr(order.fiscal_position_id, "dgi_es_retenedor", False)
+            fp = order.fiscal_position_id
+            is_retenedor = getattr(fp, "dgi_es_retenedor", False)
+            if not is_retenedor and fp:
+                nombre = (fp.name or "").lower()
+                is_retenedor = bool("retención" in nombre or "retenedor" in nombre or "agente de retención" in nombre or "retencion" in nombre)
+                
             receptor_tipo = getattr(order.partner_id, "l10n_pa_receptor_tipo", None)
             order.dgi_show_retention_block = bool(
                 receptor_tipo in ("01", "03") and is_retenedor
