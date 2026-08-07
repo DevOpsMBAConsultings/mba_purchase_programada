@@ -183,6 +183,9 @@ class ResCompany(models.Model):
             # Asignar tipo si la vista o modelo lo soporta, el partner base usa company_type, l10n_pa_tipo_contribuyente
             vals["l10n_pa_tipo_contribuyente"] = tipo_ruc if tipo_ruc in ("1", "2") else False
             
+            if razon_social:
+                vals["l10n_pa_razon_social"] = str(razon_social).strip()
+            
             if partner:
                 vals["l10n_pa_is_dgi_validated"] = True
             

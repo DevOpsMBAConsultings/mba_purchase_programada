@@ -70,6 +70,9 @@ class ResCompany(models.Model):
             if tipo_ruc in ("1", "2"):
                 vals["l10n_pa_tipo_contribuyente"] = tipo_ruc
                 
+            if razon_social:
+                vals["l10n_pa_razon_social"] = str(razon_social).strip()
+                
             if partner:
                 vals["l10n_pa_is_dgi_validated"] = True
                 
