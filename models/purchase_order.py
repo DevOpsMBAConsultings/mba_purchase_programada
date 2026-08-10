@@ -65,17 +65,17 @@ class PurchaseOrder(models.Model):
         return products - self.order_line.product_id
 
     def action_mba_open_programada_products(self):
-        """Abre la pantalla de selección de productos del proveedor
-        (lista con checkboxes + cantidad editable, igual en espíritu a
-        Reabastecimiento en Inventario): el comprador marca las filas que
-        quiere pedir este mes y define cuánto, y solo esas se agregan a
-        la orden con el botón "Agregar a la orden" de esa lista.
+        """Abre la pantalla de selección de productos del proveedor: se
+        muestran todos de una vez (sin checkboxes que marcar) y el
+        comprador solo escribe cantidad en los que quiere pedir este mes;
+        el botón "Agregar productos" del wizard agrega a la orden
+        únicamente los que quedaron con cantidad > 0.
         """
         self.ensure_one()
-        Line = self.env['mba.purchase.programada.line']
+        Wizard = self.env['mba.purchase.programada.wizard']
         # Limpia una selección previa de esta misma orden, por si el
         # comprador abre la pantalla más de una vez (evita duplicados).
-        Line.search([('order_id', '=', self.id)]).unlink()
+        Wizard.search([('order_id', '=', self.id)]).unlink()
 
         supplierinfos = self._mba_get_programada_supplierinfos()
 
@@ -98,19 +98,21 @@ class PurchaseOrder(models.Model):
         products = products.filtered(
             lambda p: p.active and p.purchase_ok) - self.order_line.product_id
 
-        lines = Line.create([
-            {
-                'order_id': self.id,
-                'product_id': product.id,
-                'price_unit': price_by_product.get(product.id, 0.0),
-            }
-            for product in products
-        ])
+        wizard = Wizard.create({
+            'order_id': self.id,
+            'line_ids': [
+                (0, 0, {
+                    'product_id': product.id,
+                    'price_unit': price_by_product.get(product.id, 0.0),
+                })
+                for product in products
+            ],
+        })
         return {
             'type': 'ir.actions.act_window',
             'name': _('Seleccionar productos del proveedor'),
-            'res_model': 'mba.purchase.programada.line',
-            'view_mode': 'list',
-            'domain': [('id', 'in', lines.ids)],
+            'res_model': 'mba.purchase.programada.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
             'target': 'new',
         }
