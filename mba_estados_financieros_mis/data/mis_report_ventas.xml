@@ -131,7 +131,7 @@
     </record>
     <record id="kpi_ventas_comisiones_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_ventas_comisiones" />
-        <field name="name">balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_comision_venta').id])][]</field>
+        <field name="name">balp[('tag_ids', '=', ref('mba_estados_financieros_mis.tag_comision_venta').id)][]</field>
     </record>
 
     <!-- 70: ITBMS/IVA cobrado, informativo, por etiqueta -->
@@ -147,7 +147,7 @@
     </record>
     <record id="kpi_ventas_itbms_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_ventas_itbms" />
-        <field name="name">-balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_impuesto_ventas').id])][]</field>
+        <field name="name">-balp[('tag_ids', '=', ref('mba_estados_financieros_mis.tag_impuesto_ventas').id)][]</field>
     </record>
 
 </odoo>

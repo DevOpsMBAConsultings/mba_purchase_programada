@@ -1,6 +1,6 @@
 {
     'name': 'Estados Financieros MIS (MBA Consultings)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'category': 'Accounting/Reporting',
     'summary': 'Balance General, Estado de Resultados, Estado de Resultados '
                'de Ventas y Estado de Cambios en el Patrimonio sobre MIS '

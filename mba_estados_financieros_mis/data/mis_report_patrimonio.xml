@@ -156,7 +156,7 @@
     </record>
     <record id="kpi_patrimonio_verificacion_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_patrimonio_verificacion" />
-        <field name="name">-bale[('account_type', 'in', ['equity', 'equity_unaffected'])][]</field>
+        <field name="name">-bale[('account_type', 'like', 'equity%')][]</field>
     </record>
 
 </odoo>
