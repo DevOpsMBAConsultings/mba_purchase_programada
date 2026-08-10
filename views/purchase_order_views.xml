@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Campo "Tipo de orden" junto al proveedor: permite ver/reclasificar
+         si una orden es Transaccional o Programada. Bloqueado una vez que
+         la orden deja de ser borrador/solicitud enviada, para no cambiar
+         la clasificación de una orden ya confirmada. -->
+    <record id="purchase_order_form_view_inherit_mba_programada" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.mba.programada</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="mba_order_type"
+                       readonly="state not in ('draft', 'sent')"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Acción: mismo modelo y mismo formulario que las compras normales
+         (por eso trae, sin nada adicional, las columnas de existencia e
+         historial de ventas que agrega mb_stock_orderpoint_vendor).
+         Se filtra al tipo "Programada" y ese es el valor por defecto al
+         crear una orden nueva desde este menú. -->
+    <record id="action_purchase_order_programada" model="ir.actions.act_window">
+        <field name="name">Compras Programadas</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('mba_order_type', '=', 'programada')]</field>
+        <field name="context">{'default_mba_order_type': 'programada'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Crea una nueva compra programada
+            </p>
+            <p>
+                Selecciona el proveedor y se cargarán automáticamente todos
+                los productos que lo tengan configurado en la pestaña
+                "Compras" de su ficha, listos para que definas las
+                cantidades a pedir.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_purchase_order_programada"
+              name="Compras Programadas"
+              parent="purchase.menu_procurement_management"
+              action="action_purchase_order_programada"
+              sequence="15"/>
+
+</odoo>
