@@ -53,4 +53,30 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Herencia 2: acercar Cantidad y Precio unitario a la Descripción
+         (antes del historial de ventas), y el Subtotal justo después del
+         historial (MBA Consultings). Mismo criterio que "Herencia 4" en
+         stock_warehouse_orderpoint_views.xml: que el comprador vea de un
+         vistazo qué pide, a qué precio y con qué contexto de venta, sin
+         tener que hacer scroll horizontal para llegar al precio.
+         Ancla semántica: los propios campos mba_qty_on_hand /
+         mba_sold_total_4m que este módulo ya agrega arriba -únicos en
+         todo el formulario-, en vez de posiciones relativas frágiles.
+         position="move" reubica los campos core ya existentes en el
+         arch, no los duplica. -->
+    <record id="purchase_order_form_view_inherit_mb_qty_price_position" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.mb.qty.price.position</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//field[@name='mba_qty_on_hand']" position="before">
+                <xpath expr="//field[@name='order_line']//field[@name='product_qty']" position="move"/>
+                <xpath expr="//field[@name='order_line']//field[@name='price_unit']" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//field[@name='mba_sold_total_4m']" position="after">
+                <xpath expr="//field[@name='order_line']//field[@name='price_subtotal']" position="move"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

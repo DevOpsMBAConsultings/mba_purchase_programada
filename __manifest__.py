@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MBA - Proveedor en Reabastecimiento de Inventario (MBA Consultings)',
-    'version': '18.0.1.0.7',
+    'version': '18.0.1.0.8',
     'category': 'Inventory/Inventory',
     'summary': 'Asignación automática y filtrado de proveedor en reglas de reabastecimiento según la pestaña de compras del producto.',
     'description': """
@@ -24,6 +24,9 @@ Este módulo personaliza el comportamiento del Reabastecimiento de Inventario
   ("A la mano", M(-1)..M(-4), Total 4M) en las líneas de la Orden de
   Compra (Compras > Órdenes > Órdenes de compra), para que el comprador
   tenga el mismo contexto al momento de decidir cuánto pedir.
+- Reubica Cantidad y Precio unitario junto a Descripción (antes del
+  historial de ventas), y Subtotal justo después, para no tener que
+  hacer scroll horizontal para ver el precio.
     """,
     'author': 'MBA Consultings, Brooks González',
     'website': 'https://www.mbaconsultings.com',
