@@ -13,6 +13,12 @@
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="mba_order_type"
                        readonly="state not in ('draft', 'sent')"/>
+                <button name="action_mba_open_programada_products"
+                        type="object"
+                        string="Cargar productos del proveedor"
+                        class="btn-link"
+                        icon="fa-list-ul"
+                        invisible="mba_order_type != 'programada' or not partner_id or state not in ('draft', 'sent')"/>
             </xpath>
         </field>
     </record>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import Command, api, fields, models
+from odoo import _, api, fields, models
 
 
 class PurchaseOrder(models.Model):
@@ -23,25 +23,21 @@ class PurchaseOrder(models.Model):
         required=True,
         help='Transaccional: compra puntual (p. ej. asociada a una venta).\n'
              'Programada: compra mensual/recurrente a un proveedor, generada '
-             'desde el menú "Compras Programadas", que precarga automáticamente '
-             'los productos configurados con ese proveedor.',
+             'desde el menú "Compras Programadas".',
     )
 
-    @api.onchange('partner_id')
-    def _onchange_partner_id_mba_programada(self):
-        """Al elegir proveedor en una compra programada, precargar todas las
-        líneas de producto que tengan a ese proveedor configurado en la
-        pestaña "Compras" de la ficha del producto (product.supplierinfo).
+    def _mba_get_programada_supplier_products(self):
+        """Productos comprables y activos que tengan a self.partner_id
+        configurado como proveedor en su pestaña "Compras" (product.
+        supplierinfo), y que todavía no estén en las líneas de esta orden.
 
-        La cantidad se deja en 0 para que el comprador la complete a mano.
-        El resto de campos de la línea (precio, UdM, impuestos, descripción,
-        fecha prevista) se completan solos: al agregar la línea únicamente
-        con product_id, se dispara en cascada el propio onchange de
-        product_id de purchase.order.line (el mismo que corre cuando el
-        usuario agrega el producto manualmente desde "Agregar un producto").
+        Es el "universo" que se ofrece para elegir en la pantalla de
+        selección (ver mba.purchase.programada.line); no se agrega nada
+        a la orden automáticamente.
         """
-        if self.mba_order_type != 'programada' or not self.partner_id:
-            return
+        self.ensure_one()
+        if not self.partner_id:
+            return self.env['product.product']
 
         company_id = self.company_id.id or self.env.company.id
         supplierinfos = self.env['product.supplierinfo'].search([
@@ -56,13 +52,32 @@ class PurchaseOrder(models.Model):
             elif supplierinfo.product_tmpl_id:
                 products |= supplierinfo.product_tmpl_id.product_variant_ids
 
-        # Solo productos comprables y activos; y no duplicar los que ya
-        # estén en la orden (p. ej. si el usuario cambia de proveedor y
-        # vuelve a seleccionar el mismo, o agregó algo a mano antes).
         products = products.filtered(lambda p: p.active and p.purchase_ok)
-        new_products = products - self.order_line.product_id
-        if new_products:
-            self.order_line = [
-                Command.create({'product_id': product.id, 'product_qty': 0})
-                for product in new_products
-            ]
+        return products - self.order_line.product_id
+
+    def action_mba_open_programada_products(self):
+        """Abre la pantalla de selección de productos del proveedor
+        (lista con checkboxes + cantidad editable, igual en espíritu a
+        Reabastecimiento en Inventario): el comprador marca las filas que
+        quiere pedir este mes y define cuánto, y solo esas se agregan a
+        la orden con el botón "Agregar a la orden" de esa lista.
+        """
+        self.ensure_one()
+        Line = self.env['mba.purchase.programada.line']
+        # Limpia una selección previa de esta misma orden, por si el
+        # comprador abre la pantalla más de una vez (evita duplicados).
+        Line.search([('order_id', '=', self.id)]).unlink()
+
+        products = self._mba_get_programada_supplier_products()
+        lines = Line.create([
+            {'order_id': self.id, 'product_id': product.id}
+            for product in products
+        ])
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Seleccionar productos del proveedor'),
+            'res_model': 'mba.purchase.programada.line',
+            'view_mode': 'list',
+            'domain': [('id', 'in', lines.ids)],
+            'target': 'new',
+        }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Lista de selección: checkboxes nativos de Odoo (columna izquierda
+         de selección) + cantidad editable, y un botón dentro de <list>
+         (no dentro de una columna) que Odoo muestra como acción masiva
+         cuando hay filas marcadas, el mismo patrón que "Pedir" en
+         Reabastecimiento (stock.view_warehouse_orderpoint_tree_editable). -->
+    <record id="view_purchase_programada_line_list" model="ir.ui.view">
+        <field name="name">mba.purchase.programada.line.list</field>
+        <field name="model">mba.purchase.programada.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" create="false" delete="false">
+                <button name="action_add_to_order" type="object"
+                        string="Agregar a la orden" class="btn-primary"/>
+                <field name="mba_reference" string="Referencia" readonly="1"/>
+                <field name="product_id" string="Descripción" readonly="1"
+                       context="{'display_default_code': False}"/>
+                <field name="mba_qty_on_hand" string="A la mano" readonly="1"/>
+                <field name="qty_to_order" string="Cantidad a pedir"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>
