@@ -1,6 +1,6 @@
 {
-    'name': 'Corrección de Logo en Encabezado PDF (wkhtmltopdf)',
-    'version': '18.0.1.0.0',
+    'name': 'Corrección de Logo en Encabezado PDF (MBA Consultings)',
+    'version': '18.0.1.0.2',
     'category': 'Technical',
     'summary': 'Corrige el logo/datos de empresa que no se pintan en el '
                'encabezado de los reportes PDF (Estado de Cuenta y '
@@ -21,7 +21,7 @@ Causa raíz
 ----------
 El bloque "header" de estos 3 layouts (``web.external_layout_standard``,
 ``web.external_layout_boxed``, ``web.external_layout_bold``) se extrae y
-se pasa a wkhtmltopdf como un archivo HTML aparte (``--header-html``),
+se pasa a wkhtmltopdf como un archivo HTML aparte (parámetro header-html),
 que wkhtmltopdf renderiza en un sub-proceso de WebKit distinto -y más
 limitado- al que usa para el cuerpo del documento. Ese sub-proceso tiene
 soporte pobre de flexbox/CSS Grid (los 3 layouts usan ``.row``/``.col-*``

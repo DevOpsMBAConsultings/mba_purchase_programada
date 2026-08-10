@@ -3,7 +3,7 @@
     Reemplaza el contenedor flexbox (.row/.col-* o .d-flex de Bootstrap 5)
     que envuelve el logo en el header de los 3 layouts de documento, por
     una tabla HTML simple. wkhtmltopdf renderiza el header del PDF en un
-    sub-proceso de WebKit aparte (vía --header-html) que no soporta bien
+    sub-proceso de WebKit aparte (vía el flag header-html) que no soporta bien
     flexbox/grid: el logo queda embebido en el PDF pero no se pinta.
     Las tablas SÍ se renderizan de forma confiable en ese sub-proceso.
 

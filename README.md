@@ -1,6 +1,6 @@
 # mba_pdf_header_logo_fix
 
-**v18.0.1.0.0**
+**v18.0.1.0.2**
 
 Módulo Odoo 18 CE — MBA Consultings. Corrige el logo y el bloque de datos
 de la empresa que no se pintan en el encabezado de reportes **PDF**
@@ -66,5 +66,17 @@ cliente si es producción.)
 
 ## Changelog
 
+- **18.0.1.0.2** — Renombra el módulo (campo `name` del manifest) a
+  "Corrección de Logo en Encabezado PDF (MBA Consultings)" para seguir el
+  mismo patrón de marca que `mba_estados_financieros_mis` en vez de
+  describir la causa técnica en el título. Solo cambia el nombre visible
+  en Apps; el nombre técnico (`mba_pdf_header_logo_fix`) no cambia.
+- **18.0.1.0.1** — Corrige bug bloqueante de instalación: un comentario
+  XML en `views/report_templates.xml` contenía un doble guion literal
+  (`--header-html`), y XML prohíbe `--` dentro de comentarios en
+  cualquier posición (solo se permite para cerrar `-->`). Error exacto:
+  `lxml.etree.XMLSyntaxError: Comment must not contain '--'
+  (double-hyphen)`. Se reescribió el texto del comentario sin el doble
+  guion; no cambia ninguna lógica del módulo.
 - **18.0.1.0.0** — Versión inicial. Fix de logo/header PDF para Standard,
   Boxed y Bold.
