@@ -16,6 +16,9 @@ Módulo de **Odoo 18.0 CE** diseñado por **MBA Consultings** que personaliza el
    * Se agregó el campo relacionado `mba_reference` (`product_id.default_code`, `store=True`) como columna **Referencia** independiente, insertada antes de `product_id`.
    * Al campo `product_id` se le agregó `display_default_code: False` en su `context` (clave estándar de Odoo, usada en 20+ lugares del core para el mismo propósito) para que deje de repetir el prefijo `[REF]` y solo muestre la descripción; se le cambió el `string` a "Descripción".
    * Se descartó la sintaxis de "campo con punto" (`<field name="product_id.default_code"/>`) directamente en la vista: se verificó contra el código fuente de Odoo (búsqueda en `odoo/odoo` en GitHub) que ese patrón no se usa en ningún lado del core como columna de solo lectura, por lo que no es una funcionalidad soportada — se usó en su lugar un campo `related` real, el mismo patrón ya probado en este módulo para `mba_sold_m1..m4`.
+4. **Columna "Por ordenar" junto a Descripción (18.0.1.0.6):**
+   * El campo core `qty_to_order` (cantidad sugerida a pedir, editable por el usuario antes de presionar "Orden") ya existía en la vista pero al final, después de Mínimo/Máximo/UdM, obligando a hacer scroll horizontal para verla junto al producto.
+   * Se reubicó con `position="move"` (no se duplica el campo, se reubica el nodo existente del arch core) justo después de `product_id`, para que Referencia, Descripción, Por ordenar y el histórico de ventas queden visibles juntos.
 
 ---
 

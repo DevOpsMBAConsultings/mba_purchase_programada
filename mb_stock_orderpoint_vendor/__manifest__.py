@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MBA - Proveedor en Reabastecimiento de Inventario (MBA Consultings)',
-    'version': '18.0.1.0.5',
+    'version': '18.0.1.0.6',
     'category': 'Inventory/Inventory',
     'summary': 'Asignación automática y filtrado de proveedor en reglas de reabastecimiento según la pestaña de compras del producto.',
     'description': """
@@ -18,6 +18,8 @@ Este módulo personaliza el comportamiento del Reabastecimiento de Inventario
 - Separa la columna combinada "Producto" en dos columnas: Referencia
   (product_id.default_code, campo relacionado propio) y Descripción
   (product_id sin el prefijo de referencia, vía context display_default_code=False).
+- Reubica la columna core "Por ordenar" (qty_to_order) junto a Descripción,
+  para ver de un vistazo cuánto hay y cuánto se sugiere pedir.
     """,
     'author': 'MBA Consultings, Brooks González',
     'website': 'https://www.mbaconsultings.com',

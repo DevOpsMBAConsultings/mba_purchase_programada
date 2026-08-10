@@ -77,5 +77,24 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Herencia 4: acercar "Por ordenar" a la columna Descripción (MBA Consultings) -->
+    <record id="view_warehouse_orderpoint_tree_editable_inherit_mb_qty_to_order_position" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.tree.editable.inherit.mb.qty.to.order.position</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree_editable"/>
+        <field name="arch" type="xml">
+            <!--
+                Reubica el campo core qty_to_order (columna "Por ordenar", editable, sugerida
+                por Odoo a partir de Mínimo/Máximo/Pronóstico) justo después de product_id
+                (columna "Descripción"), para que el usuario vea de un vistazo qué producto es,
+                cuánto hay y cuánto se sugiere pedir, sin scroll horizontal. position="move"
+                reubica el nodo ya existente en el arch core, no lo duplica.
+            -->
+            <xpath expr="//field[@name='product_id']" position="after">
+                <xpath expr="//field[@name='qty_to_order']" position="move"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
 
