@@ -8,18 +8,19 @@
     </record>
 
     <!--
-        Paleta alineada a la marca del cliente (Simplifica T): los mismos
-        dos colores que ya están configurados en Ajustes > Ajustes
-        Generales > Diseño del Documento (plantilla de cotización/factura):
-          - Azul marino #012177 (color principal)
-          - Rojo        #AE1E16 (color secundario, NO se usa aquí: en
-            reportes contables el rojo se asocia a pérdida/negativo, así
-            que se reserva y no se usa como color decorativo de fila)
-        Estos 3 estilos (subtotal / subtotal indentado / total) son los que
-        dan la jerarquía visual común a los 4 reportes de este módulo Y a
-        Balance General / Estado de Resultados (reetiquetados en
-        mis_report_pl_bs_es.xml, que además apunta su style_id a estos
-        mismos registros para que los 4 reportes se vean con el mismo tema).
+        Estos 3 estilos (subtotal / subtotal indentado / total) dan la
+        jerarquía visual común a los 4 reportes de este módulo Y a Balance
+        General / Estado de Resultados (reetiquetados en
+        mis_report_pl_bs_es.xml, que apunta su style_id a estos mismos
+        registros para que los 4 reportes compartan el mismo tema).
+
+        Los colores de abajo son solo el VALOR POR DEFECTO / de respaldo.
+        Al instalar el módulo, hooks.py (post_init_hook) los sobreescribe
+        automáticamente con el color de marca YA configurado en Ajustes >
+        Diseño del Documento de cada empresa (res.company.primary_color) -
+        así cada cliente obtiene su propio tema sin editar el módulo. Si
+        una empresa no tiene ese color configurado, se queda con el azul
+        de abajo (el de Simplifica T, #012177) tal cual.
     -->
     <record id="style_subtotal" model="mis.report.style">
         <field name="name">MBA - Subtotal</field>

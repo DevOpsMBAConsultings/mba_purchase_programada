@@ -1,6 +1,6 @@
 # Estados Financieros MIS (MBA Consultings)
 
-**v18.0.1.0.2**
+**v18.0.1.0.3**
 
 Módulo de solo datos, **agnóstico de plan de cuentas**, que arma 4 reportes
 sobre MIS Builder para cualquier cliente de MBA Consultings, tenga o no un
@@ -127,24 +127,36 @@ una sola vez desde `Contabilidad > Configuración > Plan de Cuentas >
 Si no se asigna la etiqueta, esa fila sale en cero — el resto del reporte
 no se afecta.
 
-## Tema visual (colores de marca del cliente)
+## Tema visual (auto-detectado de la marca de cada cliente)
 
 Los 4 reportes comparten una misma jerarquía visual de 3 niveles, definida
 en `data/mis_report_style.xml`:
 
 - **Fila de detalle** (cuenta individual): sin color, texto normal.
-- **Subtotal** (`style_subtotal` / `style_subtotal_indent`): fondo azul
-  claro `#D9DEEB`, negrita.
-- **Total** (`style_total`): fondo azul marino `#012177` (color principal
-  de la marca), texto blanco, negrita.
+- **Subtotal** (`style_subtotal` / `style_subtotal_indent`): fondo en un
+  tinte claro del color de marca, negrita.
+- **Total** (`style_total`): fondo con el color de marca (color
+  principal), texto blanco o negro según contraste, negrita.
 
-Estos dos tonos de azul son los mismos que ya están configurados en
-`Ajustes > Ajustes Generales > Diseño del Documento` (la plantilla de
-cotizaciones/facturas de Simplifica T), para que el reporte financiero se
-vea consistente con el resto de la papelería de la empresa. El rojo de esa
-misma plantilla (`#AE1E16`) se dejó fuera a propósito: en un estado
-financiero el rojo se asocia a pérdida o saldo negativo, así que usarlo
-como color decorativo de fila generaría confusión.
+**Esto es automático y agnóstico de cliente**, igual que el resto del
+módulo: al instalarse, `hooks.py` (`post_init_hook`) lee el color ya
+configurado en `Ajustes > Ajustes Generales > Diseño del Documento` de
+la empresa (`res.company.primary_color`) y lo aplica a estos 3 estilos.
+Ningún cliente nuevo requiere editar el módulo — si tiene su Diseño del
+Documento configurado, sus reportes salen con SU color desde el día uno.
+Si no lo tiene configurado, se queda con el azul marino `#012177` por
+defecto (el de Simplifica T) hasta que lo configure.
+
+Si un cliente cambia su color de marca **después** de instalado el
+módulo, no hace falta que nadie edite nada a mano: desde la ficha de la
+Empresa (`Ajustes > Usuarios y Empresas > Empresas` → abrir la empresa →
+ícono ⚙ Acciones) hay una acción **"MBA: Sincronizar tema de reportes
+MIS con la marca"** que vuelve a aplicar el color actual con un clic.
+
+El color secundario (usualmente rojo en la plantilla de documentos) se
+deja fuera a propósito: en un estado financiero el rojo se asocia a
+pérdida o saldo negativo, así que usarlo como color decorativo de fila
+generaría confusión, sin importar el cliente.
 
 Balance General y Estado de Resultados (que reutilizan la plantilla de
 `mis_template_financial_report` de OCA) traían sus propios estilos, solo
@@ -153,11 +165,6 @@ negrita sin color. Se les apuntó el `style_id` a nuestros propios estilos
 mismo tema. Esto se hace actualizando un campo de un registro existente
 desde nuestro módulo -no se toca ningún archivo de OCA-, así que sobrevive
 actualizaciones del módulo OCA sin conflicto.
-
-Si el cliente cambia su paleta de marca más adelante, solo hay que
-actualizar los 2 colores en `style_subtotal` / `style_subtotal_indent` /
-`style_total` en `data/mis_report_style.xml` y subir la versión; se
-propaga automáticamente a los 4 reportes.
 
 ## Dependencias
 
@@ -232,6 +239,15 @@ antes de tiempo. Por eso:
 
 ## Historial de cambios
 
+- **18.0.1.0.3** — El tema visual ahora se auto-detecta por cliente: un
+  `post_init_hook` (`hooks.py`) lee `res.company.primary_color` (Ajustes >
+  Diseño del Documento) al instalar y colorea los estilos MIS con el color
+  de marca de ESA empresa, sin editar el módulo. Se agrega también una
+  acción contextual en la ficha de la Empresa para re-sincronizar el tema
+  si el cliente cambia su color de marca más adelante. El azul de
+  Simplifica T (`#012177`) queda como valor por defecto/respaldo en
+  `data/mis_report_style.xml` para empresas sin Diseño del Documento
+  configurado.
 - **18.0.1.0.2** — Alinea el tema visual de los 4 reportes a los colores
   de marca del cliente (azul marino `#012177`, tomado de la plantilla de
   cotizaciones/facturas). Balance General y Estado de Resultados ahora

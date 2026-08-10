@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Acción contextual visible en la ficha de la Empresa (Ajustes >
+    Usuarios y Empresas > Empresas > abrir la empresa > ⚙ Acciones) para
+    volver a aplicar el color de marca a los reportes MIS en cualquier
+    momento -por ejemplo, si el cliente cambia su paleta después de haber
+    instalado el módulo. Reutiliza la misma función que corre sola al
+    instalar (ver hooks.py), así que el comportamiento es siempre el mismo.
+-->
+<odoo>
+
+    <record id="action_sync_mis_theme_with_brand" model="ir.actions.server">
+        <field name="name">MBA: Sincronizar tema de reportes MIS con la marca</field>
+        <field name="model_id" ref="base.model_res_company" />
+        <field name="binding_model_id" ref="base.model_res_company" />
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+from odoo.addons.mba_estados_financieros_mis.hooks import _apply_brand_theme
+_apply_brand_theme(env)
+        </field>
+    </record>
+
+</odoo>
