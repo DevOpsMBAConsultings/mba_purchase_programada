@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Etiquetas de cuenta (account.account.tag) usadas por el Estado de
+    Resultados de Ventas para las dos filas que NO tienen un account_type
+    propio en Odoo: Comisiones sobre Venta e ITBMS/IVA cobrado.
+
+    No se asigna ninguna cuenta aquí a propósito: esa asignación es
+    específica de cada cliente y se hace desde la UI (Contabilidad >
+    Configuración > Plan de Cuentas > cuenta > campo "Etiquetas"), sin
+    tocar código. Si no se asigna, la fila correspondiente del reporte
+    simplemente sale en cero.
+-->
+<odoo noupdate="0">
+
+    <record id="tag_comision_venta" model="account.account.tag">
+        <field name="name">Comisiones de Venta (MIS)</field>
+        <field name="applicability">accounts</field>
+    </record>
+
+    <record id="tag_impuesto_ventas" model="account.account.tag">
+        <field name="name">Impuesto sobre Ventas (MIS)</field>
+        <field name="applicability">accounts</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="style_report_base" model="mis.report.style">
+        <field name="name">MBA - Base (2 decimales)</field>
+        <field name="dp_inherit" eval="False" />
+        <field name="dp">2</field>
+    </record>
+
+    <record id="style_subtotal" model="mis.report.style">
+        <field name="name">MBA - Subtotal</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+    </record>
+
+    <record id="style_total" model="mis.report.style">
+        <field name="name">MBA - Total</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#E8EEF7</field>
+        <field name="divider_inherit" eval="False" />
+        <field name="divider">total</field>
+    </record>
+
+    <record id="style_detail_indent" model="mis.report.style">
+        <field name="name">MBA - Detalle (indentado)</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">1</field>
+        <field name="font_style_inherit" eval="False" />
+        <field name="font_style">italic</field>
+    </record>
+
+    <record id="style_pct" model="mis.report.style">
+        <field name="name">MBA - Porcentaje</field>
+        <field name="suffix_inherit" eval="False" />
+        <field name="suffix"> %</field>
+        <field name="dp_inherit" eval="False" />
+        <field name="dp">1</field>
+        <field name="font_style_inherit" eval="False" />
+        <field name="font_style">italic</field>
+    </record>
+
+    <record id="style_verificacion" model="mis.report.style">
+        <field name="name">MBA - Informativo / Verificación</field>
+        <field name="font_style_inherit" eval="False" />
+        <field name="font_style">italic</field>
+        <field name="color_inherit" eval="False" />
+        <field name="color">#7A7A7A</field>
+    </record>
+
+</odoo>
