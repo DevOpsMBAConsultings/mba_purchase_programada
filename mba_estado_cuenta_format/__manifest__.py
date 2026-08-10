@@ -1,6 +1,6 @@
 {
     'name': 'Formato de Estado de Cuenta (MBA Consultings)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'category': 'Accounting/Reporting',
     'summary': 'Formato de Estado de Cuenta personalizado (Azul/Rojo), '
                'homogéneo con Cotización y Orden de Compra',
@@ -8,12 +8,19 @@
 Formato de Estado de Cuenta (MBA Consultings)
 ================================================
 
-Reemplaza el layout del reporte "Estado de la cuenta"
-(``partner_statement.outstanding_statement``, del módulo OCA
-``partner_statement``) por el mismo patrón visual ya usado en
-``formato_cotizacion_simplificat`` y ``mba_purchase_order_format``: logo
-y datos de encabezado corporativo (azul ``#04167e`` / rojo ``#cb1a1c``),
-en vez del layout genérico de Odoo (Light/Boxed/Bold/etc.).
+Reemplaza el layout de los DOS reportes de estado de cuenta del módulo
+OCA ``partner_statement`` -que son plantillas distintas, cada una con su
+propio encabezado-:
+
+- ``partner_statement.outstanding_statement`` ("Estado de los
+  pendientes de la cuenta del cliente", solo saldos pendientes).
+- ``partner_statement.activity_statement`` ("Estado de la cuenta del
+  cliente", historial completo de movimientos).
+
+por el mismo patrón visual ya usado en ``formato_cotizacion_simplificat``
+y ``mba_purchase_order_format``: logo y datos de encabezado corporativo
+(azul ``#04167e`` / rojo ``#cb1a1c``), en vez del layout genérico de
+Odoo (Light/Boxed/Bold/etc.).
 
 Por qué existe
 --------------
@@ -64,6 +71,7 @@ colores/campos, siguiendo el mismo patrón que los otros dos formatos.
     ],
     'data': [
         'views/report_outstanding_statement.xml',
+        'views/report_activity_statement.xml',
     ],
     'installable': True,
     'application': False,
