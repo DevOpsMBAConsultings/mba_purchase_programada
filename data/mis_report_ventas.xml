@@ -25,6 +25,14 @@
     (negativo en la convención cruda de MIS Builder), por eso llevan "-"
     de forma uniforme. expense_direct_cost es de saldo deudor, va sin
     invertir signo.
+
+    IMPORTANTE - sintaxis de expresiones: el parser de MIS Builder usa una
+    expresión regular NO-GREEDY para extraer el dominio entre corchetes
+    (balp[...]), así que se detiene en el PRIMER ']' que encuentra. No se
+    pueden anidar listas dentro del dominio (ej. ('tag_ids', 'in', [x])
+    rompe el parseo). Por eso el filtro por etiqueta usa '=' con un solo
+    id en vez de 'in' con una lista: para campos many2many, '=' con un id
+    equivale a "contiene ese id", sin necesidad de lista.
 -->
 <odoo noupdate="0">
 
@@ -131,7 +139,7 @@
     </record>
     <record id="kpi_ventas_comisiones_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_ventas_comisiones" />
-        <field name="name">balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_comision_venta').id])][]</field>
+        <field name="name">balp[('tag_ids', '=', ref('mba_estados_financieros_mis.tag_comision_venta').id)][]</field>
     </record>
 
     <!-- 70: ITBMS/IVA cobrado, informativo, por etiqueta -->
@@ -147,7 +155,7 @@
     </record>
     <record id="kpi_ventas_itbms_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_ventas_itbms" />
-        <field name="name">-balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_impuesto_ventas').id])][]</field>
+        <field name="name">-balp[('tag_ids', '=', ref('mba_estados_financieros_mis.tag_impuesto_ventas').id)][]</field>
     </record>
 
 </odoo>

@@ -19,6 +19,16 @@
     cuenta equity_unaffected al cerrar el año fiscal. Por eso la fila de
     "Verificación" puede no cuadrar contra el saldo real hasta que se
     corra el cierre de año - es esperado, no es un error del reporte.
+
+    IMPORTANTE - sintaxis de expresiones: el parser de MIS Builder usa una
+    expresión regular NO-GREEDY para extraer el dominio entre corchetes
+    (bale[...]), así que se detiene en el PRIMER ']' que encuentra. No se
+    pueden anidar listas dentro del dominio (ej. ('account_type', 'in',
+    ['equity', 'equity_unaffected']) rompe el parseo, porque el ']' de la
+    lista interna cierra el match antes de tiempo). Por eso la fila de
+    verificación usa 'like' con un patrón de texto ('equity%') en vez de
+    'in' con una lista: como los dos account_type que nos interesan
+    comparten el prefijo "equity", un solo 'like' cubre ambos sin anidar.
 -->
 <odoo noupdate="0">
 
@@ -156,7 +166,7 @@
     </record>
     <record id="kpi_patrimonio_verificacion_expr" model="mis.report.kpi.expression">
         <field name="kpi_id" ref="kpi_patrimonio_verificacion" />
-        <field name="name">-bale[('account_type', 'in', ['equity', 'equity_unaffected'])][]</field>
+        <field name="name">-bale[('account_type', 'like', 'equity%')][]</field>
     </record>
 
 </odoo>

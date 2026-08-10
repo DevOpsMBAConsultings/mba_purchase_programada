@@ -3,7 +3,19 @@
     Reetiqueta al español los reportes y KPIs de mis_template_financial_report
     (OCA). No se toca ninguna expresión ni modo de cálculo -ya son
     agnósticas de plan de cuentas, agrupan por account_type-, solo los
-    campos 'name' / 'description'.
+    campos 'name' / 'description' y, a partir de la v18.0.1.0.2, el
+    'style_id' de las filas de subtotal/total.
+
+    Por qué el style_id: mis_template_financial_report (OCA) trae sus
+    propios estilos "PL/BS header" / "PL/BS indented header", que son solo
+    negrita, sin color. Para que Balance General y Estado de Resultados se
+    vean con el MISMO tema que Estado de Resultados de Ventas y Estado de
+    Cambios en el Patrimonio (nuestros 2 reportes propios), apuntamos estas
+    filas a nuestros propios estilos (style_subtotal / style_subtotal_indent
+    / style_total, definidos en data/mis_report_style.xml con los colores de
+    marca del cliente). Esto NO modifica el módulo OCA -solo actualizamos un
+    campo de un registro existente desde nuestro propio módulo, vía
+    depends-, así que sobrevive updates de OCA sin conflicto.
 -->
 <odoo noupdate="0">
 
@@ -14,14 +26,17 @@
 
     <record id="mis_template_financial_report.kpi_profit" model="mis.report.kpi">
         <field name="description">Ingresos</field>
+        <field name="style_id" ref="style_subtotal" />
     </record>
 
     <record id="mis_template_financial_report.kpi_loss" model="mis.report.kpi">
         <field name="description">Costos y Gastos</field>
+        <field name="style_id" ref="style_subtotal" />
     </record>
 
     <record id="mis_template_financial_report.kpi_pl_to_report" model="mis.report.kpi">
         <field name="description">Utilidad (Pérdida) del Período</field>
+        <field name="style_id" ref="style_total" />
     </record>
 
     <!-- ── Balance General (report_bs) ──────────────────────────────── -->
@@ -31,22 +46,27 @@
 
     <record id="mis_template_financial_report.kpi_assets" model="mis.report.kpi">
         <field name="description">Activos</field>
+        <field name="style_id" ref="style_total" />
     </record>
 
     <record id="mis_template_financial_report.kpi_liability_total" model="mis.report.kpi">
         <field name="description">Pasivo + Patrimonio</field>
+        <field name="style_id" ref="style_total" />
     </record>
 
     <record id="mis_template_financial_report.kpi_liability" model="mis.report.kpi">
         <field name="description">Pasivos</field>
+        <field name="style_id" ref="style_subtotal_indent" />
     </record>
 
     <record id="mis_template_financial_report.kpi_equity" model="mis.report.kpi">
         <field name="description">Patrimonio</field>
+        <field name="style_id" ref="style_subtotal_indent" />
     </record>
 
     <record id="mis_template_financial_report.kpi_unallocated_total" model="mis.report.kpi">
         <field name="description">Resultados Acumulados</field>
+        <field name="style_id" ref="style_subtotal_indent" />
     </record>
 
     <record id="mis_template_financial_report.kpi_current_unallocated" model="mis.report.kpi">

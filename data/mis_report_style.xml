@@ -7,10 +7,37 @@
         <field name="dp">2</field>
     </record>
 
+    <!--
+        Estos 3 estilos (subtotal / subtotal indentado / total) dan la
+        jerarquía visual común a los 4 reportes de este módulo Y a Balance
+        General / Estado de Resultados (reetiquetados en
+        mis_report_pl_bs_es.xml, que apunta su style_id a estos mismos
+        registros para que los 4 reportes compartan el mismo tema).
+
+        Los colores de abajo son solo el VALOR POR DEFECTO / de respaldo.
+        Al instalar el módulo, hooks.py (post_init_hook) los sobreescribe
+        automáticamente con el color de marca YA configurado en Ajustes >
+        Diseño del Documento de cada empresa (res.company.primary_color) -
+        así cada cliente obtiene su propio tema sin editar el módulo. Si
+        una empresa no tiene ese color configurado, se queda con el azul
+        de abajo (el de Simplifica T, #012177) tal cual.
+    -->
     <record id="style_subtotal" model="mis.report.style">
         <field name="name">MBA - Subtotal</field>
         <field name="font_weight_inherit" eval="False" />
         <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#D9DEEB</field>
+    </record>
+
+    <record id="style_subtotal_indent" model="mis.report.style">
+        <field name="name">MBA - Subtotal (indentado)</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#D9DEEB</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">1</field>
     </record>
 
     <record id="style_total" model="mis.report.style">
@@ -18,9 +45,9 @@
         <field name="font_weight_inherit" eval="False" />
         <field name="font_weight">bold</field>
         <field name="background_color_inherit" eval="False" />
-        <field name="background_color">#E8EEF7</field>
-        <field name="divider_inherit" eval="False" />
-        <field name="divider">total</field>
+        <field name="background_color">#012177</field>
+        <field name="color_inherit" eval="False" />
+        <field name="color">#FFFFFF</field>
     </record>
 
     <record id="style_detail_indent" model="mis.report.style">
