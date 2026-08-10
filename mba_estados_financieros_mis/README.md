@@ -1,6 +1,6 @@
 # Estados Financieros MIS (MBA Consultings)
 
-**v18.0.1.0.1**
+**v18.0.1.0.2**
 
 Módulo de solo datos, **agnóstico de plan de cuentas**, que arma 4 reportes
 sobre MIS Builder para cualquier cliente de MBA Consultings, tenga o no un
@@ -127,6 +127,38 @@ una sola vez desde `Contabilidad > Configuración > Plan de Cuentas >
 Si no se asigna la etiqueta, esa fila sale en cero — el resto del reporte
 no se afecta.
 
+## Tema visual (colores de marca del cliente)
+
+Los 4 reportes comparten una misma jerarquía visual de 3 niveles, definida
+en `data/mis_report_style.xml`:
+
+- **Fila de detalle** (cuenta individual): sin color, texto normal.
+- **Subtotal** (`style_subtotal` / `style_subtotal_indent`): fondo azul
+  claro `#D9DEEB`, negrita.
+- **Total** (`style_total`): fondo azul marino `#012177` (color principal
+  de la marca), texto blanco, negrita.
+
+Estos dos tonos de azul son los mismos que ya están configurados en
+`Ajustes > Ajustes Generales > Diseño del Documento` (la plantilla de
+cotizaciones/facturas de Simplifica T), para que el reporte financiero se
+vea consistente con el resto de la papelería de la empresa. El rojo de esa
+misma plantilla (`#AE1E16`) se dejó fuera a propósito: en un estado
+financiero el rojo se asocia a pérdida o saldo negativo, así que usarlo
+como color decorativo de fila generaría confusión.
+
+Balance General y Estado de Resultados (que reutilizan la plantilla de
+`mis_template_financial_report` de OCA) traían sus propios estilos, solo
+negrita sin color. Se les apuntó el `style_id` a nuestros propios estilos
+(ver `data/mis_report_pl_bs_es.xml`) para que los 4 reportes luzcan con el
+mismo tema. Esto se hace actualizando un campo de un registro existente
+desde nuestro módulo -no se toca ningún archivo de OCA-, así que sobrevive
+actualizaciones del módulo OCA sin conflicto.
+
+Si el cliente cambia su paleta de marca más adelante, solo hay que
+actualizar los 2 colores en `style_subtotal` / `style_subtotal_indent` /
+`style_total` en `data/mis_report_style.xml` y subir la versión; se
+propaga automáticamente a los 4 reportes.
+
 ## Dependencias
 
 - `mis_builder` (OCA/mis-builder, rama 18.0)
@@ -200,6 +232,12 @@ antes de tiempo. Por eso:
 
 ## Historial de cambios
 
+- **18.0.1.0.2** — Alinea el tema visual de los 4 reportes a los colores
+  de marca del cliente (azul marino `#012177`, tomado de la plantilla de
+  cotizaciones/facturas). Balance General y Estado de Resultados ahora
+  usan los mismos estilos `style_subtotal` / `style_total` que Ventas y
+  Patrimonio, en vez de los estilos por defecto (sin color) de
+  `mis_template_financial_report`. Ver sección "Tema visual" arriba.
 - **18.0.1.0.1** — Corrige dos bugs de instalación: el campo `divider` de
   `mis.report.style` no acepta `'total'` como valor (es un factor de
   escala numérico, no un tipo de línea); y dos expresiones usaban listas
