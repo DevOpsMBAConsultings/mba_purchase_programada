@@ -46,7 +46,7 @@ mb_stock_orderpoint_vendor/
 
 ---
 
-## 📜 Estándares y Cumplimiento (`rules.md`)
+## 📜 Estándares y Cumplimiento (`AGENTS.md`)
 *   **Prefijo del Módulo:** `mb_stock_orderpoint_vendor`
 *   **Autor:** `"MBA Consultings, Brooks González"`
 *   **Nombre Técnico en Manifiesto:** `"MBA - Proveedor en Reabastecimiento de Inventario (MBA Consultings)"`
