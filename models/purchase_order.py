@@ -26,6 +26,23 @@ class PurchaseOrder(models.Model):
              'desde el menú "Compras Programadas".',
     )
 
+    def _mba_get_programada_supplierinfos(self):
+        """product.supplierinfo de self.partner_id, ya filtradas por
+        compañía. Es la fuente única tanto del universo de productos a
+        ofrecer como del precio sugerido de cada uno (ver
+        action_mba_open_programada_products): al traerlas una sola vez
+        evitamos dos búsquedas separadas que podrían desalinearse.
+        """
+        self.ensure_one()
+        if not self.partner_id:
+            return self.env['product.supplierinfo']
+
+        company_id = self.company_id.id or self.env.company.id
+        return self.env['product.supplierinfo'].search([
+            ('partner_id', '=', self.partner_id.id),
+            ('company_id', 'in', [False, company_id]),
+        ])
+
     def _mba_get_programada_supplier_products(self):
         """Productos comprables y activos que tengan a self.partner_id
         configurado como proveedor en su pestaña "Compras" (product.
@@ -35,15 +52,7 @@ class PurchaseOrder(models.Model):
         selección (ver mba.purchase.programada.line); no se agrega nada
         a la orden automáticamente.
         """
-        self.ensure_one()
-        if not self.partner_id:
-            return self.env['product.product']
-
-        company_id = self.company_id.id or self.env.company.id
-        supplierinfos = self.env['product.supplierinfo'].search([
-            ('partner_id', '=', self.partner_id.id),
-            ('company_id', 'in', [False, company_id]),
-        ])
+        supplierinfos = self._mba_get_programada_supplierinfos()
 
         products = self.env['product.product']
         for supplierinfo in supplierinfos:
@@ -68,9 +77,33 @@ class PurchaseOrder(models.Model):
         # comprador abre la pantalla más de una vez (evita duplicados).
         Line.search([('order_id', '=', self.id)]).unlink()
 
-        products = self._mba_get_programada_supplier_products()
+        supplierinfos = self._mba_get_programada_supplierinfos()
+
+        # Precio sugerido por producto: la primera product.supplierinfo
+        # que lo incluya (ya vienen ordenadas por sequence/min_qty/price,
+        # orden por defecto del modelo -ver product.supplierinfo._order-,
+        # así que la primera es la de mayor prioridad para ese proveedor).
+        price_by_product = {}
+        products = self.env['product.product']
+        for supplierinfo in supplierinfos:
+            supplier_products = (
+                supplierinfo.product_id
+                or (supplierinfo.product_tmpl_id.product_variant_ids
+                    if supplierinfo.product_tmpl_id else self.env['product.product'])
+            )
+            for product in supplier_products:
+                price_by_product.setdefault(product.id, supplierinfo.price)
+            products |= supplier_products
+
+        products = products.filtered(
+            lambda p: p.active and p.purchase_ok) - self.order_line.product_id
+
         lines = Line.create([
-            {'order_id': self.id, 'product_id': product.id}
+            {
+                'order_id': self.id,
+                'product_id': product.id,
+                'price_unit': price_by_product.get(product.id, 0.0),
+            }
             for product in products
         ])
         return {

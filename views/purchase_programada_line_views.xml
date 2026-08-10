@@ -23,6 +23,7 @@
                 <field name="product_id" string="Descripción" readonly="1"
                        context="{'display_default_code': False}"/>
                 <field name="qty_to_order" string="Cantidad a pedir"/>
+                <field name="price_unit" string="Precio unitario"/>
                 <field name="mba_qty_on_hand" string="A la mano" readonly="1"/>
                 <field name="mba_sold_m1"
                        string="M(-1)"
@@ -49,6 +50,8 @@
                        help="Total de unidades vendidas en los últimos 4 meses"
                        optional="show"
                        readonly="1"/>
+                <field name="subtotal" string="Subtotal"
+                       help="Cantidad x Precio unitario. Si el proveedor dio un precio especial por el lote, escríbelo aquí directamente y el Precio unitario se recalcula solo."/>
             </list>
         </field>
     </record>
