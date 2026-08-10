@@ -19,8 +19,6 @@
         <field name="font_weight">bold</field>
         <field name="background_color_inherit" eval="False" />
         <field name="background_color">#E8EEF7</field>
-        <field name="divider_inherit" eval="False" />
-        <field name="divider">total</field>
     </record>
 
     <record id="style_detail_indent" model="mis.report.style">
