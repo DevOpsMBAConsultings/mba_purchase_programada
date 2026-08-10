@@ -1,6 +1,6 @@
 # mba_pdf_header_logo_fix
 
-**v18.0.1.0.2**
+**v18.0.1.0.3**
 
 Módulo Odoo 18 CE — MBA Consultings. Corrige el logo y el bloque de datos
 de la empresa que no se pintan en el encabezado de reportes **PDF**
@@ -66,6 +66,10 @@ cliente si es producción.)
 
 ## Changelog
 
+- **18.0.1.0.3** — Corrige el campo `author` del manifest: faltaba el
+  acento en "González" (`odoo-18/rules.md`, sección 8, exige
+  `'MBA Consultings, Brooks González'` exacto). Solo metadata, no cambia
+  lógica.
 - **18.0.1.0.2** — Renombra el módulo (campo `name` del manifest) a
   "Corrección de Logo en Encabezado PDF (MBA Consultings)" para seguir el
   mismo patrón de marca que `mba_estados_financieros_mis` en vez de

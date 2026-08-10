@@ -1,6 +1,6 @@
 {
     'name': 'Corrección de Logo en Encabezado PDF (MBA Consultings)',
-    'version': '18.0.1.0.2',
+    'version': '18.0.1.0.3',
     'category': 'Technical',
     'summary': 'Corrige el logo/datos de empresa que no se pintan en el '
                'encabezado de los reportes PDF (Estado de Cuenta y '
@@ -90,7 +90,7 @@ ningún cliente de MBA Consultings, por lo que vive en su propio repo
 reutilizable (igual que ``mba_estados_financieros_mis``) y se integra a
 cada repo de cliente vía ``git subtree``.
 """,
-    'author': 'MBA Consultings, Brooks Gonzalez',
+    'author': 'MBA Consultings, Brooks González',
     'website': 'https://mbaconsultings.com',
     'license': 'LGPL-3',
     'depends': [
