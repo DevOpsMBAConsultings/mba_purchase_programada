@@ -152,6 +152,11 @@ módulo, no hace falta que nadie edite nada a mano: desde la ficha de la
 Empresa (`Ajustes > Usuarios y Empresas > Empresas` → abrir la empresa →
 ícono ⚙ Acciones) hay una acción **"MBA: Sincronizar tema de reportes
 MIS con la marca"** que vuelve a aplicar el color actual con un clic.
+Esa acción llama a `res.company.action_resync_brand_theme()`
+(`models/res_company.py`) — no puede llamar a `hooks.py` directo porque
+el código de una `ir.actions.server` corre en el sandbox `safe_eval` de
+Odoo, que prohíbe cualquier `import`/`from...import` (ver Historial de
+cambios, 18.0.1.0.4).
 
 El color secundario (usualmente rojo en la plantilla de documentos) se
 deja fuera a propósito: en un estado financiero el rojo se asocia a

@@ -13,7 +13,7 @@ lógica sin necesidad de tocar código ni la base de datos a mano.
 
 Esa acción NO importa este archivo directamente: el código de una
 ir.actions.server corre dentro del sandbox safe_eval de Odoo, que
-prohíbe cualquier import/from...import (opcodes IMPORT_NAME/IMPORT_FROM
+prohibe cualquier import/from...import (opcodes IMPORT_NAME/IMPORT_FROM
 bloqueados) por seguridad. Por eso la acción llama a un método normal de
 modelo (res.company.action_resync_brand_theme(), ver models/res_company.py)
 que sí puede importar este módulo con un import de Python normal, y ese
