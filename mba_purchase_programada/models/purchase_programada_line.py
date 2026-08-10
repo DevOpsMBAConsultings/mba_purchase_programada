@@ -5,20 +5,20 @@ from odoo.tools.float_utils import float_round
 
 
 class PurchaseProgramadaLine(models.TransientModel):
-    """Pantalla de selección de productos para Compras Programadas.
-
-    Una fila por cada producto que tiene al proveedor de la orden
-    configurado en su pestaña "Compras" (product.supplierinfo). Se abre
-    como una lista (no un formulario) para poder usar la selección nativa
-    de Odoo con checkboxes + un botón de acción masiva "Agregar a la
-    orden", igual en espíritu a la pantalla de Reabastecimiento en
-    Inventario (stock.warehouse.orderpoint): marcar filas, definir
-    cantidad y confirmar.
+    """Una fila por cada producto que tiene al proveedor de la orden
+    configurado en su pestaña "Compras" (product.supplierinfo). Vive
+    dentro del formulario de mba.purchase.programada.wizard (campo
+    line_ids): se muestran todas, sin necesidad de marcar checkboxes, y
+    al confirmar (ver PurchaseProgramadaWizard.action_add_to_order) solo
+    se agregan a la orden las que tengan Cantidad a pedir > 0.
     """
     _name = 'mba.purchase.programada.line'
     _description = 'Selección de productos - Compras Programadas'
 
-    order_id = fields.Many2one('purchase.order', required=True, ondelete='cascade')
+    wizard_id = fields.Many2one(
+        'mba.purchase.programada.wizard', required=True, ondelete='cascade')
+    order_id = fields.Many2one(
+        related='wizard_id.order_id', store=True, readonly=True)
     product_id = fields.Many2one('product.product', required=True, readonly=True)
 
     # Mismo campo/patrón que stock_warehouse_orderpoint.py: Referencia
@@ -44,14 +44,18 @@ class PurchaseProgramadaLine(models.TransientModel):
         string='Cantidad a pedir',
         digits='Product Unit of Measure',
         default=0.0,
-        help='Cantidad que se agregará a la orden para este producto si '
-             'la fila queda seleccionada.',
+        help='Cantidad que se agregará a la orden para este producto. '
+             'Solo se agregan a la orden los productos con cantidad '
+             'mayor a 0 -los que se dejan en 0 se ignoran-, así que '
+             'basta con escribir cantidad únicamente en lo que sí se '
+             'quiere pedir, sin marcar nada.',
     )
 
     # Precio sugerido: se precarga con el precio configurado en la pestaña
     # "Compras" del producto para este proveedor (product.supplierinfo),
-    # ver action_mba_open_programada_products. El comprador lo puede
-    # sobrescribir a mano cuando el proveedor le da un precio especial.
+    # ver PurchaseOrder.action_mba_open_programada_products. El comprador
+    # lo puede sobrescribir a mano cuando el proveedor le da un precio
+    # especial.
     price_unit = fields.Float(
         string='Precio unitario',
         digits=(16, 2),
@@ -121,52 +125,7 @@ class PurchaseProgramadaLine(models.TransientModel):
                 line.price_unit = float_round(
                     line.subtotal / line.qty_to_order, precision_digits=2)
             elif line.subtotal:
-                # No hay cantidad todavía: no hay con qué dividir. Se dejar
+                # No hay cantidad todavía: no hay con qué dividir. Se deja
                 # el precio en 0 en vez de fallar; el comprador completa la
                 # cantidad y puede volver a escribir el subtotal.
                 line.price_unit = 0.0
-
-    def action_add_to_order(self):
-        """Botón de acción masiva de la lista: self son solo las filas
-        marcadas por el usuario (selección nativa de Odoo), no todas las
-        que se muestran en pantalla.
-        """
-        if not self:
-            return {'type': 'ir.actions.act_window_close'}
-
-        order = self.mapped('order_id')
-        order.ensure_one()
-
-        PurchaseOrderLine = self.env['purchase.order.line']
-        new_lines = self.env['purchase.order.line']
-        for line in self:
-            product = line.product_id
-            uom = product.uom_po_id or product.uom_id
-            new_lines |= PurchaseOrderLine.create({
-                'order_id': order.id,
-                'product_id': product.id,
-                'product_qty': line.qty_to_order,
-                'product_uom': uom.id,
-                # Se pasa explícito (no se deja que el compute del core lo
-                # calcule solo) porque el comprador pudo haber puesto un
-                # precio especial acá, distinto al de la ficha del
-                # proveedor.
-                'price_unit': line.price_unit,
-            })
-
-        # name / date_planned / discount son campos computados y guardados
-        # (compute='_compute_price_unit_and_date_planned_and_name' en
-        # purchase.order.line del core) y se llenan solos al crear la
-        # línea -price_unit ya lo fijamos arriba, así que ese compute no lo
-        # toca-. taxes_id NO es un campo computado ahí -solo se llena vía
-        # el onchange de product_id en pantalla-, así que reutilizamos el
-        # mismo método que usa ese onchange (_compute_tax_id) para no
-        # reinventar el mapeo de posición fiscal.
-        if new_lines:
-            new_lines._compute_tax_id()
-
-        # Limpieza: ya no hace falta la selección de esta orden.
-        self.env['mba.purchase.programada.line'].search(
-            [('order_id', '=', order.id)]).unlink()
-
-        return {'type': 'ir.actions.act_window_close'}
