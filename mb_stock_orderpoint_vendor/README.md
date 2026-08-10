@@ -11,6 +11,11 @@ Módulo de **Odoo 18.0 CE** diseñado por **MBA Consultings** que personaliza el
 2. **Menú desplegable restringido por producto (Domain seguro):**
    * Al hacer clic para modificar el campo **Proveedor** en la vista de lista editable o formulario de reabastecimiento, el menú desplegable sólo muestra los proveedores configurados en la pestaña de **Compras** de ese producto en particular (`allowed_vendor_ids`).
    * Evita la creación en caliente (`no_create`, `no_create_edit`) para garantizar que todos los proveedores del producto se gestionen primero en su ficha de compra.
+3. **Columna "Producto" separada en Referencia / Descripción (18.0.1.0.5):**
+   * La lista de Reabastecimiento mostraba una sola columna `product_id` con el `display_name` combinado (`[REF] Nombre`), sin forma de ordenar/filtrar solo por referencia.
+   * Se agregó el campo relacionado `mba_reference` (`product_id.default_code`, `store=True`) como columna **Referencia** independiente, insertada antes de `product_id`.
+   * Al campo `product_id` se le agregó `display_default_code: False` en su `context` (clave estándar de Odoo, usada en 20+ lugares del core para el mismo propósito) para que deje de repetir el prefijo `[REF]` y solo muestre la descripción; se le cambió el `string` a "Descripción".
+   * Se descartó la sintaxis de "campo con punto" (`<field name="product_id.default_code"/>`) directamente en la vista: se verificó contra el código fuente de Odoo (búsqueda en `odoo/odoo` en GitHub) que ese patrón no se usa en ningún lado del core como columna de solo lectura, por lo que no es una funcionalidad soportada — se usó en su lugar un campo `related` real, el mismo patrón ya probado en este módulo para `mba_sold_m1..m4`.
 
 ---
 
