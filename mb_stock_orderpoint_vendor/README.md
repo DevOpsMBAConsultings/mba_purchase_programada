@@ -19,6 +19,11 @@ Módulo de **Odoo 18.0 CE** diseñado por **MBA Consultings** que personaliza el
 4. **Columna "Por ordenar" junto a Descripción (18.0.1.0.6):**
    * El campo core `qty_to_order` (cantidad sugerida a pedir, editable por el usuario antes de presionar "Orden") ya existía en la vista pero al final, después de Mínimo/Máximo/UdM, obligando a hacer scroll horizontal para verla junto al producto.
    * Se reubicó con `position="move"` (no se duplica el campo, se reubica el nodo existente del arch core) justo después de `product_id`, para que Referencia, Descripción, Por ordenar y el histórico de ventas queden visibles juntos.
+5. **"A la mano" e historial de ventas en la Orden de Compra (18.0.1.0.7):**
+   * El comprador pedía tener, al agregar un producto en Compras > Órdenes > Órdenes de compra > Nuevo, el mismo contexto que ya existe en Reabastecimiento: cuánto hay a la mano y cómo se ha movido el producto en los últimos 4 meses, sin salir de la orden.
+   * Se agregó `mba_qty_on_hand` en `purchase.order.line` (modelo nuevo, `models/purchase_order_line.py`): campo **computado, no almacenado**, que llama a `product_id.with_context(warehouse=...).qty_available` usando el almacén de recepción de la orden (`order_id.picking_type_id.warehouse_id`). No se guarda porque el almacén puede cambiar mientras la orden está en borrador. Si la orden no tiene almacén definido o el producto no maneja inventario, muestra `0`.
+   * Se agregaron `mba_sold_m1..m4` y `mba_sold_total_4m` en `purchase.order.line` como campos `related` a `product_id.product_tmpl_id`, mismo patrón ya usado en `stock_warehouse_orderpoint.py` — el cálculo real (ventana móvil de 4 meses, datos de Sage) sigue viviendo únicamente en `product_template.py`, no se duplica lógica.
+   * Vista nueva (`views/purchase_order_line_views.xml`): hereda `purchase.purchase_order_form` y ancla el xpath en `field[@name='order_line']//field[@name='product_id']` (no en el tag `<list>`/`<tree>` del core, para no depender de su sintaxis) e inserta las columnas "A la mano", M(-1)..M(-4) y Total 4M justo después de Producto, todas de solo lectura y `optional="show"` (ocultables desde el ⚙️ de la lista, igual que en Reabastecimiento).
 
 ---
 
@@ -29,9 +34,13 @@ mb_stock_orderpoint_vendor/
 ├── __manifest__.py
 ├── models/
 │   ├── __init__.py
+│   ├── mba_product_sales_history.py
+│   ├── product_template.py
+│   ├── purchase_order_line.py
 │   └── stock_warehouse_orderpoint.py
 ├── views/
-│   └── stock_warehouse_orderpoint_views.xml
+│   ├── stock_warehouse_orderpoint_views.xml
+│   └── purchase_order_line_views.xml
 └── README.md
 ```
 

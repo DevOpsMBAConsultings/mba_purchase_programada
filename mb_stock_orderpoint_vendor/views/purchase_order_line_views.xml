@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Herencia: columnas de existencia y de historial de ventas en las
+         líneas de la orden de compra (MBA Consultings).
+         Mismo criterio que en Reabastecimiento (ver
+         stock_warehouse_orderpoint_views.xml): "A la mano" por almacén y
+         el historial de ventas de los últimos 4 meses (Sage), para que el
+         comprador vea de un vistazo cuánto hay y cómo se ha movido el
+         producto antes de decidir cuánto pedir. -->
+    <record id="purchase_order_form_view_inherit_mb_stock_history" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.mb.stock.history</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <!--
+                Ancla semántica: field[@name='product_id'] dentro de la
+                subvista de order_line — campo estable y único en ese
+                contexto. No se referencia el tag <list>/<tree> del core
+                directamente (evita depender de un cambio de sintaxis),
+                el xpath solo baja por el field[@name='order_line'].
+            -->
+            <xpath expr="//field[@name='order_line']//field[@name='product_id']" position="after">
+                <field name="mba_qty_on_hand"
+                       string="A la mano"
+                       help="Existencia física en el almacén de recepción de esta orden."
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m1"
+                       string="M(-1)"
+                       help="Unidades vendidas el mes anterior (más reciente)"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m2"
+                       string="M(-2)"
+                       help="Unidades vendidas hace 2 meses"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m3"
+                       string="M(-3)"
+                       help="Unidades vendidas hace 3 meses"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m4"
+                       string="M(-4)"
+                       help="Unidades vendidas hace 4 meses (mes más antiguo)"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_total_4m"
+                       string="Total 4M"
+                       help="Total de unidades vendidas en los últimos 4 meses"
+                       optional="show"
+                       readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
