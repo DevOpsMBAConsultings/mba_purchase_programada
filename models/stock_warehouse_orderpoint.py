@@ -13,6 +13,12 @@ class StockWarehouseOrderpoint(models.Model):
         readonly=False
     )
 
+    # --- MBA: Referencia interna del producto, columna separada de la
+    # descripción en Reabastecimiento (Inventario) ---
+    mba_reference = fields.Char(
+        related='product_id.default_code', store=True, readonly=True,
+        string='Referencia')
+
     # --- MBA: Historial de ventas de Sage (rolling window 4 meses) ---
     mba_sold_m1 = fields.Float(
         related='product_tmpl_id.mba_sold_m1', store=True, readonly=True)

@@ -12,7 +12,33 @@
         </field>
     </record>
 
-    <!-- Herencia 2: columnas de historial de ventas (MBA Consultings) -->
+    <!-- Herencia 2: separar Referencia / Descripción en la columna de producto (MBA Consultings) -->
+    <record id="view_warehouse_orderpoint_tree_editable_inherit_mb_reference" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.tree.editable.inherit.mb.reference</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree_editable"/>
+        <field name="arch" type="xml">
+            <!--
+                Ancla semántica: field[@name='product_id'] — campo estable y único en la vista core.
+                Se inserta la Referencia (product_id.default_code, campo relacionado propio,
+                ver models/stock_warehouse_orderpoint.py) antes del producto, y se le quita el
+                prefijo "[REF]" al campo product_id mediante el context display_default_code=False
+                (clave estándar de Odoo, no un hack), para que solo muestre la descripción.
+            -->
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="mba_reference"
+                       string="Referencia"
+                       optional="show"
+                       readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="attributes">
+                <attribute name="string">Descripción</attribute>
+                <attribute name="context">{'default_is_storable': True, 'display_default_code': False}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Herencia 3: columnas de historial de ventas (MBA Consultings) -->
     <record id="view_warehouse_orderpoint_tree_editable_inherit_mb_sales_history" model="ir.ui.view">
         <field name="name">stock.warehouse.orderpoint.tree.editable.inherit.mb.sales.history</field>
         <field name="model">stock.warehouse.orderpoint</field>
@@ -48,6 +74,25 @@
                        help="Total de unidades vendidas en los últimos 4 meses"
                        optional="show"
                        readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Herencia 4: acercar "Por ordenar" a la columna Descripción (MBA Consultings) -->
+    <record id="view_warehouse_orderpoint_tree_editable_inherit_mb_qty_to_order_position" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.tree.editable.inherit.mb.qty.to.order.position</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree_editable"/>
+        <field name="arch" type="xml">
+            <!--
+                Reubica el campo core qty_to_order (columna "Por ordenar", editable, sugerida
+                por Odoo a partir de Mínimo/Máximo/Pronóstico) justo después de product_id
+                (columna "Descripción"), para que el usuario vea de un vistazo qué producto es,
+                cuánto hay y cuánto se sugiere pedir, sin scroll horizontal. position="move"
+                reubica el nodo ya existente en el arch core, no lo duplica.
+            -->
+            <xpath expr="//field[@name='product_id']" position="after">
+                <xpath expr="//field[@name='qty_to_order']" position="move"/>
             </xpath>
         </field>
     </record>

@@ -25,9 +25,10 @@ from pathlib import Path
 # CONFIGURACIÓN — ajustar antes de ejecutar
 # ===========================================================================
 ODOO_URL = "https://simplificat.mbaconsultings.com"
-DB = "simplificat"          # nombre de la base de datos en Odoo
+DB = "odoo18"          # nombre de la base de datos en Odoo
 USER = "admin"              # usuario con permisos de stock manager
-PASSWORD = ""               # contraseña (no commitear con valor real)
+import os
+PASSWORD = os.environ.get("ODOO_PASSWORD", "")
 
 XLSX_PATH = Path(__file__).parent.parent.parent.parent.parent / \
     "proyectos/Simplifica T/historico/MOQ REORDER.xlsx"

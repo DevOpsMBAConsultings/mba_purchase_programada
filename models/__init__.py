@@ -2,4 +2,5 @@
 
 from . import mba_product_sales_history
 from . import product_template
+from . import purchase_order_line
 from . import stock_warehouse_orderpoint
