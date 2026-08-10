@@ -1,6 +1,6 @@
 {
     'name': 'MBA - Compras Programadas (MBA Consultings)',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'category': 'Purchases',
     'summary': 'Órdenes de compra mensuales/recurrentes por proveedor, con selección manual de sus productos configurados',
     'description': """
@@ -24,7 +24,7 @@ Programada) para poder distinguirlas y filtrarlas en reportes.
     'author': 'MBA Consultings, Brooks González',
     'website': 'https://www.mbaconsultings.com',
     'license': 'LGPL-3',
-    'depends': ['purchase', 'purchase_stock', 'stock'],
+    'depends': ['purchase', 'purchase_stock', 'stock', 'mb_stock_orderpoint_vendor'],
     'data': [
         'security/ir.model.access.csv',
         'views/purchase_programada_line_views.xml',

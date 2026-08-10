@@ -47,6 +47,23 @@ class PurchaseProgramadaLine(models.TransientModel):
              'la fila queda seleccionada.',
     )
 
+    # Mismos campos/patrón que stock_warehouse_orderpoint.py y
+    # purchase_order_line.py (módulo mb_stock_orderpoint_vendor): historial
+    # de ventas de Sage, rolling window de 4 meses, ya calculado en
+    # product.template. Se traen tal cual (related) para dar el mismo
+    # contexto que el comprador ya ve en Reabastecimiento y en las líneas
+    # de la orden de compra normal.
+    mba_sold_m1 = fields.Float(
+        related='product_id.product_tmpl_id.mba_sold_m1', store=True, readonly=True)
+    mba_sold_m2 = fields.Float(
+        related='product_id.product_tmpl_id.mba_sold_m2', store=True, readonly=True)
+    mba_sold_m3 = fields.Float(
+        related='product_id.product_tmpl_id.mba_sold_m3', store=True, readonly=True)
+    mba_sold_m4 = fields.Float(
+        related='product_id.product_tmpl_id.mba_sold_m4', store=True, readonly=True)
+    mba_sold_total_4m = fields.Float(
+        related='product_id.product_tmpl_id.mba_sold_total_4m', store=True, readonly=True)
+
     @api.depends('product_id', 'order_id.picking_type_id.warehouse_id')
     def _compute_mba_qty_on_hand(self):
         for line in self:

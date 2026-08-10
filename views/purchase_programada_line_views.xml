@@ -2,22 +2,53 @@
 <odoo>
 
     <!-- Lista de selección: checkboxes nativos de Odoo (columna izquierda
-         de selección) + cantidad editable, y un botón dentro de <list>
-         (no dentro de una columna) que Odoo muestra como acción masiva
-         cuando hay filas marcadas, el mismo patrón que "Pedir" en
-         Reabastecimiento (stock.view_warehouse_orderpoint_tree_editable). -->
+         de selección) + cantidad editable. El botón va dentro de <header>
+         -no como hijo directo de <list>, eso lo vuelve un botón por fila-
+         que es el ancla real de "acción masiva sobre lo seleccionado" en
+         una vista de lista: solo aparece con 1+ filas marcadas y se
+         ejecuta sobre esas filas. Mismo patrón que "Pedir" en
+         Reabastecimiento (stock.view_warehouse_orderpoint_tree_editable),
+         mismo orden de columnas (Referencia, Descripción, cantidad,
+         existencia, historial de ventas). -->
     <record id="view_purchase_programada_line_list" model="ir.ui.view">
         <field name="name">mba.purchase.programada.line.list</field>
         <field name="model">mba.purchase.programada.line</field>
         <field name="arch" type="xml">
             <list editable="bottom" create="false" delete="false">
-                <button name="action_add_to_order" type="object"
-                        string="Agregar a la orden" class="btn-primary"/>
+                <header>
+                    <button name="action_add_to_order" type="object"
+                            string="Agregar productos" class="btn-primary"/>
+                </header>
                 <field name="mba_reference" string="Referencia" readonly="1"/>
                 <field name="product_id" string="Descripción" readonly="1"
                        context="{'display_default_code': False}"/>
-                <field name="mba_qty_on_hand" string="A la mano" readonly="1"/>
                 <field name="qty_to_order" string="Cantidad a pedir"/>
+                <field name="mba_qty_on_hand" string="A la mano" readonly="1"/>
+                <field name="mba_sold_m1"
+                       string="M(-1)"
+                       help="Unidades vendidas el mes anterior (más reciente)"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m2"
+                       string="M(-2)"
+                       help="Unidades vendidas hace 2 meses"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m3"
+                       string="M(-3)"
+                       help="Unidades vendidas hace 3 meses"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_m4"
+                       string="M(-4)"
+                       help="Unidades vendidas hace 4 meses (mes más antiguo)"
+                       optional="show"
+                       readonly="1"/>
+                <field name="mba_sold_total_4m"
+                       string="Total 4M"
+                       help="Total de unidades vendidas en los últimos 4 meses"
+                       optional="show"
+                       readonly="1"/>
             </list>
         </field>
     </record>
