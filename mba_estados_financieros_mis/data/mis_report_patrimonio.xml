@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Estado de Cambios en el Patrimonio - AGNÓSTICO DE PLAN DE CUENTAS.
+
+    Solo usa dos account_type que Odoo ya distingue de forma nativa en
+    cualquier plan de cuentas:
+      - equity             -> Capital / Reservas / aportes y retiros
+      - equity_unaffected  -> Resultados acumulados no distribuidos
+                               (la MISMA cuenta que usa el Balance General
+                               de mis_template_financial_report).
+
+    El resultado del período se trae por subreporte desde el Estado de
+    Resultados (mis_template_financial_report.report_pl), así los dos
+    estados siempre cuadran entre sí por construcción, sin duplicar
+    lógica.
+
+    Nota: en muchas implementaciones Odoo calcula el resultado del
+    ejercicio actual "al vuelo" y solo lo postea físicamente contra la
+    cuenta equity_unaffected al cerrar el año fiscal. Por eso la fila de
+    "Verificación" puede no cuadrar contra el saldo real hasta que se
+    corra el cierre de año - es esperado, no es un error del reporte.
+-->
+<odoo noupdate="0">
+
+    <record id="report_patrimonio" model="mis.report">
+        <field name="name">Estado de Cambios en el Patrimonio</field>
+        <field name="style_id" ref="style_report_base" />
+    </record>
+
+    <record id="subreport_patrimonio_pl" model="mis.report.subreport">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="subreport_id" ref="mis_template_financial_report.report_pl" />
+        <field name="name">subreport_pl</field>
+    </record>
+
+    <!-- 10: Capital - saldo inicial -->
+    <record id="kpi_patrimonio_capital_inicial" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">capital_inicial</field>
+        <field name="description">Capital - Saldo Inicial del Período</field>
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_detail_indent" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="kpi_patrimonio_capital_inicial_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_capital_inicial" />
+        <field name="name">-bali[('account_type', '=', 'equity')][]</field>
+    </record>
+
+    <!-- 20: Capital - movimiento del período (aportes/retiros/reclasificaciones) -->
+    <record id="kpi_patrimonio_capital_mov" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">capital_movimiento</field>
+        <field name="description">(+/-) Aportes y Retiros de Capital</field>
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="kpi_patrimonio_capital_mov_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_capital_mov" />
+        <field name="name">-balp[('account_type', '=', 'equity')][]</field>
+    </record>
+
+    <!-- 30: Capital - saldo final -->
+    <record id="kpi_patrimonio_capital_final" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">capital_final</field>
+        <field name="description">Capital - Saldo Final del Período</field>
+        <field name="style_id" ref="style_subtotal" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="kpi_patrimonio_capital_final_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_capital_final" />
+        <field name="name">capital_inicial + capital_movimiento</field>
+    </record>
+
+    <!-- 40: Resultados acumulados - saldo inicial -->
+    <record id="kpi_patrimonio_racum_inicial" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">racum_inicial</field>
+        <field name="description">Resultados Acumulados - Saldo Inicial del Período</field>
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="kpi_patrimonio_racum_inicial_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_racum_inicial" />
+        <field name="name">-bali[('account_type', '=', 'equity_unaffected')][]</field>
+    </record>
+
+    <!-- 50: Resultado del período (según Estado de Resultados) -->
+    <record id="kpi_patrimonio_resultado" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">resultado_periodo</field>
+        <field name="description">(+/-) Resultado del Período (según Estado de Resultados)</field>
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="kpi_patrimonio_resultado_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_resultado" />
+        <field name="name">subreport_pl.pl_to_report</field>
+    </record>
+
+    <!-- 60: Resultados acumulados - saldo final -->
+    <record id="kpi_patrimonio_racum_final" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">racum_final</field>
+        <field name="description">Resultados Acumulados - Saldo Final del Período</field>
+        <field name="style_id" ref="style_subtotal" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="kpi_patrimonio_racum_final_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_racum_final" />
+        <field name="name">racum_inicial + resultado_periodo</field>
+    </record>
+
+    <!-- 70: Patrimonio total - saldo final -->
+    <record id="kpi_patrimonio_total_final" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">patrimonio_total</field>
+        <field name="description">Patrimonio Total - Saldo Final del Período</field>
+        <field name="style_id" ref="style_total" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="kpi_patrimonio_total_final_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_total_final" />
+        <field name="name">capital_final + racum_final</field>
+    </record>
+
+    <!-- 80: Verificación contra el saldo real del mayor -->
+    <record id="kpi_patrimonio_verificacion" model="mis.report.kpi">
+        <field name="report_id" ref="report_patrimonio" />
+        <field name="name">verificacion</field>
+        <field name="description">Verificación (saldo real de las cuentas de patrimonio)</field>
+        <field name="style_id" ref="style_verificacion" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="kpi_patrimonio_verificacion_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_patrimonio_verificacion" />
+        <field name="name">-bale[('account_type', 'in', ['equity', 'equity_unaffected'])][]</field>
+    </record>
+
+</odoo>

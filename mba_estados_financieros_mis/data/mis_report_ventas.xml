@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Estado de Resultados de Ventas - AGNÓSTICO DE PLAN DE CUENTAS.
+
+    Ningún código de cuenta está escrito aquí. Se usa account_type, que es
+    obligatorio en toda cuenta de cualquier plan de cuentas de Odoo:
+      - income              -> Ventas Netas (ya incluye devoluciones y
+                                descuentos si se contabilizan contra la
+                                misma cuenta de venta o contra una cuenta
+                                contraria: todas suman con su signo real,
+                                por eso "Ventas Netas" no necesita 3 filas
+                                separadas de brutas/devoluciones/descuentos,
+                                basta con expandir el detalle por cuenta).
+      - expense_direct_cost -> Costo de Venta (COGS)
+      - income_other        -> Otros Ingresos (no operacionales)
+
+    Comisiones sobre Venta e ITBMS/IVA cobrado NO tienen un account_type
+    propio en Odoo (son filas informativas, no entran en Utilidad Bruta).
+    Se resuelven con account.account.tag: cada cliente asigna la etiqueta
+    correspondiente a SU cuenta desde el Plan de Cuentas (ver
+    data/account_account_tag.xml). Si no se asigna, la fila sale en cero
+    sin romper nada más del reporte.
+
+    Convención de signo: income/income_other son de saldo acreedor
+    (negativo en la convención cruda de MIS Builder), por eso llevan "-"
+    de forma uniforme. expense_direct_cost es de saldo deudor, va sin
+    invertir signo.
+-->
+<odoo noupdate="0">
+
+    <record id="report_ventas" model="mis.report">
+        <field name="name">Estado de Resultados de Ventas</field>
+        <field name="style_id" ref="style_report_base" />
+    </record>
+
+    <!-- 10: Ventas Netas -->
+    <record id="kpi_ventas_ventas_netas" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">ventas_netas</field>
+        <field name="description">Ventas Netas</field>
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_detail_indent" />
+        <field name="style_id" ref="style_subtotal" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="kpi_ventas_ventas_netas_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_ventas_netas" />
+        <field name="name">-balp[('account_type', '=', 'income')][]</field>
+    </record>
+
+    <!-- 20: Costo de Venta -->
+    <record id="kpi_ventas_costo_venta" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">costo_venta</field>
+        <field name="description">Costo de Venta</field>
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_detail_indent" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="kpi_ventas_costo_venta_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_costo_venta" />
+        <field name="name">balp[('account_type', '=', 'expense_direct_cost')][]</field>
+    </record>
+
+    <!-- 30: Utilidad Bruta -->
+    <record id="kpi_ventas_utilidad_bruta" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">utilidad_bruta</field>
+        <field name="description">Utilidad Bruta</field>
+        <field name="style_id" ref="style_total" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="kpi_ventas_utilidad_bruta_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_utilidad_bruta" />
+        <field name="name">ventas_netas - costo_venta</field>
+    </record>
+
+    <!-- 40: % Margen Bruto -->
+    <record id="kpi_ventas_margen_pct" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">margen_bruto_pct</field>
+        <field name="description">% Margen Bruto sobre Ventas Netas</field>
+        <field name="style_id" ref="style_pct" />
+        <field name="type">pct</field>
+        <field name="compare_method">diff</field>
+        <field name="accumulation_method">avg</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="kpi_ventas_margen_pct_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_margen_pct" />
+        <field name="name">utilidad_bruta / ventas_netas</field>
+    </record>
+
+    <!-- 50: Otros Ingresos no operacionales, informativo -->
+    <record id="kpi_ventas_otros_ingresos" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">otros_ingresos</field>
+        <field name="description">Otros Ingresos No Operacionales (informativo)</field>
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_detail_indent" />
+        <field name="style_id" ref="style_verificacion" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="kpi_ventas_otros_ingresos_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_otros_ingresos" />
+        <field name="name">-balp[('account_type', '=', 'income_other')][]</field>
+    </record>
+
+    <!-- 60: Comisiones sobre venta, informativo, por etiqueta -->
+    <record id="kpi_ventas_comisiones" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">comisiones_venta</field>
+        <field name="description">Comisiones sobre Venta (informativo - requiere etiquetar la cuenta)</field>
+        <field name="style_id" ref="style_verificacion" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="kpi_ventas_comisiones_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_comisiones" />
+        <field name="name">balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_comision_venta').id])][]</field>
+    </record>
+
+    <!-- 70: ITBMS/IVA cobrado, informativo, por etiqueta -->
+    <record id="kpi_ventas_itbms" model="mis.report.kpi">
+        <field name="report_id" ref="report_ventas" />
+        <field name="name">itbms_iva</field>
+        <field name="description">ITBMS/IVA Cobrado (informativo - requiere etiquetar la cuenta)</field>
+        <field name="style_id" ref="style_verificacion" />
+        <field name="type">num</field>
+        <field name="compare_method">pct</field>
+        <field name="accumulation_method">sum</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="kpi_ventas_itbms_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_ventas_itbms" />
+        <field name="name">-balp[('tag_ids', 'in', [ref('mba_estados_financieros_mis.tag_impuesto_ventas').id])][]</field>
+    </record>
+
+</odoo>
