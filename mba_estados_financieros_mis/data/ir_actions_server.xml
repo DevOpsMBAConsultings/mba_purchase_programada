@@ -4,8 +4,17 @@
     Usuarios y Empresas > Empresas > abrir la empresa > ⚙ Acciones) para
     volver a aplicar el color de marca a los reportes MIS en cualquier
     momento -por ejemplo, si el cliente cambia su paleta después de haber
-    instalado el módulo. Reutiliza la misma función que corre sola al
-    instalar (ver hooks.py), así que el comportamiento es siempre el mismo.
+    instalado el módulo.
+
+    El código de esta ir.actions.server corre dentro del sandbox
+    safe_eval de Odoo, que bloquea cualquier import/from...import
+    (opcodes IMPORT_NAME/IMPORT_FROM prohibidos) -por eso NO se puede
+    importar hooks.py aquí directo (eso rompía la instalación con
+    "forbidden opcode(s)... IMPORT_NAME, IMPORT_FROM"). En su lugar se
+    llama a un método normal de modelo (models/res_company.py), que sí
+    puede hacer un import de Python normal y ahí adentro llama a la misma
+    _apply_brand_theme() que usa el post_init_hook, así el comportamiento
+    es siempre el mismo.
 -->
 <odoo>
 
@@ -15,10 +24,7 @@
         <field name="binding_model_id" ref="base.model_res_company" />
         <field name="binding_view_types">form</field>
         <field name="state">code</field>
-        <field name="code">
-from odoo.addons.mba_estados_financieros_mis.hooks import _apply_brand_theme
-_apply_brand_theme(env)
-        </field>
+        <field name="code">record.action_resync_brand_theme()</field>
     </record>
 
 </odoo>

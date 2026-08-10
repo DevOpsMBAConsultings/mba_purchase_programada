@@ -11,6 +11,14 @@ en la ficha de la Empresa ("MBA: Sincronizar tema de reportes MIS con la
 marca", ver data/ir_actions_server.xml) que vuelve a correr esta misma
 lógica sin necesidad de tocar código ni la base de datos a mano.
 
+Esa acción NO importa este archivo directamente: el código de una
+ir.actions.server corre dentro del sandbox safe_eval de Odoo, que
+prohíbe cualquier import/from...import (opcodes IMPORT_NAME/IMPORT_FROM
+bloqueados) por seguridad. Por eso la acción llama a un método normal de
+modelo (res.company.action_resync_brand_theme(), ver models/res_company.py)
+que sí puede importar este módulo con un import de Python normal, y ese
+método es el que llama a _apply_brand_theme().
+
 Si la empresa no tiene primary_color configurado (nunca abrió el asistente
 de Diseño del Documento), no se toca nada: los reportes se quedan con la
 paleta por defecto definida en data/mis_report_style.xml.
@@ -40,8 +48,8 @@ def _pick_contrast_text(hex_color):
     return "#FFFFFF" if luminance < 140 else "#1A1A1A"
 
 
-def _apply_brand_theme(env):
-    company = env.company
+def _apply_brand_theme(env, company=None):
+    company = company or env.company
     primary = (company.primary_color or "").strip()
     if not re.match(r"^#[0-9A-Fa-f]{6}$", primary):
         # Sin color de marca configurado todavía: se deja la paleta por

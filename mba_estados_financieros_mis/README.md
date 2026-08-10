@@ -1,6 +1,6 @@
 # Estados Financieros MIS (MBA Consultings)
 
-**v18.0.1.0.3**
+**v18.0.1.0.4**
 
 Módulo de solo datos, **agnóstico de plan de cuentas**, que arma 4 reportes
 sobre MIS Builder para cualquier cliente de MBA Consultings, tenga o no un
@@ -239,6 +239,18 @@ antes de tiempo. Por eso:
 
 ## Historial de cambios
 
+- **18.0.1.0.4** — Corrige bug bloqueante de instalación: la acción
+  "MBA: Sincronizar tema de reportes MIS con la marca" intentaba hacer
+  `from odoo.addons.mba_estados_financieros_mis.hooks import
+  _apply_brand_theme` dentro del código de una `ir.actions.server`, y ese
+  código corre en el sandbox `safe_eval` de Odoo, que bloquea cualquier
+  `import`/`from...import` (`ParseError: forbidden opcode(s)...
+  IMPORT_NAME, IMPORT_FROM`). Se movió la lógica a un método normal de
+  modelo (`res.company.action_resync_brand_theme()`, en
+  `models/res_company.py`), que sí puede importar `hooks.py` con un
+  import de Python normal; la server action ahora solo llama
+  `record.action_resync_brand_theme()`. El comportamiento visible no
+  cambia, solo dónde vive el código.
 - **18.0.1.0.3** — El tema visual ahora se auto-detecta por cliente: un
   `post_init_hook` (`hooks.py`) lee `res.company.primary_color` (Ajustes >
   Diseño del Documento) al instalar y colorea los estilos MIS con el color
