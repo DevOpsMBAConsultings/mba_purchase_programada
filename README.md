@@ -100,7 +100,7 @@ Este repositorio centraliza los módulos personalizados desarrollados por **MBA 
 - Dependencias: `account`
 
 #### 9. Panamá - Reportes Diarios Cierre de Caja (`mba_reportes_diarios`)
-**v18.0.1.3.8** | Categoría: Accounting/Localizations
+**v18.0.1.3.16** | Categoría: Accounting/Localizations
 - Cierre de caja diario: facturación, cobros de cuentas por cobrar (CxC) y ventas de Punto de Venta
 - Matriz mensual "mes a la fecha" (MTD) de ingresos y reporte de comisiones de ventas
 - **Cómo funciona:** agrega un modelo `mba.report.template` que actúa como catálogo de reportes disponibles (cada uno con su wizard e icono); cada wizard (`mba.daily.cxc.wizard`, etc.) pide una fecha y compañía, clasifica facturas/pagos (incluyendo detección de pagos que vienen del POS) y genera un PDF con totales formateados. Un reporte queda oculto automáticamente si el módulo de Odoo del que depende (ej. `point_of_sale`) no está instalado
