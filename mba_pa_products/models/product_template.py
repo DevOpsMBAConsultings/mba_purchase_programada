@@ -105,7 +105,9 @@ class ProductTemplate(models.Model):
     def write(self, vals):
         res = super().write(vals)
         if "standard_price" in vals:
-            self._update_sale_price_from_base_pricelist(show_notification=True)
+            action = self._update_sale_price_from_base_pricelist(show_notification=True)
+            if action:
+                return action
         return res
 
     @api.model_create_multi
