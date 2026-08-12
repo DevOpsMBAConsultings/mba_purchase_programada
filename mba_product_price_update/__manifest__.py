@@ -2,7 +2,7 @@
 {
     'name': 'MBA - Actualización Automática de Precio de Venta desde Costo (MBA Consultings)',
     'summary': 'Recalcula automáticamente el precio de venta al modificar el costo en productos según la Lista de Precios base.',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'category': 'Sales',
     'author': 'MBA Consultings, Brooks González',
     'website': 'https://mbaconsultings.com',
