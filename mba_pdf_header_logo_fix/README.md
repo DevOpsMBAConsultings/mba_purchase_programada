@@ -16,10 +16,11 @@ cliente de MBA Consultings que use Odoo 18 CE + wkhtmltopdf, igual que
 ## Causa raíz
 
 wkhtmltopdf extrae el bloque `header` de estos 3 layouts y lo renderiza
-en un sub-proceso de WebKit aparte (vía `--header-html`), con soporte
-pobre de flexbox/CSS Grid — justo lo que usan `.row`/`.col-*`/`.d-flex`
-de Bootstrap 5. El logo queda embebido en el PDF (confirmable con
-Ghostscript) pero no se pinta en el lienzo del header.
+en un sub-proceso de WebKit aparte (vía el parámetro header-html), con
+soporte pobre de flexbox/CSS Grid — justo lo que usan
+`.row`/`.col-*`/`.d-flex` de Bootstrap 5. El logo queda embebido en el
+PDF (confirmable con Ghostscript) pero no se pinta en el lienzo del
+header.
 
 Detalle técnico completo, evidencia del diagnóstico y justificación de
 cada XPath: ver el campo `description` en
