@@ -31,7 +31,7 @@ class ProductTemplate(models.Model):
 
         updated_templates = []
         for tmpl in self:
-            pricelist_data = pricelist._compute_price_rule(tmpl, 1)
+            pricelist_data = pricelist.with_company(company)._compute_price_rule(tmpl, 1)
             new_price, suitable_rule = pricelist_data.get(tmpl.id, (False, False))
             if suitable_rule and new_price is not False and new_price != tmpl.list_price:
                 tmpl.write({"list_price": new_price})
@@ -71,3 +71,8 @@ class ProductProduct(models.Model):
             templates = records.mapped("product_tmpl_id")
             templates._update_sale_price_from_base_pricelist(show_notification=True)
         return records
+
+    def _set_standard_price(self):
+        super()._set_standard_price()
+        templates = self.mapped("product_tmpl_id")
+        templates._update_sale_price_from_base_pricelist(show_notification=True)
