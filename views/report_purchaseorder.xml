@@ -18,23 +18,29 @@
                     }
                 </style>
 
-                <div class="mb-3">
+                <div class="mb-5" style="margin-bottom: 40px !important;">
                     <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
                 </div>
 
                 <div class="row mb-4">
                     <div class="col-6">
-                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Datos del Proveedor</strong>
-                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
-                        <strong>Nombre:</strong> <span t-field="o.partner_id.name"/><br/>
-                        <strong>Contacto:</strong> <span t-field="o.partner_id.child_ids[0].name" t-if="o.partner_id.child_ids"/><br/>
+                        <t t-if="o.partner_id.parent_id">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Proveedor: <span t-field="o.partner_id.parent_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                            <strong>Contacto:</strong> <span t-field="o.partner_id.name"/><br/>
+                        </t>
+                        <t t-else="">
+                            <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Proveedor: <span t-field="o.partner_id.name"/></strong>
+                            <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        </t>
                         <strong>Dirección:</strong> <span t-field="o.partner_id.street"/><br/>
+                        <strong>Teléfono:</strong> <span t-field="o.partner_id.phone"/><br/>
+                        <strong>Correo:</strong> <span t-field="o.partner_id.email"/><br/>
                     </div>
 
                     <div class="col-5 offset-1">
-                        <strong style="font-size: 11pt; margin-bottom: 2px; display: block;">Orden de Compra</strong>
+                        <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Orden de Compra: <span t-field="o.name"/></strong>
                         <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
-                        <strong>Número:</strong> <span t-field="o.name"/><br/>
                         <strong>Fecha del Pedido:</strong> <span t-field="o.date_order" t-options='{"widget": "date"}'/><br/>
                         <strong>Fecha Prevista:</strong> <span t-field="o.date_planned" t-options='{"widget": "date"}'/><br/>
                         <strong>Condiciones de pago:</strong> <span t-field="o.payment_term_id.name"/>
