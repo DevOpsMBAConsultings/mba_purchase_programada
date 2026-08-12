@@ -301,9 +301,9 @@ class SaleOrder(models.Model):
         if not line.tax_id:
             return False  # Sin impuestos → inválido
         tax_res = line.tax_id.compute_all(
-            line.price_unit,
+            abs(line.price_unit) or 1.0,
             currency=order.currency_id,
-            quantity=line.product_uom_qty,
+            quantity=abs(line.product_uom_qty) or 1.0,
             product=line.product_id,
             partner=order.partner_id,
         )
@@ -337,7 +337,7 @@ class SaleOrder(models.Model):
                         "No se puede confirmar el pedido: las siguientes líneas "
                         "no tienen un impuesto (ITBMS o Exento) asignado.\n\n"
                         "La DGI exige que todas las líneas declaren un impuesto base. "
-                        "Si el cliente es exento, utilice la Posición Fiscal adecuada para aplicar el impuesto 0% (Exento), pero el campo de impuestos no puede quedar vacío.\n\n"
+                        "Si el cliente es exento, utilice la Posición Fiscal adecuada para aplicar el impuesto 0%% (Exento), pero el campo de impuestos no puede quedar vacío.\n\n"
                         "Líneas afectadas: %s"
                     )
                     % names

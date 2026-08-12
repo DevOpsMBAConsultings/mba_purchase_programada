@@ -62,13 +62,14 @@ class HKAClient:
         # "CF" es la convención interna de CF sin RUC (res_partner fuerza vat="CF"), no un RUC real.
         # NOTA: Digifact resuelve este mismo caso enviando el campo VACÍO (regla XSD DGI distinta);
         # esa lógica es exclusiva de Digifact y NO se comparte — la API REST de HKA exige "00000".
-        if tipo_cliente == "02" and (
-            not partner_ruc
-            or partner_ruc.upper() == "CF"
-            or not any(c.isdigit() for c in partner_ruc)
-        ):
-            partner_ruc = "00000"
-            partner_dv = ""
+        if tipo_cliente == "02":
+            # HKA valida numeroRUC contra el formato numérico de RUC/cédula panameña (error 109).
+            # Si el RUC viene con prefijos como "PN-", "PE-", "CF", letras o no es una cédula numérica limpia,
+            # para Consumidor Final (02) se envía el comodín "00000" aceptado oficialmente por HKA.
+            is_valid_numeric_ruc = bool(re.match(r"^(\d{1,2}-\d{1,5}-\d{1,6}|\d{1,2}-NT-\d{1,5}-\d{1,6}|\d{7,15})$", partner_ruc))
+            if not partner_ruc or partner_ruc.upper() == "CF" or not is_valid_numeric_ruc:
+                partner_ruc = "00000"
+                partner_dv = ""
         partner_name = getattr(invoice, "dgi_partner_name", None) or commercial_partner.name or ""
         partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or getattr(commercial_partner, "l10n_pa_tipo_contribuyente", None) or ("2" if commercial_partner.company_type == "company" else "1")
 
@@ -220,18 +221,34 @@ class HKAClient:
         }
 
         # --- Build listaItems ---
-        for line in valid_lines:
+        # Separar líneas regulares y líneas de descuento/recompensa (ej. Odoo Loyalty en Ventas o POS)
+        def is_reward_discount_line(l):
+            if l.price_unit < 0 or l.price_subtotal < 0:
+                return True
+            if any(getattr(sl, "is_reward_line", False) for sl in l.sale_line_ids):
+                return True
+            if hasattr(l, "pos_line_ids") and any(getattr(pl, "is_reward_line", False) for pl in l.pos_line_ids):
+                return True
+            return False
+
+        regular_lines = valid_lines.filtered(lambda l: not is_reward_discount_line(l))
+        reward_lines = valid_lines - regular_lines
+
+        if not regular_lines:
+            regular_lines = valid_lines
+            reward_lines = invoice.env["account.move.line"]
+
+        total_reward_discount = sum(abs(l.price_subtotal) for l in reward_lines)
+        total_regular_subtotal = sum(l.price_subtotal for l in regular_lines)
+
+        for line in regular_lines:
             # Producto template (campos DGI viven en template, no en variante)
             prod = line.product_id
             prod_tmpl = prod.product_tmpl_id if prod else None
 
-            # Tasa ITBMS y monto: solo impuestos positivos (ignorar retenciones)
-            # 01=7%, 02=10%, 03=15%, 00=Exento
-            # Cuando hay posición fiscal de retención, el impuesto de la línea puede
-            # ser neto (ej: 3.5% en vez de 7%), así que usamos los impuestos ORIGINALES
-            # del producto para determinar la tasa ITBMS real.
+            # Tasa ITBMS y porcentaje
             tasa_itbms = "00"
-            itbms_item = 0.0
+            tax_percent = 0.0
 
             fp = invoice.fiscal_position_id
             is_retention_fp = fp and 'retenci' in (fp.name or '').lower()
@@ -245,11 +262,13 @@ class HKAClient:
                     amt = round(tax.amount, 0)
                     if amt == 7:
                         tasa_itbms = "01"
+                        tax_percent = 7.0
                     elif amt == 10:
                         tasa_itbms = "02"
+                        tax_percent = 10.0
                     elif amt == 15:
                         tasa_itbms = "03"
-                    itbms_item = round(line.price_subtotal * tax.amount / 100, 2)
+                        tax_percent = 15.0
                     break
             elif line.tax_ids:
                 # Caso normal: usar impuestos de la línea (aplanar grupos)
@@ -262,26 +281,38 @@ class HKAClient:
                         amt = round(tax.amount, 0)
                         if amt == 7:
                             tasa_itbms = "01"
+                            tax_percent = 7.0
                         elif amt == 10:
                             tasa_itbms = "02"
+                            tax_percent = 10.0
                         elif amt == 15:
                             tasa_itbms = "03"
-                        itbms_item = round(line.price_subtotal * tax.amount / 100, 2)
+                            tax_percent = 15.0
                         break
-            itbms_item = round(itbms_item, 2)
 
+            # Calcular descuento unitario total (descuento propio de línea + proporción de lealtad)
+            line_subtotal = line.price_subtotal
+            allocated_reward = (
+                (line_subtotal / total_regular_subtotal) * total_reward_discount
+                if total_regular_subtotal
+                else 0.0
+            )
 
-            # Precio del item (sin descuento para compatibilidad)
-            precio_item = round(line.quantity * line.price_unit, 2)
+            base_unit_disc = (
+                line.price_unit - (line.price_subtotal / line.quantity)
+                if line.quantity
+                else 0.0
+            )
+            reward_unit_disc = (allocated_reward / line.quantity) if line.quantity else 0.0
+            precio_descuento = base_unit_disc + reward_unit_disc
 
-            # valorTotal = precio neto del item + ITBMS (sin retención)
-            valor_total_item = round(line.price_subtotal + itbms_item, 2)
-
-            # Descuento por item (si aplica)
-            precio_descuento = round(line.price_unit - (line.price_subtotal / line.quantity), 4) if line.quantity else 0.0
+            # Precios netos del item para DGI HKA (precioItem = cantidad * (precioUnitario - precioUnitarioDescuento))
+            net_unit_price = line.price_unit - precio_descuento
+            precio_item = round(line.quantity * net_unit_price, 2)
+            itbms_item = round(precio_item * tax_percent / 100.0, 2) if tax_percent else 0.0
+            valor_total_item = round(precio_item + itbms_item, 2)
 
             # Usar nombre del producto sin prefijo de código [SKU]
-            # line.name incluye "[MBA-PS5-SONY] Playstation 5" → duplica el código
             prod_name = prod.name if prod else (line.name or "Producto")
             item = {
                 "descripcion": prod_name[:500],
@@ -339,18 +370,38 @@ class HKAClient:
             payload["documento"]["listaItems"].append(item)
 
         # --- Recalcular totales desde los items realmente enviados ---
-        # Esto GARANTIZA que totalITBMS == suma(valorITBMS) (validación HKA error 109)
-        sum_itbms = sum(
-            float(it.get("valorITBMS", "0")) for it in payload["documento"]["listaItems"]
+        sum_precio_neto = round(
+            sum(float(it.get("precioItem", "0")) for it in payload["documento"]["listaItems"]), 2
         )
-        sum_itbms = round(sum_itbms, 2)
-        total_neto = round(invoice.amount_untaxed, 2)
-        total_factura = round(total_neto + sum_itbms, 2)
+        sum_itbms = round(
+            sum(float(it.get("valorITBMS", "0")) for it in payload["documento"]["listaItems"]), 2
+        )
 
+        # --- Reconciliación de redondeo de centavos con el ITBMS real de Odoo ---
+        odoo_target_tax = round(invoice.amount_tax, 2)
+        diff_tax = round(sum_itbms - odoo_target_tax, 2)
+
+        # Si hay diferencia de 1 o 2 centavos por redondeo individual vs Odoo global,
+        # ajustamos la diferencia en el último ítem con impuesto > 0 para que la suma cuadre exacta con Odoo.
+        if diff_tax != 0.0 and abs(diff_tax) <= 0.05:
+            for item in reversed(payload["documento"]["listaItems"]):
+                current_item_tax = float(item.get("valorITBMS", "0"))
+                if current_item_tax > 0:
+                    adjusted_item_tax = round(current_item_tax - diff_tax, 2)
+                    item["valorITBMS"] = f"{adjusted_item_tax:.2f}"
+                    current_item_net = float(item.get("precioItem", "0"))
+                    item["valorTotal"] = f"{round(current_item_net + adjusted_item_tax, 2):.2f}"
+                    sum_itbms = odoo_target_tax
+                    break
+
+        total_factura = round(sum_precio_neto + sum_itbms, 2)
+
+        totales_sub_totales["totalPrecioNeto"] = f"{sum_precio_neto:.2f}"
         totales_sub_totales["totalITBMS"] = f"{sum_itbms:.2f}"
         totales_sub_totales["totalMontoGravado"] = f"{sum_itbms:.2f}"
         totales_sub_totales["totalFactura"] = f"{total_factura:.2f}"
         totales_sub_totales["totalValorRecibido"] = f"{total_factura:.2f}"
+        totales_sub_totales["nroItems"] = str(len(payload["documento"]["listaItems"]))
         totales_sub_totales["totalTodosItems"] = f"{total_factura:.2f}"
         # Actualizar valorCuotaPagada en listaFormaPago
         totales_sub_totales["listaFormaPago"][0]["valorCuotaPagada"] = f"{total_factura:.2f}"

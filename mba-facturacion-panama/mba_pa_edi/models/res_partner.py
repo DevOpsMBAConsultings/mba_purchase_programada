@@ -188,6 +188,28 @@ class ResPartner(models.Model):
             self.dgi_payment_method_id = dgi_vals.get("dgi_payment_method_id")
             self.dgi_plazo_option = dgi_vals.get("dgi_plazo_option", "30")
 
+    def _sanitize_panama_vat(self, vat_raw):
+        """
+        Sanitiza y normaliza automáticamente cadenas de RUC / Cédula de Panamá:
+        - Pasa a mayúsculas y quita espacios.
+        - Si es un carnet/cédula tipo PN/PE/PI/N/E pegado sin guión (ej. PN0174213),
+          le inserta el guión automáticamente (ej. PN-0174213).
+        """
+        if not vat_raw:
+            return vat_raw
+        raw = str(vat_raw).strip().upper().replace(" ", "")
+        match_prefix = re.match(r"^(PN|PE|PI|N|E)(\d+)$", raw)
+        if match_prefix:
+            prefix, digits = match_prefix.groups()
+            return f"{prefix}-{digits}"
+        return raw
+
+    @api.onchange("vat")
+    def _onchange_vat_sanitize_pa(self):
+        """Auto-sanitiza el RUC en tiempo real en la vista formulario."""
+        if self.vat:
+            self.vat = self._sanitize_panama_vat(self.vat)
+
     # =========================================================
     # REGLAS DE VALIDACIÓN DGI (Constrains)
     # =========================================================
@@ -253,7 +275,9 @@ class ResPartner(models.Model):
             )
 
         vat_value = self.vat or ""
-        ruc = vat_value.strip()
+        ruc = self._sanitize_panama_vat(vat_value.strip())
+        if ruc and ruc != self.vat:
+            self.with_context(skip_fe_validation=True).write({"vat": ruc})
 
         # Validaciones de campos obligatorios para DGI
         if not self.l10n_pa_receptor_tipo:
@@ -293,29 +317,29 @@ class ResPartner(models.Model):
                 "Debe seleccionar un Método de Pago (DGI) o Término de Pago antes de validar."
             )
 
-        # Bypass API validation for Consumidor Final (02) if no RUC provided or it's "CF"
-        if self.l10n_pa_receptor_tipo == '02' and (not ruc or ruc.upper() == 'CF'):
+        # Bypass API validation for Consumidor Final (02) and Extranjero (04)
+        if self.l10n_pa_receptor_tipo == '02':
             vals = {
                 "l10n_pa_is_dgi_validated": True,
             }
             if not ruc:
                 vals["vat"] = "CF"
-                
+
             raw_phone = (self.phone or "").strip()
             if self.country_id and self.country_id.code == "PA":
                 formatted_phone = self._format_panama_phone(raw_phone, self.country_id) or False
             else:
                 formatted_phone = self._format_dgi_phone_any_country(raw_phone) or False
-                
+
             if formatted_phone:
                 vals["phone"] = formatted_phone
-                
+
             if self.street:
                 vals["street"] = self.street[:100]
-                
+
             self.with_context(skip_fe_validation=True).write(vals)
             self.message_post(
-                body="✅ <b>Validación DGI completada</b><br/>Tipo: Consumidor Final (sin RUC)",
+                body="✅ <b>Validación DGI completada (Interna)</b><br/>Tipo: Consumidor Final",
                 message_type="comment",
                 subtype_xmlid="mail.mt_note",
             )
@@ -324,7 +348,37 @@ class ResPartner(models.Model):
                 "tag": "display_notification",
                 "params": {
                     "title": "Datos DGI validados",
-                    "message": "Consumidor Final validado correctamente (sin RUC).",
+                    "message": "Consumidor Final validado correctamente (Validación interna DGI).",
+                    "type": "success",
+                    "sticky": True,
+                },
+            }
+
+        if self.l10n_pa_receptor_tipo == '04':
+            vals = {
+                "l10n_pa_is_dgi_validated": True,
+            }
+
+            raw_phone = (self.phone or "").strip()
+            formatted_phone = self._format_dgi_phone_any_country(raw_phone) or False
+            if formatted_phone:
+                vals["phone"] = formatted_phone
+
+            if self.street:
+                vals["street"] = self.street[:100]
+
+            self.with_context(skip_fe_validation=True).write(vals)
+            self.message_post(
+                body="✅ <b>Validación DGI completada (Interna)</b><br/>Tipo: Extranjero",
+                message_type="comment",
+                subtype_xmlid="mail.mt_note",
+            )
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Datos DGI validados",
+                    "message": "Receptor Extranjero validado correctamente (Validación interna DGI).",
                     "type": "success",
                     "sticky": True,
                 },
