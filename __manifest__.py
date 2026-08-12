@@ -11,7 +11,7 @@
         2. Columna en Cotización: Muestra la columna Stock Disp. en las líneas de pedido de venta antes de la columna UdM.
         3. Filtrado por Almacén: Calcula automáticamente las unidades libres de inventario considerando el almacén asignado a la cotización.
     """,
-    "author": "MBA Consultings",
+    "author": "MBA Consultings, Brooks González",
     "website": "https://www.mbaconsultings.com",
     "license": "LGPL-3",
     "depends": ["sale", "sale_stock"],
