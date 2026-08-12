@@ -79,7 +79,7 @@ class HKAClient:
             "numeroRUC": partner_ruc,
             "digitoVerificadorRUC": partner_dv,
             "razonSocial": partner_name,
-            "direccion": commercial_partner.street or "Panama",
+            "direccion": (commercial_partner.street or "Panama").strip()[:100],
             "codigoUbicacion": commercial_partner.l10n_pa_corregimiento_id.code if (tipo_cliente != "04" and commercial_partner.l10n_pa_corregimiento_id) else ("1-1-1" if tipo_cliente != "04" else ""),
             "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if tipo_cliente != "04" else "",
             "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if tipo_cliente != "04" else "",
