@@ -1,6 +1,6 @@
 # mba_pdf_header_logo_fix
 
-**v18.0.1.0.2**
+**v18.0.1.0.3**
 
 Módulo Odoo 18 CE — MBA Consultings. Corrige el logo y el bloque de datos
 de la empresa que no se pintan en el encabezado de reportes **PDF**
@@ -16,10 +16,11 @@ cliente de MBA Consultings que use Odoo 18 CE + wkhtmltopdf, igual que
 ## Causa raíz
 
 wkhtmltopdf extrae el bloque `header` de estos 3 layouts y lo renderiza
-en un sub-proceso de WebKit aparte (vía `--header-html`), con soporte
-pobre de flexbox/CSS Grid — justo lo que usan `.row`/`.col-*`/`.d-flex`
-de Bootstrap 5. El logo queda embebido en el PDF (confirmable con
-Ghostscript) pero no se pinta en el lienzo del header.
+en un sub-proceso de WebKit aparte (vía el parámetro header-html), con
+soporte pobre de flexbox/CSS Grid — justo lo que usan
+`.row`/`.col-*`/`.d-flex` de Bootstrap 5. El logo queda embebido en el
+PDF (confirmable con Ghostscript) pero no se pinta en el lienzo del
+header.
 
 Detalle técnico completo, evidencia del diagnóstico y justificación de
 cada XPath: ver el campo `description` en
@@ -66,6 +67,10 @@ cliente si es producción.)
 
 ## Changelog
 
+- **18.0.1.0.3** — Corrige el campo `author` del manifest: faltaba el
+  acento en "González" (`odoo-18/rules.md`, sección 8, exige
+  `'MBA Consultings, Brooks González'` exacto). Solo metadata, no cambia
+  lógica.
 - **18.0.1.0.2** — Renombra el módulo (campo `name` del manifest) a
   "Corrección de Logo en Encabezado PDF (MBA Consultings)" para seguir el
   mismo patrón de marca que `mba_estados_financieros_mis` en vez de
