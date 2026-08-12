@@ -1,6 +1,6 @@
 {
     "name": "Panamá - POS Facturación Electrónica (MBA Consultings)",
-    "version": "18.0.1.0.11",
+    "version": "18.0.1.0.15",
     "category": "Point of Sale",
     "summary": "Integración POS con Facturación Electrónica DGI Panamá. | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",
@@ -17,6 +17,9 @@
     ],
     "assets": {
         "point_of_sale._assets_pos": [
+            "mba_pa_pos/static/src/overrides/models.js",
+            "mba_pa_pos/static/src/overrides/components/payment_screen/dgi_number_popup.js",
+            "mba_pa_pos/static/src/overrides/components/payment_screen/dgi_number_popup.xml",
             "mba_pa_pos/static/src/overrides/components/payment_screen/payment_screen.js",
             "mba_pa_pos/static/src/overrides/components/receipt_screen/receipt_screen.js",
             "mba_pa_pos/static/src/overrides/components/receipt_screen/receipt_screen.xml",

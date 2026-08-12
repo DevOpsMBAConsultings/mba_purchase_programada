@@ -486,7 +486,8 @@ class DigifactNUCBuilder(models.AbstractModel):
         # El comentario de abajo dice "enviar TaxID vacío si no hay RUC real", pero _str_clean("CF")
         # devuelve "CF" y terminaba enviándose al XSD (error 3010). Lo normalizamos aquí de verdad:
         # "CF" (o cualquier placeholder no numérico en CF/02) → "" para que <TaxID> vaya vacío.
-        if buyer_ruc.upper() == "CF" or (tipo_receptor == "02" and not any(c.isdigit() for c in buyer_ruc)):
+        is_clean_numeric_ruc = bool(re.match(r"^(\d{1,2}-\d{1,5}-\d{1,6}|\d{1,2}-NT-\d{1,5}-\d{1,6}|\d{7,15})$", buyer_ruc))
+        if buyer_ruc.upper() == "CF" or (tipo_receptor == "02" and not is_clean_numeric_ruc):
             buyer_ruc = ""
         if tipo_receptor == "04":
             buyer_ruc = "EXTRANJERO"

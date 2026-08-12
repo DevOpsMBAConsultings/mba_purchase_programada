@@ -1,6 +1,6 @@
 {
     "name": "Panamá - Conector Digifact (MBA Consultings)",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "category": "Accounting/Localizations",
     "summary": "Conector XML para el PAC Digifact en Panamá. | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",

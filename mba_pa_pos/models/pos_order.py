@@ -36,6 +36,37 @@ class PosOrder(models.Model):
         help="Indica si este POS usa impresora fiscal (tomado de la configuración).",
     )
 
+    l10n_pa_custom_numero_df = fields.Char(
+        string="Número DF Personalizado POS",
+        copy=False,
+        help="Número fiscal DGI confirmado/editado por el cajero en el POS.",
+    )
+
+    @api.model
+    def get_next_dgi_number(self, config_id=None):
+        """Retorna el siguiente consecutivo fiscal DGI sugerido para la caja POS."""
+        journal = False
+        company = self.env.company
+        if config_id:
+            config = self.env['pos.config'].browse(config_id)
+            if config.exists():
+                journal = config.l10n_pa_pos_journal_id or config.invoice_journal_id
+                company = config.company_id
+        if not journal:
+            journal = self.env['account.journal'].search([
+                ('company_id', '=', company.id),
+                ('type', '=', 'sale'),
+            ], limit=1)
+        if not journal:
+            return "0000000001"
+
+        dummy_move = self.env['account.move'].new({
+            'company_id': company.id,
+            'journal_id': journal.id,
+            'move_type': 'out_invoice',
+        })
+        return dummy_move._pa_next_numero()
+
     # ─── Auto-rellenar datos DGI desde el partner ──────────────────────────
 
     @api.onchange("partner_id")
@@ -137,10 +168,9 @@ class PosOrder(models.Model):
             if not new_move.invoice_date:
                 new_move.invoice_date = fields.Date.context_today(self)
 
-            # 1. Reservar siguiente número fiscal disponible.
-            #    _pa_reserve_numero() toma un advisory lock por diario, así dos
-            #    cajas facturando a la vez no calculan el mismo consecutivo.
-            new_move._pa_reserve_numero()
+            # 1. Reservar número fiscal (usar el personalizado si el cajero lo editó en POS)
+            custom_num = (order.l10n_pa_custom_numero_df or "").strip()
+            new_move._pa_reserve_numero(numero=custom_num or None)
 
             # 2. Enviar al PAC sincrónicamente (si falla, lanza UserError y hace rollback)
             new_move.action_l10n_pa_send_to_pac()
@@ -175,6 +205,13 @@ class PosOrder(models.Model):
             "target": "current",
             "res_id": moves and moves.ids[0] or False,
         }
+
+    @api.model
+    def _order_fields(self, ui_order):
+        fields_val = super()._order_fields(ui_order)
+        if ui_order.get("l10n_pa_custom_numero_df"):
+            fields_val["l10n_pa_custom_numero_df"] = ui_order["l10n_pa_custom_numero_df"]
+        return fields_val
 
     @api.model
     def _process_order(self, order, draft, *args, **kwargs):
