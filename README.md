@@ -1,6 +1,6 @@
 # Estados Financieros MIS (MBA Consultings)
 
-**v18.0.1.0.4**
+**v18.0.1.0.5**
 
 Módulo de solo datos, **agnóstico de plan de cuentas**, que arma 4 reportes
 sobre MIS Builder para cualquier cliente de MBA Consultings, tenga o no un
@@ -244,6 +244,10 @@ antes de tiempo. Por eso:
 
 ## Historial de cambios
 
+- **18.0.1.0.5** — Corrige el campo `author` del manifest: faltaba el
+  acento en "González" (`odoo-18/rules.md`, sección 8, exige
+  `'MBA Consultings, Brooks González'` exacto). Solo metadata, no cambia
+  lógica.
 - **18.0.1.0.4** — Corrige bug bloqueante de instalación: la acción
   "MBA: Sincronizar tema de reportes MIS con la marca" intentaba hacer
   `from odoo.addons.mba_estados_financieros_mis.hooks import

@@ -1,6 +1,6 @@
 {
     'name': 'Estados Financieros MIS (MBA Consultings)',
-    'version': '18.0.1.0.4',
+    'version': '18.0.1.0.5',
     'category': 'Accounting/Reporting',
     'summary': 'Balance General, Estado de Resultados, Estado de Resultados '
                'de Ventas y Estado de Cambios en el Patrimonio sobre MIS '
@@ -40,7 +40,7 @@ Contabilidad > Configuración > Plan de Cuentas > abrir la cuenta > campo
 Ventas (MIS)" a la(s) cuenta(s) que correspondan en ESE maestro de
 cuentas.
 """,
-    'author': 'MBA Consultings, Brooks Gonzalez',
+    'author': 'MBA Consultings, Brooks González',
     'website': 'https://mbaconsultings.com',
     'license': 'LGPL-3',
     'depends': [
