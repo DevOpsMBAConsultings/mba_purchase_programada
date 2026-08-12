@@ -149,3 +149,25 @@ class ProductTemplate(models.Model):
                 },
             }
 
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def write(self, vals):
+        res = super().write(vals)
+        if "standard_price" in vals:
+            templates = self.mapped("product_tmpl_id")
+            action = templates._update_sale_price_from_base_pricelist(show_notification=True)
+            if action:
+                return action
+        return res
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        if any("standard_price" in vals for vals in vals_list):
+            templates = records.mapped("product_tmpl_id")
+            templates._update_sale_price_from_base_pricelist(show_notification=True)
+        return records
+
+
