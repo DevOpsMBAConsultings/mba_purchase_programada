@@ -377,22 +377,9 @@ class HKAClient:
             sum(float(it.get("valorITBMS", "0")) for it in payload["documento"]["listaItems"]), 2
         )
 
-        # --- Reconciliación de redondeo de centavos con el ITBMS real de Odoo ---
-        odoo_target_tax = round(invoice.amount_tax, 2)
-        diff_tax = round(sum_itbms - odoo_target_tax, 2)
-
-        # Si hay diferencia de 1 o 2 centavos por redondeo individual vs Odoo global,
-        # ajustamos la diferencia en el último ítem con impuesto > 0 para que la suma cuadre exacta con Odoo.
-        if diff_tax != 0.0 and abs(diff_tax) <= 0.05:
-            for item in reversed(payload["documento"]["listaItems"]):
-                current_item_tax = float(item.get("valorITBMS", "0"))
-                if current_item_tax > 0:
-                    adjusted_item_tax = round(current_item_tax - diff_tax, 2)
-                    item["valorITBMS"] = f"{adjusted_item_tax:.2f}"
-                    current_item_net = float(item.get("precioItem", "0"))
-                    item["valorTotal"] = f"{round(current_item_net + adjusted_item_tax, 2):.2f}"
-                    sum_itbms = odoo_target_tax
-                    break
+        # Cada ítem mantiene su valorITBMS calculado de forma pura por línea,
+        # cumpliendo con la regla 2152 de la DGI Panamá (valorITBMS = round(precioItem * tasa)).
+        # Los totales globales se calculan como la suma exacta de los ítems enviados.
 
         total_factura = round(sum_precio_neto + sum_itbms, 2)
 
