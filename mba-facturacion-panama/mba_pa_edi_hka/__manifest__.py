@@ -1,6 +1,6 @@
 {
     "name": "Panamá - FE Connector The Factory HKA (MBA Consultings)",
-    "version": "18.0.1.0.11",
+    "version": "18.0.1.0.14",
     "category": "Accounting/Localizations",
     "summary": "Conector API REST para el PAC The Factory HKA en Panamá. | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",

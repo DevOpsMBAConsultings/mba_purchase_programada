@@ -108,6 +108,14 @@
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
             </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='tax_id']" position="attributes" groups="mba_pa_sale.group_edit_sale_line_tax">
+                <attribute name="readonly">0</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="attributes" groups="mba_pa_sale.group_edit_sale_line_tax">
+                <attribute name="readonly">0</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
             <xpath expr="//field[@name='date_order']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>

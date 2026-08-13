@@ -1,6 +1,6 @@
 {
     "name": "Panamá - Facturación Electrónica Core (MBA Consultings)",
-    "version": "18.0.1.0.11",
+    "version": "18.0.1.0.16",
     "category": "Accounting/Localizations",
     "summary": "Módulo core de Facturación Electrónica DGI para Panamá (Sin PAC asignado). | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",
@@ -8,6 +8,7 @@
     "license": "LGPL-3",
     "depends": [
         "account",
+        "account_debit_note",
         "sale",
         "mba_pa_base",
         "mba_pa_products"

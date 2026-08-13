@@ -1,6 +1,6 @@
 {
     "name": "Panamá - Integración con Ventas (MBA Consultings)",
-    "version": "18.0.1.0.15",
+    "version": "18.0.1.0.17",
     "category": "Sales",
     "summary": "Extensión de cotizaciones y ventas para Panamá (DGI). | MBA Consultings",
     "author": "MBA Consultings, Brooks Gonzalez",
@@ -12,6 +12,7 @@
         "mba_pa_edi"
     ],
     "data": [
+        "security/mba_pa_sale_security.xml",
         "security/ir.model.access.csv",
         "wizard/sale_order_dgi_warning_wizard_views.xml",
         "views/sale_order_views.xml"

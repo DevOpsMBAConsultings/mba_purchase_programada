@@ -15,6 +15,9 @@ class AccountMove(models.Model):
     dgi_document_type_id = fields.Many2one(
         "dgi.document.type",
         string="Tipo de documento (DGI)",
+        compute="_compute_dgi_document_type_id",
+        store=True,
+        readonly=False,
         tracking=True,
     )
 
@@ -123,6 +126,42 @@ class AccountMove(models.Model):
         store=True,
         help="True si la factura fue generada desde una cotización/orden de venta aprobada."
     )
+
+    l10n_pa_is_debit_note = fields.Boolean(
+        string="Es Nota de Débito (DGI)",
+        default=False,
+        copy=False,
+        tracking=True,
+        help="Indica si este documento es una Nota de Débito DGI (Referenciada o Genérica)."
+    )
+
+    @api.depends("move_type", "reversed_entry_id", "l10n_pa_is_debit_note")
+    def _compute_dgi_document_type_id(self):
+        DocType = self.env["dgi.document.type"]
+        for move in self:
+            debit_origin = getattr(move, "debit_origin_id", False)
+            is_debit = move.l10n_pa_is_debit_note or bool(debit_origin)
+            
+            if move.dgi_document_type_id and not self.env.context.get("force_recompute_dgi_type"):
+                if is_debit and move.dgi_document_type_id.code not in ("nd_referenciada_fe", "nd_generica"):
+                    pass
+                else:
+                    continue
+
+            code = False
+            if move.move_type == "out_refund":
+                code = "nc_referenciada_fe" if move.reversed_entry_id else "nc_generica"
+            elif move.move_type == "out_invoice":
+                if debit_origin:
+                    code = "nd_referenciada_fe"
+                elif is_debit:
+                    code = "nd_generica"
+                else:
+                    code = "factura_operacion_interna"
+            if code:
+                doc_type = DocType.search([("code", "=", code)], limit=1)
+                if doc_type:
+                    move.dgi_document_type_id = doc_type
 
     @api.depends("invoice_origin", "move_type")
     def _compute_dgi_is_from_sale(self):
@@ -400,3 +439,22 @@ class AccountMove(models.Model):
                 }
         
         return super(AccountMove, self).action_post()
+
+
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    def _get_dgi_item_description(self):
+        """
+        Método agnóstico para obtener la descripción que se enviará al PAC/DGI.
+        Si el producto está marcado como 'Es producto genérico DGI' (is_dgi_generic),
+        o si no hay producto, se prioriza lo que el usuario escribió en la casilla 'Descripción' (line.name).
+        De lo contrario, se utiliza el nombre original del producto en el catálogo.
+        """
+        self.ensure_one()
+        prod = self.product_id
+        is_generic = getattr(prod, "is_dgi_generic", False) if prod else True
+        if is_generic:
+            return (self.name or (prod.name if prod else "Ítem")).strip()
+        return (prod.name if prod else (self.name or "Ítem")).strip()
+

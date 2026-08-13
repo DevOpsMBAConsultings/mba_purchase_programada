@@ -72,24 +72,37 @@ class HKAClient:
                 partner_dv = ""
         partner_name = getattr(invoice, "dgi_partner_name", None) or commercial_partner.name or ""
         partner_taxpayer_type = getattr(invoice, "dgi_partner_taxpayer_type", None) or getattr(commercial_partner, "l10n_pa_tipo_contribuyente", None) or ("2" if commercial_partner.company_type == "company" else "1")
+        has_corregimiento = bool(commercial_partner.l10n_pa_corregimiento_id)
+        has_ruc = bool(partner_ruc and partner_ruc.upper() != "CF" and partner_ruc != "00000")
 
         # --- Datos del Cliente ---
         cliente_data = {
             "tipoClienteFE": tipo_cliente,
-            "numeroRUC": partner_ruc,
-            "digitoVerificadorRUC": partner_dv,
             "razonSocial": partner_name,
             "direccion": (commercial_partner.street or "Panama").strip()[:100],
-            "codigoUbicacion": commercial_partner.l10n_pa_corregimiento_id.code if (tipo_cliente != "04" and commercial_partner.l10n_pa_corregimiento_id) else ("1-1-1" if tipo_cliente != "04" else ""),
-            "provincia": self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name) if tipo_cliente != "04" else "",
-            "distrito": self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name) if tipo_cliente != "04" else "",
-            "corregimiento": self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name) if tipo_cliente != "04" else "",
             "telefono1": __import__("re").sub(r"^\+507\s*", "", contact_partner.phone or commercial_partner.phone or "").replace("+", "").strip()[:20],
             "correoElectronico1": contact_partner.email or commercial_partner.email or "",
             "pais": commercial_partner.country_id.code or "PA",
         }
 
-        if tipo_cliente != "04":
+        # RUC y DV: si es Consumidor Final (02) y no tiene RUC real, se pueden omitir o usar comodín limpio
+        if has_ruc or tipo_cliente != "02":
+            cliente_data["numeroRUC"] = partner_ruc
+            cliente_data["digitoVerificadorRUC"] = partner_dv
+
+        # Ubicación geográfica: enviar si está configurado el corregimiento; si es Consumidor Final y no tiene corregimiento, omitir para evitar error de discrepancia de provincia
+        if has_corregimiento:
+            cliente_data["codigoUbicacion"] = commercial_partner.l10n_pa_corregimiento_id.code or ""
+            cliente_data["provincia"] = self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name)
+            cliente_data["distrito"] = self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name)
+            cliente_data["corregimiento"] = self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name)
+        elif tipo_cliente != "02" and tipo_cliente != "04":
+            cliente_data["codigoUbicacion"] = "1-1-1"
+            cliente_data["provincia"] = self._clean_location_name(commercial_partner.l10n_pa_provincia_id.name)
+            cliente_data["distrito"] = self._clean_location_name(commercial_partner.l10n_pa_distrito_id.name)
+            cliente_data["corregimiento"] = self._clean_location_name(commercial_partner.l10n_pa_corregimiento_id.name)
+
+        if tipo_cliente != "04" and (has_ruc or tipo_cliente != "02"):
             cliente_data["tipoContribuyente"] = partner_taxpayer_type
 
         if tipo_cliente == "04":
@@ -129,13 +142,16 @@ class HKAClient:
             ]
         }
 
-        # --- Detección de Nota de Crédito (ANTES de listaPagoPlazo) ---
-        is_credit_note = invoice.move_type == 'out_refund'
-        original_invoice = getattr(invoice, 'reversed_entry_id', None)
+        # --- Detección de Tipo de Documento (NC 04/06, ND 05/07, Factura) ---
+        doc_code = (invoice.dgi_document_type_id.code if invoice.dgi_document_type_id else "").strip()
+        is_credit_note = invoice.move_type == 'out_refund' or doc_code in ('nc_referenciada_fe', 'nc_generica')
+        is_debit_note = bool(invoice.debit_origin_id) or getattr(invoice, 'l10n_pa_is_debit_note', False) or doc_code in ('nd_referenciada_fe', 'nd_generica')
+
+        original_invoice = invoice.debit_origin_id if is_debit_note else getattr(invoice, 'reversed_entry_id', None)
         is_referenced = bool(original_invoice and getattr(original_invoice, 'l10n_pa_cufe', None))
 
         if is_credit_note:
-            if is_referenced:
+            if is_referenced or doc_code == 'nc_referenciada_fe':
                 tipo_documento = "04"  # NC Referenciada
             else:
                 tipo_documento = "06"  # NC Genérica
@@ -152,8 +168,14 @@ class HKAClient:
                     "infoPagoCuota": "Nota de credito electronica",
                 }
             ]
+        elif is_debit_note:
+            if is_referenced or doc_code == 'nd_referenciada_fe':
+                tipo_documento = "05"  # ND Referenciada
+            else:
+                tipo_documento = "07"  # ND Genérica
+            tipo_venta = "1"
         else:
-            tipo_documento = invoice.dgi_document_type_id.code if invoice.dgi_document_type_id else "01"
+            tipo_documento = invoice.dgi_document_type_id.dgi_numeric_code if invoice.dgi_document_type_id else "01"
             tipo_venta = "1"  # Venta de Giro del negocio
 
             # listaPagoPlazo: obligatorio cuando tiempoPago == "2" (crédito/plazo)
@@ -197,8 +219,8 @@ class HKAClient:
         if invoice.dgi_payment_notes:
             datos_transaccion["informacionInteres"] = (invoice.dgi_payment_notes or "")[:5000]
 
-        # --- Bloque de documento fiscal referenciado (obligatorio para NC 04) ---
-        if is_credit_note and is_referenced:
+        # --- Bloque de documento fiscal referenciado (obligatorio para NC 04 y ND 05) ---
+        if (is_credit_note or is_debit_note) and is_referenced:
             datos_transaccion["listaDocsFiscalReferenciados"] = [
                 {
                     "fechaEmisionDocFiscalReferenciado": original_invoice.invoice_date.strftime(
@@ -312,8 +334,8 @@ class HKAClient:
             itbms_item = round(precio_item * tax_percent / 100.0, 2) if tax_percent else 0.0
             valor_total_item = round(precio_item + itbms_item, 2)
 
-            # Usar nombre del producto sin prefijo de código [SKU]
-            prod_name = prod.name if prod else (line.name or "Producto")
+            # Usar método agnóstico para descripción (respeta si es producto genérico DGI)
+            prod_name = line._get_dgi_item_description() if hasattr(line, "_get_dgi_item_description") else (prod.name if prod else (line.name or "Producto"))
             item = {
                 "descripcion": prod_name[:500],
                 "cantidad": f"{line.quantity:.4f}",

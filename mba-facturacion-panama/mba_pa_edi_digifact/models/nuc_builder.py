@@ -281,10 +281,12 @@ class DigifactNUCBuilder(models.AbstractModel):
             raise ValueError("Document must be draft or posted")
         if move.state == "draft" and not allow_draft:
             raise ValueError("Document must be posted before generating NUC XML (or use allow_draft=True for preview)")
-        if move.move_type == "out_refund" and move.dgi_document_type_id and move.dgi_document_type_id.code in ("nc_referenciada_fe", "nd_referenciada_fe"):
+        if move.dgi_document_type_id and move.dgi_document_type_id.code in ("nc_referenciada_fe", "nd_referenciada_fe"):
             refs = getattr(move, "dgi_referenced_fe_ids", None)
-            if not refs or not any(getattr(r, "cufe", None) for r in refs):
-                raise ValueError("NC/ND referenciada FE debe tener al menos un documento fiscal referenciado (tabla Documento Fiscal Referenciado) con CUFE.")
+            has_ref = bool(refs and any(getattr(r, "cufe", None) for r in refs))
+            has_origin = bool((move.debit_origin_id and move.debit_origin_id.l10n_pa_cufe) or (move.reversed_entry_id and move.reversed_entry_id.l10n_pa_cufe))
+            if not (has_ref or has_origin):
+                raise ValueError("NC/ND referenciada FE debe tener al menos un documento fiscal referenciado con CUFE.")
 
         company = move.company_id
         partner = move.partner_id
@@ -760,8 +762,9 @@ class DigifactNUCBuilder(models.AbstractModel):
                 for name, value in code_pairs:
                     SubElement(codes, "Code", {"Name": str(name), "Value": str(value)})
 
-            # Basic fields (descripción sin repetir código; CodigoProd ya va en Codes)
-            item_desc = _strip_reference_from_description(line.name, prod.default_code if prod else None)
+            # Basic fields (descripción respetando si el producto es genérico DGI)
+            raw_item_desc = line._get_dgi_item_description() if hasattr(line, "_get_dgi_item_description") else line.name
+            item_desc = _strip_reference_from_description(raw_item_desc, prod.default_code if prod else None)
             SubElement(it, "Description").text = _nuc_sanitize_text(item_desc or "ITEM")
             SubElement(it, "Qty").text = _fmt_amount(line.quantity, 2)
             # E06 UnitOfMeasure: opcional (Ocu 0-1) según DGI NUC-XML V2.0.7.

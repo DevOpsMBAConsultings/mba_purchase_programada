@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 # Código de etiqueta para mostrar en listas (ej. "01 - Factura de Operación Interna")
@@ -33,17 +33,21 @@ class DgiDocumentType(models.Model):
         string="Receptor Rules",
     )
 
-    def name_get(self):
+    @api.depends('code', 'name')
+    def _compute_display_name(self):
         """Mostrar etiqueta con número de documento, ej. 01 - Factura de Operación Interna."""
-        result = []
         for rec in self:
             display_code = DOC_TYPE_DISPLAY_CODE.get((rec.code or "").strip())
             name = (rec.name or "").strip()
             if display_code:
-                result.append((rec.id, f"{display_code} - {name}"))
+                rec.display_name = f"{display_code} - {name}"
             else:
-                result.append((rec.id, name or rec.code or ""))
-        return result
+                rec.display_name = name or rec.code or ""
+
+    @property
+    def dgi_numeric_code(self):
+        self.ensure_one()
+        return DOC_TYPE_DISPLAY_CODE.get((self.code or "").strip(), "01")
 
 
 class DgiDocumentTypeRule(models.Model):

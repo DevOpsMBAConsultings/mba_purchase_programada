@@ -47,6 +47,13 @@ class ProductTemplate(models.Model):
         "se agregan a TotalCharges (F03) con la descripción indicada.",
     )
 
+    is_dgi_generic = fields.Boolean(
+        string="Es Producto Genérico (DGI)",
+        default=False,
+        help="Si se marca, en la facturación electrónica ante la DGI se enviará el texto de la 'Descripción' "
+        "modificado por el usuario en la línea de la factura, en lugar del nombre estático del producto del catálogo.",
+    )
+
     @api.onchange("dgi_cpbs_segment_id")
     def _onchange_dgi_cpbs_segment_id(self):
         for rec in self:
