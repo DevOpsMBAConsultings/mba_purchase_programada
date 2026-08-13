@@ -9,10 +9,10 @@ class MbaInventoryOverview(models.Model):
 
     name = fields.Char("Nombre", default="Inventario Operativo")
     company_id = fields.Many2one('res.company', string='Empresa', default=lambda self: self.env.company)
-    fisico_bruto = fields.Float("Físico en Bodega", compute="_compute_metrics")
-    deficit_negativo = fields.Float("Déficit Vtas. Negativas", compute="_compute_metrics")
-    compras_transito = fields.Float("Compras en Tránsito", compute="_compute_metrics")
-    inventario_operativo = fields.Float("Inv. Operativo Proyectado", compute="_compute_metrics")
+    fisico_bruto = fields.Float("Físico en Bodega", compute="_compute_metrics", store=True)
+    deficit_negativo = fields.Float("Déficit Vtas. Negativas", compute="_compute_metrics", store=True)
+    compras_transito = fields.Float("Compras en Tránsito", compute="_compute_metrics", store=True)
+    inventario_operativo = fields.Float("Inv. Operativo Proyectado", compute="_compute_metrics", store=True)
 
     @api.depends('company_id')
     def _compute_metrics(self):
@@ -33,6 +33,10 @@ class MbaInventoryOverview(models.Model):
             rec.deficit_negativo = res.get('deficit_negativo', 0.0)
             rec.compras_transito = res.get('compras_transito', 0.0)
             rec.inventario_operativo = res.get('inventario_operativo', 0.0)
+
+    def action_refresh_metrics(self):
+        """Método para forzar el recálculo y actualización inmediata de las métricas almacenadas."""
+        self._compute_metrics()
 
     def init(self):
         """Asegura que exista un registro inicial por empresa al instalar/actualizar."""
