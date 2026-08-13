@@ -36,13 +36,6 @@
    "fontSize": 9,
    "textColor": "#434343"
   },
-  "5": {
-   "bold": true,
-   "textColor": "#434343"
-  },
-  "6": {
-   "textColor": "#434343"
-  },
   "7": {
    "bold": true,
    "fontSize": 16,
@@ -138,9 +131,24 @@
      "asc": false
     }
    ]
+  },
+  "3": {
+   "id": "3",
+   "name": "Productos en Bodega (Mayor a Menor Valor)",
+   "model": "stock.valuation.layer",
+   "domain": [
+    ["remaining_qty", ">", 0]
+   ],
+   "columns": ["product_id", "remaining_qty", "remaining_value"],
+   "orderBy": [
+    {
+     "name": "remaining_value",
+     "asc": false
+    }
+   ]
   }
  },
- "listNextId": 3,
+ "listNextId": 4,
  "globalFilters": [
   {
    "id": "filter_period",
@@ -167,7 +175,7 @@
    "id": "sheet1",
    "name": "Inventario & Tránsito",
    "colNumber": 12,
-   "rowNumber": 40,
+   "rowNumber": 50,
    "cells": {
     "A2": {
      "content": "Tablero de Inventario Operativo & Tránsito",
@@ -178,39 +186,20 @@
      "style": 2
     },
 
-    "A5": {
-     "content": "Físico en Bodega (Stock > 0)",
-     "style": 3
-    },
     "A6": {
      "content": "=PIVOT.VALUE(1,\"fisico_bruto\")",
      "style": 7,
      "format": 1
-    },
-
-    "D5": {
-     "content": "Déficit Vtas. Negativas",
-     "style": 3
     },
     "D6": {
      "content": "=-ABS(PIVOT.VALUE(1,\"deficit_negativo\"))",
      "style": 8,
      "format": 1
     },
-
-    "G5": {
-     "content": "Compras en Tránsito",
-     "style": 3
-    },
     "G6": {
      "content": "=PIVOT.VALUE(1,\"compras_transito\")",
      "style": 9,
      "format": 1
-    },
-
-    "J5": {
-     "content": "Inv. Operativo Proyectado",
-     "style": 3
     },
     "J6": {
      "content": "=PIVOT.VALUE(1,\"inventario_operativo\")",
@@ -218,103 +207,198 @@
      "format": 1
     },
 
-    "A9": {
+    "A18": {
+     "content": "Productos en Bodega (Ordenados por Valor)",
+     "style": 3
+    },
+    "A19": {
+     "content": "Producto"
+    },
+    "B19": {
+     "content": "Cant. Restante"
+    },
+    "C19": {
+     "content": "Valor Total (Costo)"
+    },
+    "A20": {
+     "content": "=ODOO.LIST(3,1,\"product_id\")"
+    },
+    "B20": {
+     "content": "=ODOO.LIST(3,1,\"remaining_qty\")"
+    },
+    "C20": {
+     "content": "=ODOO.LIST(3,1,\"remaining_value\")",
+     "format": 1
+    },
+
+    "E18": {
      "content": "Clientes en Espera (Entregas Reservadas / Parciales)",
      "style": 3
     },
-    "A10": {
+    "E19": {
      "content": "Referencia"
     },
-    "B10": {
+    "F19": {
      "content": "Cliente"
     },
-    "C10": {
+    "G19": {
      "content": "Fecha Creación"
     },
-    "D10": {
+    "H19": {
      "content": "Estado"
     },
-    "A11": {
+    "E20": {
      "content": "=ODOO.LIST(1,1,\"name\")"
     },
-    "B11": {
+    "F20": {
      "content": "=ODOO.LIST(1,1,\"partner_id\")"
     },
-    "C11": {
+    "G20": {
      "content": "=ODOO.LIST(1,1,\"create_date\")"
     },
-    "D11": {
+    "H20": {
      "content": "=ODOO.LIST(1,1,\"state\")"
     },
 
-    "G9": {
+    "I18": {
      "content": "Proveedores con Órdenes en Tránsito (Por Recibir)",
      "style": 3
     },
-    "G10": {
+    "I19": {
      "content": "Orden Compra"
     },
-    "H10": {
+    "J19": {
      "content": "Proveedor"
     },
-    "I10": {
+    "K19": {
      "content": "Producto"
     },
-    "J10": {
+    "L19": {
      "content": "Cant. Pedida"
     },
-    "K10": {
-     "content": "Monto Subtotal"
-    },
-    "G11": {
+    "I20": {
      "content": "=ODOO.LIST(2,1,\"order_id\")"
     },
-    "H11": {
+    "J20": {
      "content": "=ODOO.LIST(2,1,\"partner_id\")"
     },
-    "I11": {
+    "K20": {
      "content": "=ODOO.LIST(2,1,\"product_id\")"
     },
-    "J11": {
+    "L20": {
      "content": "=ODOO.LIST(2,1,\"product_qty\")"
-    },
-    "K11": {
-     "content": "=ODOO.LIST(2,1,\"price_subtotal\")",
-     "format": 1
     }
    },
    "styles": {
     "A2": 1,
     "A3": 2,
-    "A5": 3,
     "A6": 7,
-    "D5": 3,
     "D6": 8,
-    "G5": 3,
     "G6": 9,
-    "J5": 3,
     "J6": 7,
-    "A9": 3,
-    "G9": 3
+    "A18": 3,
+    "E18": 3,
+    "I18": 3
    },
    "formats": {
     "A6": 1,
     "D6": 1,
     "G6": 1,
     "J6": 1,
-    "K11": 1
+    "C20": 1
    },
    "borders": {
     "A2:L2": 1,
-    "A5:C5": 1,
-    "D5:F5": 1,
-    "G5:I5": 1,
-    "J5:L5": 1,
-    "A9:E9": 1,
-    "G9:L9": 1
+    "A18:C18": 1,
+    "E18:H18": 1,
+    "I18:L18": 1
    },
-   "conditionalFormats": [],
-   "figures": [],
+   "figures": [
+    {
+     "id": "card_kpi_1",
+     "x": 0,
+     "y": 60,
+     "width": 230,
+     "height": 105,
+     "tag": "chart",
+     "data": {
+      "type": "scorecard",
+      "background": "#EFF6FF",
+      "title": {
+       "text": "Físico en Bodega (Stock > 0)",
+       "color": "#434343",
+       "bold": true
+      },
+      "keyValue": "sheet1!A6",
+      "baseline": "Mercadería real en repisas",
+      "baselineMode": "text",
+      "humanize": false
+     }
+    },
+    {
+     "id": "card_kpi_2",
+     "x": 240,
+     "y": 60,
+     "width": 230,
+     "height": 105,
+     "tag": "chart",
+     "data": {
+      "type": "scorecard",
+      "background": "#FEF2F2",
+      "title": {
+       "text": "Déficit Vtas. Negativas",
+       "color": "#434343",
+       "bold": true
+      },
+      "keyValue": "sheet1!D6",
+      "baseline": "Ventas facturadas por reabastecer",
+      "baselineMode": "text",
+      "humanize": false
+     }
+    },
+    {
+     "id": "card_kpi_3",
+     "x": 480,
+     "y": 60,
+     "width": 230,
+     "height": 105,
+     "tag": "chart",
+     "data": {
+      "type": "scorecard",
+      "background": "#F0FDF4",
+      "title": {
+       "text": "Compras en Tránsito",
+       "color": "#434343",
+       "bold": true
+      },
+      "keyValue": "sheet1!G6",
+      "baseline": "Órdenes de compra por recibir",
+      "baselineMode": "text",
+      "humanize": false
+     }
+    },
+    {
+     "id": "card_kpi_4",
+     "x": 720,
+     "y": 60,
+     "width": 230,
+     "height": 105,
+     "tag": "chart",
+     "data": {
+      "type": "scorecard",
+      "background": "#F8FAFC",
+      "title": {
+       "text": "Inv. Operativo Proyectado",
+       "color": "#434343",
+       "bold": true
+      },
+      "keyValue": "sheet1!J6",
+      "baseline": "Valor total disponible esperado",
+      "baselineMode": "text",
+      "humanize": false
+     }
+    }
+   ],
    "tables": [],
    "areGridLinesVisible": false,
    "isVisible": true,
