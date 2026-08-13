@@ -115,7 +115,12 @@
      "name": "create_date",
      "asc": true
     }
-   ]
+   ],
+   "fieldMatching": {
+    "filter_period": { "chain": "create_date", "type": "date", "offset": 0 },
+    "filter_category": { "chain": "move_ids.product_id.categ_id", "type": "many2one" },
+    "filter_product": { "chain": "move_ids.product_id", "type": "many2one" }
+   }
   },
   "2": {
    "id": "2",
@@ -130,7 +135,12 @@
      "name": "price_subtotal",
      "asc": false
     }
-   ]
+   ],
+   "fieldMatching": {
+    "filter_period": { "chain": "create_date", "type": "date", "offset": 0 },
+    "filter_category": { "chain": "product_id.categ_id", "type": "many2one" },
+    "filter_product": { "chain": "product_id", "type": "many2one" }
+   }
   },
   "3": {
    "id": "3",
@@ -145,7 +155,12 @@
      "name": "remaining_value",
      "asc": false
     }
-   ]
+   ],
+   "fieldMatching": {
+    "filter_period": { "chain": "create_date", "type": "date", "offset": 0 },
+    "filter_category": { "chain": "product_id.categ_id", "type": "many2one" },
+    "filter_product": { "chain": "product_id", "type": "many2one" }
+   }
   }
  },
  "listNextId": 4,
