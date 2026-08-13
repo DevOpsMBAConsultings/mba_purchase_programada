@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="mba_reportes_diarios.SalesCommissionReportTemplate" owl="1">
+        <div class="o_mba_report">
+            <!-- Header & Filter Bar -->
+            <div class="o_mba_report_header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h2 class="o_mba_report_title">Comisiones de Ventas (Pre-Cierre)</h2>
+                    <div class="o_mba_report_subtitle">
+                        Empresa: <strong t-esc="state.data.company_name"/> | Rango: <span t-esc="state.date_from"/> al <span t-esc="state.date_to"/> | Generado: <span t-esc="state.data.time_report"/>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <button class="btn btn-primary" t-on-click="printPdf">
+                        <i class="fa fa-print me-1"/> Imprimir (PDF)
+                    </button>
+                    <button class="btn btn-secondary" t-on-click="exportXlsx">
+                        <i class="fa fa-file-excel-o me-1"/> Exportar (XLSX)
+                    </button>
+
+                    <div class="d-flex align-items-center gap-1 ms-2">
+                        <span class="small text-muted">Desde:</span>
+                        <input type="date" class="form-control form-control-sm" t-model="state.date_from" t-on-change="onFilterChange"/>
+                        <span class="small text-muted ms-1">Hasta:</span>
+                        <input type="date" class="form-control form-control-sm" t-model="state.date_to" t-on-change="onFilterChange"/>
+                    </div>
+
+                    <div class="ms-2">
+                        <select class="form-select form-select-sm" t-model="state.settlement_state" t-on-change="onFilterChange">
+                            <option value="all">Todas las Liquidaciones</option>
+                            <option value="pending">Solo Pendientes por Liquidar</option>
+                            <option value="settled">Solo Ya Liquidadas</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select class="form-select form-select-sm" t-model="state.payment_state" t-on-change="onFilterChange">
+                            <option value="all">Todas las Facturas</option>
+                            <option value="paid">Solo Facturas Pagadas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <t t-if="state.loading">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <div class="mt-2 text-muted">Cargando auditoría de comisiones...</div>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- OCA Warning if module not installed -->
+                <t t-if="!state.data.oca_installed">
+                    <div class="alert alert-warning text-center p-4">
+                        <i class="fa fa-exclamation-triangle fa-2x mb-2"/>
+                        <h4>Módulo OCA de Comisiones no detectado</h4>
+                        <p class="mb-0">Para visualizar las comisiones en vivo, asegúrese de tener instalado el módulo <code>account_commission_oca</code>.</p>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <!-- KPI Summary Cards -->
+                    <div class="o_mba_report_kpis">
+                        <div class="o_mba_report_kpi o_mba_kpi_info">
+                            <div class="o_mba_kpi_label">Ventas Totales Base</div>
+                            <div class="o_mba_kpi_value" t-esc="state.data.formatted_total_sales"/>
+                        </div>
+                        <div class="o_mba_report_kpi o_mba_kpi_success">
+                            <div class="o_mba_kpi_label">Total Comisiones Devengadas</div>
+                            <div class="o_mba_kpi_value" t-esc="state.data.formatted_total_commission"/>
+                        </div>
+                        <div class="o_mba_report_kpi">
+                            <div class="o_mba_kpi_label">Pendientes de Liquidación</div>
+                            <div class="o_mba_kpi_value text-warning" t-esc="state.data.formatted_total_pending"/>
+                        </div>
+                        <div class="o_mba_report_kpi">
+                            <div class="o_mba_kpi_label">Comisiones Liquidadas</div>
+                            <div class="o_mba_kpi_value text-success" t-esc="state.data.formatted_total_settled"/>
+                        </div>
+                    </div>
+
+                    <!-- Table 1: Detalle por Agente / Vendedor (Accordion) -->
+                    <div class="o_mba_report_section">
+                        <div class="o_mba_report_section_header">
+                            <h3 class="o_mba_report_section_title">Auditoría de Comisiones por Vendedor</h3>
+                            <span class="badge o_mba_badge" t-esc="state.data.agents.length + ' Vendedores'"/>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="o_mba_report_table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>Factura / Orden</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th class="text-end">Monto Venta Base</th>
+                                        <th>Estado Cobro</th>
+                                        <th>Estado Liquidación</th>
+                                        <th class="text-end">Comisión Ganada</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="!state.data.agents || state.data.agents.length === 0">
+                                        <tr>
+                                            <td colspan="8" class="text-center py-4 text-muted">
+                                                No se encontraron registros de comisiones para el periodo seleccionado.
+                                            </td>
+                                        </tr>
+                                    </t>
+
+                                    <t t-foreach="state.data.agents" t-as="ag" t-key="ag.agent_id">
+                                        <!-- Accordion Group Header -->
+                                        <tr class="o_mba_group_row" t-on-click="() => this.toggleAgent(ag.agent_id)">
+                                            <td class="text-center">
+                                                <i t-att-class="state.expanded[ag.agent_id] ? 'fa fa-caret-down o_mba_caret' : 'fa fa-caret-right o_mba_caret'"/>
+                                            </td>
+                                            <td colspan="3">
+                                                <strong class="fs-6 text-primary" t-esc="ag.agent_name"/>
+                                                <span class="badge rounded-pill bg-light text-dark ms-2" t-esc="ag.lines.length + ' facturas'"/>
+                                            </td>
+                                            <td class="o_mba_amount fw-bold" t-esc="ag.formatted_sales_total"/>
+                                            <td colspan="2" class="text-end small">
+                                                <span class="text-warning me-2">Pendiente: <t t-esc="ag.formatted_pending_total"/></span>
+                                                <span class="text-success">Liquidada: <t t-esc="ag.formatted_settled_total"/></span>
+                                            </td>
+                                            <td class="o_mba_amount text-success fs-6 fw-bold" t-esc="ag.formatted_commission_total"/>
+                                        </tr>
+
+                                        <!-- Group Details (if expanded): una fila por factura -->
+                                        <t t-if="state.expanded[ag.agent_id]">
+                                            <t t-foreach="ag.lines" t-as="l" t-key="l.invoice_id || l.invoice_name">
+                                                <tr class="o_mba_detail_row">
+                                                    <td></td>
+                                                    <td>
+                                                        <span class="o_mba_link" t-on-click="() => this.openInvoice(l.invoice_id)">
+                                                            <t t-esc="l.invoice_name"/>
+                                                        </span>
+                                                    </td>
+                                                    <td t-esc="l.invoice_date"/>
+                                                    <td>
+                                                        <t t-if="l.partner_id">
+                                                            <span class="o_mba_link" t-on-click="() => this.openPartner(l.partner_id)">
+                                                                <t t-esc="l.partner_name"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <t t-esc="l.partner_name"/>
+                                                        </t>
+                                                    </td>
+                                                    <td class="o_mba_amount" t-esc="l.formatted_price_subtotal"/>
+                                                    <td><span class="badge bg-info" t-esc="l.payment_state"/></td>
+                                                    <td class="text-end small">
+                                                        <t t-if="l.pending_amount">
+                                                            <span class="text-warning me-1">Pend: <t t-esc="l.formatted_pending_amount"/></span>
+                                                        </t>
+                                                        <t t-if="l.settled_amount">
+                                                            <span class="text-success">Liq: <t t-esc="l.formatted_settled_amount"/></span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="o_mba_amount fw-bold text-success" t-esc="l.formatted_amount"/>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="o_mba_total_row">
+                                        <td colspan="4" class="text-end">TOTALES GENERALES:</td>
+                                        <td class="o_mba_amount" t-esc="state.data.formatted_total_sales"/>
+                                        <td colspan="2" class="text-end small">
+                                            <span class="text-warning me-2">Pendientes: <t t-esc="state.data.formatted_total_pending"/></span>
+                                            <span class="text-success">Liquidadas: <t t-esc="state.data.formatted_total_settled"/></span>
+                                        </td>
+                                        <td class="o_mba_amount text-success fs-6" t-esc="state.data.formatted_total_commission"/>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+</templates>

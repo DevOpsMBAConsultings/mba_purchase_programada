@@ -1,0 +1,51 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* partner_social_panama
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 10:45+0000\n"
+"PO-Revision-Date: 2026-03-20 10:45+0000\n"
+"Last-Translator: Brooks González / Antigravity\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: partner_social_panama
+#: model:ir.model,name:partner_social_panama.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: partner_social_panama
+#: field:res.partner,social_facebook:0
+msgid "Facebook"
+msgstr "Facebook"
+
+#. module: partner_social_panama
+#: field:res.partner,social_instagram:0
+msgid "Instagram"
+msgstr "Instagram"
+
+#. module: partner_social_panama
+#: field:res.partner,social_linkedin:0
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#. module: partner_social_panama
+#: help:res.partner,social_facebook:0
+msgid "Enlace a la página de Facebook"
+msgstr "Enlace a la página de Facebook"
+
+#. module: partner_social_panama
+#: help:res.partner,social_instagram:0
+msgid "Enlace a la cuenta de Instagram"
+msgstr "Enlace a la cuenta de Instagram"
+
+#. module: partner_social_panama
+#: help:res.partner,social_linkedin:0
+msgid "Enlace al perfil de LinkedIn"
+msgstr "Enlace al perfil de LinkedIn"

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Purchase Order Consolidation</title>
+<style type="text/css">
+  .mba-doc { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+             color: #2b2b2b; line-height: 1.6; max-width: 900px; }
+  .mba-doc h1 { font-size: 2em; margin-bottom: .1em; color: #1a1a1a; }
+  .mba-doc h2 { font-size: 1.3em; margin-top: 1.6em; padding-bottom: .3em;
+                border-bottom: 1px solid #e0e0e0; color: #1a1a1a; }
+  .mba-doc .lead { font-size: 1.1em; color: #555; margin-top: 0; }
+  .mba-doc .badges span { display: inline-block; padding: 3px 10px; margin: 0 6px 0 0;
+                          border-radius: 3px; font-size: .8em; color: #fff; }
+  .mba-doc .b-lic { background: #5c6bc0; }
+  .mba-doc .b-ver { background: #7e57c2; }
+  .mba-doc .b-mba { background: #37474f; }
+  .mba-doc .origen { background: #f5f7fa; border-left: 4px solid #5c6bc0;
+                     padding: 14px 18px; margin: 1.4em 0; }
+  .mba-doc .origen strong { color: #303f9f; }
+  .mba-doc ul { padding-left: 1.3em; }
+  .mba-doc li { margin-bottom: .35em; }
+  .mba-doc code { background: #eef1f5; padding: 1px 5px; border-radius: 3px;
+                  font-size: .92em; }
+  .mba-doc footer { margin-top: 2.5em; padding-top: 1em; border-top: 1px solid #e0e0e0;
+                    font-size: .9em; color: #666; }
+</style>
+</head>
+<body>
+<section class="mba-doc">
+
+<h1>Purchase Order Consolidation</h1>
+<p class="lead">Consolida varias solicitudes de cotización del mismo proveedor en una sola.</p>
+
+<p class="badges">
+  <span class="b-lic">Licencia AGPL-3</span>
+  <span class="b-ver">Odoo 18.0</span>
+  <span class="b-mba">MBA Consultings</span>
+</p>
+
+<div class="origen">
+  <p><strong>Origen del código.</strong> Este módulo es una adaptación de
+  <code>purchase_merge</code>. El código fuente original pertenece a
+  <strong>Camptocamp SA</strong> y se distribuye a través de la
+  <strong>Odoo Community Association (OCA)</strong> en el proyecto
+  <a href="https://github.com/OCA/purchase-workflow">OCA/purchase-workflow</a>,
+  bajo licencia AGPL-3.</p>
+  <p>MBA Consultings lo modificó para adaptarlo a las necesidades de sus clientes
+  y para hacerlo compatible con Odoo 18.0. Se conserva la licencia original
+  AGPL-3. Esta adaptación no es mantenida por la OCA; para soporte de este fork,
+  contactar a MBA Consultings.</p>
+</div>
+
+<h2>Qué hace</h2>
+<p>Un asistente que se invoca desde el menú <em>Acciones</em> de la vista de lista
+de órdenes de compra. Si se cumplen los criterios de fusión, todas las líneas de
+las órdenes seleccionadas se transfieren a la orden destino, y los campos
+<code>origin</code> y <code>partner_ref</code> se concatenan. Se registra un
+mensaje en el chatter de cada orden indicando cuándo ocurrió la fusión y qué
+órdenes estuvieron involucradas. Las órdenes de origen quedan canceladas, o
+eliminadas si así se indica.</p>
+
+<h2>Criterios de fusión</h2>
+<p>Todas las órdenes seleccionadas deben compartir:</p>
+<ul>
+  <li>Proveedor</li>
+  <li>Estado borrador</li>
+  <li>Moneda</li>
+  <li>Tipo de operación (picking type)</li>
+  <li>Incoterm</li>
+  <li>Términos de pago</li>
+  <li>Posición fiscal</li>
+</ul>
+
+<h2>Uso</h2>
+<ol>
+  <li>Ir a <strong>Compras → Órdenes → Solicitudes de cotización</strong>.</li>
+  <li>Seleccionar con las casillas las órdenes que se quieren consolidar.</li>
+  <li>Abrir el menú <strong>Acciones</strong> y elegir <strong>Merge Selected Purchase</strong>.</li>
+  <li>En el asistente, seleccionar la orden <strong>destino</strong> (por defecto la
+      más antigua) y marcar <strong>Delete Source POs</strong> si se quieren eliminar
+      las órdenes de origen en lugar de cancelarlas.</li>
+  <li>Pulsar <strong>Merge Purchase</strong>.</li>
+</ol>
+<p>Si alguna orden no cumple los criterios, el asistente lo indica con un mensaje
+detallando qué campo difiere y en qué órdenes.</p>
+
+<h2>Cambios respecto al módulo original</h2>
+<ul>
+  <li><strong>Opción de eliminar las órdenes de origen</strong> en lugar de solo
+      cancelarlas.</li>
+  <li><strong>Compatibilidad con Odoo 18.0</strong>: vistas migradas de
+      <code>tree</code> a <code>list</code>.</li>
+  <li><strong>Sin dependencia de <code>openupgradelib</code></strong>: la
+      reasignación de referencias (mensajes, actividades, seguidores, adjuntos y
+      documentos relacionados) se hace con el ORM nativo. La librería es
+      incompatible con Odoo 18 porque depende del modelo <code>ir.property</code>,
+      eliminado en esta versión.</li>
+</ul>
+
+<h2>Créditos</h2>
+<p><strong>Autores del código original:</strong>
+<a href="https://www.camptocamp.com">Camptocamp</a> — Thomas Nowicki, Bojan Anchev.
+Publicado originalmente por la
+<a href="https://odoo-community.org">Odoo Community Association (OCA)</a>.</p>
+<p><strong>Adaptación a Odoo 18.0:</strong>
+<a href="https://www.mbaconsultings.com">MBA Consultings</a> — Brooks Gonzalez.</p>
+
+<footer>
+  Licencia AGPL-3, la misma del módulo original.<br/>
+  Copyright 2022 Camptocamp SA · Copyright 2026 MBA Consultings
+</footer>
+
+</section>
+</body>
+</html>

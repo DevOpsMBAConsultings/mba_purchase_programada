@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Sale Order form view to hide global pricelist and add columns to order_line -->
+    <record id="view_order_form_sale_line_pricelist" model="ir.ui.view">
+        <field name="name">sale.order.form.sale.line.pricelist.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Hide global pricelist field -->
+            <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_sale_line_pricelist_columns" model="ir.ui.view">
+        <field name="name">sale.order.form.sale.line.pricelist.custom.columns</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="readonly">not partner_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
+                <field name="line_pricelist_id"
+                       context="{'product_id': product_id, 'product_uom_qty': product_uom_qty, 'product_uom': product_uom, 'show_price_in_pricelist_name': True}"
+                       options="{'no_create': True, 'no_open': True}"
+                       optional="show"/>
+                <field name="internal_vendor_note" string="Vendor" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

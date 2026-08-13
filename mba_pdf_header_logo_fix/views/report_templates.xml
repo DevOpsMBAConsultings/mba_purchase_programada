@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Reemplaza el contenedor flexbox (.row/.col-* o .d-flex de Bootstrap 5)
+    que envuelve el logo en el header de los 3 layouts de documento, por
+    una tabla HTML simple. wkhtmltopdf renderiza el header del PDF en un
+    sub-proceso de WebKit aparte (vía el flag header-html) que no soporta bien
+    flexbox/grid: el logo queda embebido en el PDF pero no se pinta.
+    Las tablas SÍ se renderizan de forma confiable en ese sub-proceso.
+
+    No se toca ningún campo/condición dinámica -mismo t-field, mismos
+    t-if/t-else que el original de Odoo-, solo cambia el contenedor.
+-->
+<odoo>
+
+    <!--
+        Nota técnica sobre los XPath: el div del "header" en estos 3
+        templates usa t-attf-class (calculado en runtime), no un class=
+        literal, así que hasclass('header') NO lo detecta (hasclass()
+        opera sobre el arch/XML crudo, antes de resolver t-attf-class).
+        Por eso cada XPath apunta directo al div interno con class=
+        estática (row/d-flex), combinando 2 clases cuando hace falta para
+        no chocar con los divs "bg-light ... d-flex ..." de los bloques
+        placeholder de dirección vacía, que están más abajo en el mismo
+        template y también tienen class= estática.
+    -->
+
+    <!-- ── web.external_layout_bold ─────────────────────────────────── -->
+    <template id="external_layout_bold_logo_fix" inherit_id="web.external_layout_bold">
+        <xpath expr="//div[hasclass('row')]" position="replace">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; padding: 0;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"
+                             style="max-height: 70px; max-width: 100%; width: auto; display: block;" />
+                    </td>
+                    <td style="width: 50%; vertical-align: top; padding: 0;" name="company_address">
+                        <ul class="list-unstyled" name="company_address_list" style="margin: 0; padding: 0; list-style: none;">
+                            <li t-if="company.is_company_details_empty"><span t-field="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'>
+                                <div class="bg-light border-1 rounded h-100 d-flex flex-column align-items-center justify-content-center p-4 w-100 opacity-75 text-muted text-center">
+                                    <strong>Company address block</strong>
+                                    <div>Contains the company address.</div>
+                                </div>
+                            </span></li>
+                            <li t-else="">
+                                <span t-field="company.company_details">
+                                    <div class="bg-light border-1 rounded h-100 d-flex flex-column align-items-center justify-content-center p-4 w-100 opacity-75 text-muted text-center">
+                                        <strong>Company details block</strong>
+                                        <div>Contains the company details.</div>
+                                    </div>
+                                </span>
+                            </li>
+                            <li t-if="not forced_vat">
+                                <t t-if="company.vat">
+                                    <t t-esc="company.country_id.vat_label or 'Tax ID'">Tax ID</t>:
+                                    <span t-esc="company.vat">US12345671</span>
+                                </t>
+                            </li>
+                            <li t-else="">
+                                <t t-esc="company.country_id.vat_label or 'Tax ID'">Tax ID</t>:
+                                <span t-esc="forced_vat">US12345671</span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </xpath>
+    </template>
+
+    <!-- ── web.external_layout_boxed ────────────────────────────────── -->
+    <template id="external_layout_boxed_logo_fix" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[hasclass('row') and hasclass('mb8')]" position="replace">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                <tr>
+                    <td style="width: 33%; vertical-align: top; padding: 0;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"
+                             style="max-height: 70px; max-width: 100%; width: auto; display: block;" />
+                    </td>
+                    <td style="width: 67%; vertical-align: top; text-align: right; padding: 0;">
+                        <div name="company_address" style="margin-bottom: 4px;">
+                            <ul class="list-unstyled" name="company_address_list" style="margin: 0; padding: 0; list-style: none;">
+                                <li t-if="company.is_company_details_empty"><span t-field="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'>
+                                    <div class="bg-light border-1 rounded h-100 d-flex flex-column align-items-center justify-content-center p-4 w-100 opacity-75 text-muted text-center">
+                                        <strong>Company address block</strong>
+                                        <div>Contains the company address.</div>
+                                    </div>
+                                </span></li>
+                                <li t-else="">
+                                    <span t-field="company.company_details">
+                                        <div class="bg-light border-1 rounded h-100 d-flex flex-column align-items-center justify-content-center p-4 w-100 opacity-75 text-muted text-center">
+                                            <strong>Company details block</strong>
+                                            <div>Contains the company details.</div>
+                                        </div>
+                                    </span>
+                                </li>
+                                <li t-if="not forced_vat">
+                                    <t t-if="company.vat">
+                                        <t t-esc="company.country_id.vat_label or 'Tax ID'">Tax ID</t>:
+                                        <span t-esc="company.vat">US12345671</span>
+                                    </t>
+                                </li>
+                                <li t-else="">
+                                    <t t-esc="company.country_id.vat_label or 'Tax ID'">Tax ID</t>:
+                                    <span t-esc="forced_vat">US12345671</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </xpath>
+    </template>
+
+    <!-- ── web.external_layout_standard (Light) ─────────────────────── -->
+    <template id="external_layout_standard_logo_fix" inherit_id="web.external_layout_standard">
+        <xpath expr="//div[hasclass('d-flex') and hasclass('justify-content-between')]" position="replace">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                <tr>
+                    <td style="vertical-align: middle; padding: 0;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"
+                             style="max-height: 45px; max-width: 100%; width: auto; display: block;" />
+                    </td>
+                    <td style="vertical-align: middle; text-align: right; padding: 0;">
+                        <div t-if="company.report_header" t-field="company.report_header" class="o_company_tagline fw-bold">Company tagline</div>
+                    </td>
+                </tr>
+            </table>
+        </xpath>
+    </template>
+
+</odoo>

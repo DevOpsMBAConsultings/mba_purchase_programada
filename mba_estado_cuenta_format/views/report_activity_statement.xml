@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="activity_statement_document_custom" inherit_id="partner_statement.activity_statement_document" priority="30">
+
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">web.basic_layout</attribute>
+        </xpath>
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address"/>
+        </xpath>
+
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page" style="font-family: Arial, sans-serif; font-size: 10pt; color: black;">
+                <style>
+                    .header div[name="company_address"] {
+                        display: none !important;
+                    }
+                    .table-statement thead tr {
+                        background-color: #04167e !important;
+                        border-bottom: 3px solid #cb1a1c !important;
+                    }
+                    .table-statement thead th {
+                        color: white !important;
+                    }
+                </style>
+
+                <div class="mb-3">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 80px; width: auto;" alt="Logo"/>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Cliente: <span t-field="o.name"/></strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Dirección:</strong> <span t-field="o.street"/><br/>
+                        <strong>Teléfono:</strong> <span t-field="o.phone"/><br/>
+                        <strong>Correo:</strong> <span t-field="o.email"/>
+                    </div>
+
+                    <div class="col-5 offset-1">
+                        <strong style="font-size: 16pt; margin-bottom: 2px; display: block;">Estado de Cuenta</strong>
+                        <hr style="border-top: 2px solid black; opacity: 1; margin-top: 0px; margin-bottom: 10px;"/>
+                        <strong>Fecha:</strong> <span t-out="d['today']"/><br/>
+                        <t t-if="o.ref"><strong>Código de Cliente:</strong> <span t-field="o.ref"/><br/></t>
+                        <t t-if="o.vat"><strong><t t-out="company.country_id.vat_label or 'RUC'"/>:</strong> <span t-field="o.vat"/></t>
+                    </div>
+                </div>
+
+                <t t-if="d['currencies']">
+                    <t t-foreach="d['currencies'].items()" t-as="currency">
+                        <t t-set="display_currency" t-value="Currencies[currency[0]]"/>
+                        <t t-set="currency" t-value="currency[1]"/>
+                        <t t-call="partner_statement.activity_balance" name="activity"/>
+                        <t t-call="partner_statement.aging_buckets" t-if="currency['buckets']"/>
+                    </t>
+                </t>
+                <p t-if="d.get('no_entries')">
+                    <strong>El cliente no tiene movimientos pendientes.</strong>
+                </p>
+
+            </div>
+        </xpath>
+    </template>
+</odoo>
