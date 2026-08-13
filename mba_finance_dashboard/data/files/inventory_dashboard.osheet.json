@@ -141,6 +141,27 @@
   }
  },
  "listNextId": 3,
+ "globalFilters": [
+  {
+   "id": "filter_period",
+   "type": "date",
+   "label": "Período",
+   "rangeType": "relative",
+   "defaultValue": "last_90_days"
+  },
+  {
+   "id": "filter_category",
+   "type": "relation",
+   "label": "Categoría del producto",
+   "modelName": "product.category"
+  },
+  {
+   "id": "filter_product",
+   "type": "relation",
+   "label": "Producto",
+   "modelName": "product.product"
+  }
+ ],
  "sheets": [
   {
    "id": "sheet1",
