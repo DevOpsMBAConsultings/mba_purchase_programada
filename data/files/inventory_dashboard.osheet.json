@@ -86,15 +86,11 @@
    ],
    "context": {},
    "columns": [],
-   "rows": [
-    {
-     "fieldName": "product_id"
-    }
-   ],
+   "rows": [],
    "measures": [
     {
-     "fieldName": "inventory_value",
-     "id": "inventory_value"
+     "fieldName": "value",
+     "id": "value"
     }
    ],
    "sortedColumn": null,
@@ -112,15 +108,11 @@
    ],
    "context": {},
    "columns": [],
-   "rows": [
-    {
-     "fieldName": "product_id"
-    }
-   ],
+   "rows": [],
    "measures": [
     {
-     "fieldName": "inventory_value",
-     "id": "inventory_value"
+     "fieldName": "value",
+     "id": "value"
     }
    ],
    "sortedColumn": null,
@@ -133,16 +125,11 @@
    "name": "Compras en Tránsito",
    "model": "purchase.order.line",
    "domain": [
-    ["order_id.state", "in", ["purchase", "done"]],
-    ["qty_to_be_received", ">", 0]
+    ["order_id.state", "in", ["purchase", "done"]]
    ],
    "context": {},
    "columns": [],
-   "rows": [
-    {
-     "fieldName": "partner_id"
-    }
-   ],
+   "rows": [],
    "measures": [
     {
      "fieldName": "price_subtotal",
@@ -176,10 +163,9 @@
    "name": "Proveedores con Órdenes en Tránsito",
    "model": "purchase.order.line",
    "domain": [
-    ["order_id.state", "in", ["purchase", "done"]],
-    ["qty_to_be_received", ">", 0]
+    ["order_id.state", "in", ["purchase", "done"]]
    ],
-   "columns": ["order_id", "partner_id", "product_id", "qty_to_be_received", "price_subtotal"],
+   "columns": ["order_id", "partner_id", "product_id", "product_qty", "price_subtotal"],
    "orderBy": [
     {
      "name": "price_subtotal",
@@ -210,7 +196,7 @@
      "style": 3
     },
     "A6": {
-     "content": "=ODOO.PIVOT.HEADER(1, \"inventory_value\")",
+     "content": "=PIVOT.VALUE(1, \"value\")",
      "style": 7,
      "format": 1
     },
@@ -220,7 +206,7 @@
      "style": 3
     },
     "D6": {
-     "content": "=ODOO.PIVOT.HEADER(2, \"inventory_value\")",
+     "content": "=PIVOT.VALUE(2, \"value\")",
      "style": 8,
      "format": 1
     },
@@ -230,7 +216,7 @@
      "style": 3
     },
     "G6": {
-     "content": "=ODOO.PIVOT.HEADER(3, \"price_subtotal\")",
+     "content": "=PIVOT.VALUE(3, \"price_subtotal\")",
      "style": 9,
      "format": 1
     },
@@ -288,7 +274,7 @@
      "content": "Producto"
     },
     "J10": {
-     "content": "Cant. Pendiente"
+     "content": "Cant. Pedida"
     },
     "K10": {
      "content": "Monto Subtotal"
@@ -303,7 +289,7 @@
      "content": "=ODOO.LIST(2, 1, \"product_id\")"
     },
     "J11": {
-     "content": "=ODOO.LIST(2, 1, \"qty_to_be_received\")"
+     "content": "=ODOO.LIST(2, 1, \"product_qty\")"
     },
     "K11": {
      "content": "=ODOO.LIST(2, 1, \"price_subtotal\")",
