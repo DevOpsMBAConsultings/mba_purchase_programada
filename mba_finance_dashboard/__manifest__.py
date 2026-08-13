@@ -1,6 +1,6 @@
 {
     'name': 'Tablero Financiero (MBA Consultings)',
-    'version': '18.0.1.1.1',
+    'version': '18.0.1.1.2',
     'category': 'Accounting/Reporting',
     'summary': 'Tablero financiero e inventario listo para usar: antigüedad, posición, resultado del año e inventario operativo',
     'description': 'Tablero que se instala armado, con antigüedad de cuentas por '
