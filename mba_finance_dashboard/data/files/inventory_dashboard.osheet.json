@@ -201,87 +201,162 @@
      "style": 2
     },
 
-    "A22": {
-     "content": "Productos en Bodega (Ordenados por Valor)",
-     "style": 3
-    },
-    "A23": {
-     "content": "Producto"
-    },
-    "B23": {
-     "content": "Cant. Restante"
-    },
-    "C23": {
-     "content": "Valor Total (Costo)"
-    },
-    "A24": {
-     "content": "=ODOO.LIST(3,1,\"product_id\")"
-    },
-    "B24": {
-     "content": "=ODOO.LIST(3,1,\"remaining_qty\")"
-    },
-    "C24": {
-     "content": "=ODOO.LIST(3,1,\"remaining_value\")",
-     "format": 1
-    },
+    "A22": { "content": "Productos en Bodega (Ordenados por Valor)", "style": 3 },
+    "A23": { "content": "Producto" },
+    "B23": { "content": "Cant. Restante" },
+    "C23": { "content": "Valor Total (Costo)" },
 
-    "E22": {
-     "content": "Clientes en Espera (Entregas Reservadas / Parciales)",
-     "style": 3
-    },
-    "E23": {
-     "content": "Referencia"
-    },
-    "F23": {
-     "content": "Cliente"
-    },
-    "G23": {
-     "content": "Fecha Creación"
-    },
-    "H23": {
-     "content": "Estado"
-    },
-    "E24": {
-     "content": "=ODOO.LIST(1,1,\"name\")"
-    },
-    "F24": {
-     "content": "=ODOO.LIST(1,1,\"partner_id\")"
-    },
-    "G24": {
-     "content": "=ODOO.LIST(1,1,\"create_date\")"
-    },
-    "H24": {
-     "content": "=ODOO.LIST(1,1,\"state\")"
-    },
+    "A24": { "content": "=ODOO.LIST(3,1,\"product_id\")" },
+    "B24": { "content": "=ODOO.LIST(3,1,\"remaining_qty\")" },
+    "C24": { "content": "=ODOO.LIST(3,1,\"remaining_value\")", "format": 1 },
 
-    "I22": {
-     "content": "Proveedores con Órdenes en Tránsito (Por Recibir)",
-     "style": 3
-    },
-    "I23": {
-     "content": "Orden Compra"
-    },
-    "J23": {
-     "content": "Proveedor"
-    },
-    "K23": {
-     "content": "Producto"
-    },
-    "L23": {
-     "content": "Cant. Pedida"
-    },
-    "I24": {
-     "content": "=ODOO.LIST(2,1,\"order_id\")"
-    },
-    "J24": {
-     "content": "=ODOO.LIST(2,1,\"partner_id\")"
-    },
-    "K24": {
-     "content": "=ODOO.LIST(2,1,\"product_id\")"
-    },
-    "L24": {
-     "content": "=ODOO.LIST(2,1,\"product_qty\")"
-    }
+    "A25": { "content": "=ODOO.LIST(3,2,\"product_id\")" },
+    "B25": { "content": "=ODOO.LIST(3,2,\"remaining_qty\")" },
+    "C25": { "content": "=ODOO.LIST(3,2,\"remaining_value\")", "format": 1 },
+
+    "A26": { "content": "=ODOO.LIST(3,3,\"product_id\")" },
+    "B26": { "content": "=ODOO.LIST(3,3,\"remaining_qty\")" },
+    "C26": { "content": "=ODOO.LIST(3,3,\"remaining_value\")", "format": 1 },
+
+    "A27": { "content": "=ODOO.LIST(3,4,\"product_id\")" },
+    "B27": { "content": "=ODOO.LIST(3,4,\"remaining_qty\")" },
+    "C27": { "content": "=ODOO.LIST(3,4,\"remaining_value\")", "format": 1 },
+
+    "A28": { "content": "=ODOO.LIST(3,5,\"product_id\")" },
+    "B28": { "content": "=ODOO.LIST(3,5,\"remaining_qty\")" },
+    "C28": { "content": "=ODOO.LIST(3,5,\"remaining_value\")", "format": 1 },
+
+    "A29": { "content": "=ODOO.LIST(3,6,\"product_id\")" },
+    "B29": { "content": "=ODOO.LIST(3,6,\"remaining_qty\")" },
+    "C29": { "content": "=ODOO.LIST(3,6,\"remaining_value\")", "format": 1 },
+
+    "A30": { "content": "=ODOO.LIST(3,7,\"product_id\")" },
+    "B30": { "content": "=ODOO.LIST(3,7,\"remaining_qty\")" },
+    "C30": { "content": "=ODOO.LIST(3,7,\"remaining_value\")", "format": 1 },
+
+    "A31": { "content": "=ODOO.LIST(3,8,\"product_id\")" },
+    "B31": { "content": "=ODOO.LIST(3,8,\"remaining_qty\")" },
+    "C31": { "content": "=ODOO.LIST(3,8,\"remaining_value\")", "format": 1 },
+
+    "A32": { "content": "=ODOO.LIST(3,9,\"product_id\")" },
+    "B32": { "content": "=ODOO.LIST(3,9,\"remaining_qty\")" },
+    "C32": { "content": "=ODOO.LIST(3,9,\"remaining_value\")", "format": 1 },
+
+    "A33": { "content": "=ODOO.LIST(3,10,\"product_id\")" },
+    "B33": { "content": "=ODOO.LIST(3,10,\"remaining_qty\")" },
+    "C33": { "content": "=ODOO.LIST(3,10,\"remaining_value\")", "format": 1 },
+
+    "E22": { "content": "Clientes en Espera (Entregas Reservadas / Parciales)", "style": 3 },
+    "E23": { "content": "Referencia" },
+    "F23": { "content": "Cliente" },
+    "G23": { "content": "Fecha Creación" },
+    "H23": { "content": "Estado" },
+
+    "E24": { "content": "=ODOO.LIST(1,1,\"name\")" },
+    "F24": { "content": "=ODOO.LIST(1,1,\"partner_id\")" },
+    "G24": { "content": "=ODOO.LIST(1,1,\"create_date\")" },
+    "H24": { "content": "=ODOO.LIST(1,1,\"state\")" },
+
+    "E25": { "content": "=ODOO.LIST(1,2,\"name\")" },
+    "F25": { "content": "=ODOO.LIST(1,2,\"partner_id\")" },
+    "G25": { "content": "=ODOO.LIST(1,2,\"create_date\")" },
+    "H25": { "content": "=ODOO.LIST(1,2,\"state\")" },
+
+    "E26": { "content": "=ODOO.LIST(1,3,\"name\")" },
+    "F26": { "content": "=ODOO.LIST(1,3,\"partner_id\")" },
+    "G26": { "content": "=ODOO.LIST(1,3,\"create_date\")" },
+    "H26": { "content": "=ODOO.LIST(1,3,\"state\")" },
+
+    "E27": { "content": "=ODOO.LIST(1,4,\"name\")" },
+    "F27": { "content": "=ODOO.LIST(1,4,\"partner_id\")" },
+    "G27": { "content": "=ODOO.LIST(1,4,\"create_date\")" },
+    "H27": { "content": "=ODOO.LIST(1,4,\"state\")" },
+
+    "E28": { "content": "=ODOO.LIST(1,5,\"name\")" },
+    "F28": { "content": "=ODOO.LIST(1,5,\"partner_id\")" },
+    "G28": { "content": "=ODOO.LIST(1,5,\"create_date\")" },
+    "H28": { "content": "=ODOO.LIST(1,5,\"state\")" },
+
+    "E29": { "content": "=ODOO.LIST(1,6,\"name\")" },
+    "F29": { "content": "=ODOO.LIST(1,6,\"partner_id\")" },
+    "G29": { "content": "=ODOO.LIST(1,6,\"create_date\")" },
+    "H29": { "content": "=ODOO.LIST(1,6,\"state\")" },
+
+    "E30": { "content": "=ODOO.LIST(1,7,\"name\")" },
+    "F30": { "content": "=ODOO.LIST(1,7,\"partner_id\")" },
+    "G30": { "content": "=ODOO.LIST(1,7,\"create_date\")" },
+    "H30": { "content": "=ODOO.LIST(1,7,\"state\")" },
+
+    "E31": { "content": "=ODOO.LIST(1,8,\"name\")" },
+    "F31": { "content": "=ODOO.LIST(1,8,\"partner_id\")" },
+    "G31": { "content": "=ODOO.LIST(1,8,\"create_date\")" },
+    "H31": { "content": "=ODOO.LIST(1,8,\"state\")" },
+
+    "E32": { "content": "=ODOO.LIST(1,9,\"name\")" },
+    "F32": { "content": "=ODOO.LIST(1,9,\"partner_id\")" },
+    "G32": { "content": "=ODOO.LIST(1,9,\"create_date\")" },
+    "H32": { "content": "=ODOO.LIST(1,9,\"state\")" },
+
+    "E33": { "content": "=ODOO.LIST(1,10,\"name\")" },
+    "F33": { "content": "=ODOO.LIST(1,10,\"partner_id\")" },
+    "G33": { "content": "=ODOO.LIST(1,10,\"create_date\")" },
+    "H33": { "content": "=ODOO.LIST(1,10,\"state\")" },
+
+    "I22": { "content": "Proveedores con Órdenes en Tránsito (Por Recibir)", "style": 3 },
+    "I23": { "content": "Orden Compra" },
+    "J23": { "content": "Proveedor" },
+    "K23": { "content": "Producto" },
+    "L23": { "content": "Cant. Pedida" },
+
+    "I24": { "content": "=ODOO.LIST(2,1,\"order_id\")" },
+    "J24": { "content": "=ODOO.LIST(2,1,\"partner_id\")" },
+    "K24": { "content": "=ODOO.LIST(2,1,\"product_id\")" },
+    "L24": { "content": "=ODOO.LIST(2,1,\"product_qty\")" },
+
+    "I25": { "content": "=ODOO.LIST(2,2,\"order_id\")" },
+    "J25": { "content": "=ODOO.LIST(2,2,\"partner_id\")" },
+    "K25": { "content": "=ODOO.LIST(2,2,\"product_id\")" },
+    "L25": { "content": "=ODOO.LIST(2,2,\"product_qty\")" },
+
+    "I26": { "content": "=ODOO.LIST(2,3,\"order_id\")" },
+    "J26": { "content": "=ODOO.LIST(2,3,\"partner_id\")" },
+    "K26": { "content": "=ODOO.LIST(2,3,\"product_id\")" },
+    "L26": { "content": "=ODOO.LIST(2,3,\"product_qty\")" },
+
+    "I27": { "content": "=ODOO.LIST(2,4,\"order_id\")" },
+    "J27": { "content": "=ODOO.LIST(2,4,\"partner_id\")" },
+    "K27": { "content": "=ODOO.LIST(2,4,\"product_id\")" },
+    "L27": { "content": "=ODOO.LIST(2,4,\"product_qty\")" },
+
+    "I28": { "content": "=ODOO.LIST(2,5,\"order_id\")" },
+    "J28": { "content": "=ODOO.LIST(2,5,\"partner_id\")" },
+    "K28": { "content": "=ODOO.LIST(2,5,\"product_id\")" },
+    "L28": { "content": "=ODOO.LIST(2,5,\"product_qty\")" },
+
+    "I29": { "content": "=ODOO.LIST(2,6,\"order_id\")" },
+    "J29": { "content": "=ODOO.LIST(2,6,\"partner_id\")" },
+    "K29": { "content": "=ODOO.LIST(2,6,\"product_id\")" },
+    "L29": { "content": "=ODOO.LIST(2,6,\"product_qty\")" },
+
+    "I30": { "content": "=ODOO.LIST(2,7,\"order_id\")" },
+    "J30": { "content": "=ODOO.LIST(2,7,\"partner_id\")" },
+    "K30": { "content": "=ODOO.LIST(2,7,\"product_id\")" },
+    "L30": { "content": "=ODOO.LIST(2,7,\"product_qty\")" },
+
+    "I31": { "content": "=ODOO.LIST(2,8,\"order_id\")" },
+    "J31": { "content": "=ODOO.LIST(2,8,\"partner_id\")" },
+    "K31": { "content": "=ODOO.LIST(2,8,\"product_id\")" },
+    "L31": { "content": "=ODOO.LIST(2,8,\"product_qty\")" },
+
+    "I32": { "content": "=ODOO.LIST(2,9,\"order_id\")" },
+    "J32": { "content": "=ODOO.LIST(2,9,\"partner_id\")" },
+    "K32": { "content": "=ODOO.LIST(2,9,\"product_id\")" },
+    "L32": { "content": "=ODOO.LIST(2,9,\"product_qty\")" },
+
+    "I33": { "content": "=ODOO.LIST(2,10,\"order_id\")" },
+    "J33": { "content": "=ODOO.LIST(2,10,\"partner_id\")" },
+    "K33": { "content": "=ODOO.LIST(2,10,\"product_id\")" },
+    "L33": { "content": "=ODOO.LIST(2,10,\"product_qty\")" }
    },
    "styles": {
     "A2": 1,
@@ -291,7 +366,16 @@
     "I22": 3
    },
    "formats": {
-    "C24": 1
+    "C24": 1,
+    "C25": 1,
+    "C26": 1,
+    "C27": 1,
+    "C28": 1,
+    "C29": 1,
+    "C30": 1,
+    "C31": 1,
+    "C32": 1,
+    "C33": 1
    },
    "borders": {
     "A2:L2": 1,
