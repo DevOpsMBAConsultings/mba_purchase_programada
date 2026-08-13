@@ -448,13 +448,27 @@ class AccountMoveLine(models.Model):
         """
         Método agnóstico para obtener la descripción que se enviará al PAC/DGI.
         Si el producto está marcado como 'Es producto genérico DGI' (is_dgi_generic),
-        o si no hay producto, se prioriza lo que el usuario escribió en la casilla 'Descripción' (line.name).
-        De lo contrario, se utiliza el nombre original del producto en el catálogo.
+        se remueven automáticamente el prefijo [SKU] y el nombre del producto para dejar
+        únicamente la descripción personalizada ingresada por el usuario.
         """
         self.ensure_one()
         prod = self.product_id
         is_generic = getattr(prod, "is_dgi_generic", False) if prod else True
-        if is_generic:
-            return (self.name or (prod.name if prod else "Ítem")).strip()
-        return (prod.name if prod else (self.name or "Ítem")).strip()
+        raw_name = (self.name or "").strip()
+
+        if is_generic and prod:
+            # 1. Quitar prefijo de código [SKU]
+            if prod.default_code:
+                code_prefix = f"[{prod.default_code.strip()}]"
+                if raw_name.upper().startswith(code_prefix.upper()):
+                    raw_name = raw_name[len(code_prefix):].strip()
+
+            # 2. Quitar el nombre estático del producto del catálogo si antecede a la descripción
+            prod_name = (prod.name or "").strip()
+            if prod_name and raw_name.upper().startswith(prod_name.upper()):
+                raw_name = raw_name[len(prod_name):].strip()
+
+            return raw_name or prod_name
+
+        return raw_name or (prod.name if prod else "Ítem")
 
