@@ -107,7 +107,7 @@
    "model": "sale.order.line",
    "domain": [
     ["order_id.state", "=", "sale"],
-    ["qty_delivered", "<", "product_uom_qty"]
+    ["price_subtotal", ">", 0]
    ],
    "columns": ["order_id", "order_partner_id", "product_id", "product_uom_qty", "price_subtotal"],
    "orderBy": [
