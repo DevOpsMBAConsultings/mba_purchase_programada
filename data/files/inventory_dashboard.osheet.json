@@ -1,0 +1,356 @@
+{
+ "version": 21,
+ "odooVersion": 12,
+ "revisionId": "START_REVISION",
+ "uniqueFigureIds": true,
+ "settings": {
+  "locale": {
+   "code": "es_PA",
+   "name": "Español (Panamá)",
+   "dateFormat": "dd/mm/yyyy",
+   "timeFormat": "hh:mm:ss",
+   "decimalSeparator": ".",
+   "thousandsSeparator": ",",
+   "formulaArgSeparator": ",",
+   "weekStart": 7
+  }
+ },
+ "styles": {
+  "1": {
+   "bold": true,
+   "fontSize": 18,
+   "textColor": "#01666b"
+  },
+  "2": {
+   "fontSize": 9,
+   "textColor": "#8a8a8a"
+  },
+  "3": {
+   "bold": true,
+   "fontSize": 11,
+   "textColor": "#01666b",
+   "verticalAlign": "middle"
+  },
+  "4": {
+   "bold": true,
+   "fontSize": 9,
+   "textColor": "#434343"
+  },
+  "5": {
+   "bold": true,
+   "textColor": "#434343"
+  },
+  "6": {
+   "textColor": "#434343"
+  },
+  "7": {
+   "bold": true,
+   "fontSize": 16,
+   "textColor": "#28a745"
+  },
+  "8": {
+   "bold": true,
+   "fontSize": 16,
+   "textColor": "#dc3545"
+  },
+  "9": {
+   "bold": true,
+   "fontSize": 16,
+   "textColor": "#007bff"
+  }
+ },
+ "formats": {
+  "1": "#,##0.00",
+  "2": "0.0%",
+  "3": "#,##0"
+ },
+ "borders": {
+  "1": {
+   "bottom": {
+    "color": "#01666b",
+    "style": "thin"
+   }
+  }
+ },
+ "customTableStyles": {},
+ "pivots": {
+  "1": {
+   "type": "ODOO",
+   "id": "1",
+   "formulaId": "1",
+   "name": "Inventario Físico Positivo",
+   "model": "stock.quant",
+   "domain": [
+    ["location_id.usage", "=", "internal"],
+    ["quantity", ">", 0]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "product_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "inventory_value",
+     "id": "inventory_value"
+    }
+   ],
+   "sortedColumn": null,
+   "fieldMatching": {}
+  },
+  "2": {
+   "type": "ODOO",
+   "id": "2",
+   "formulaId": "2",
+   "name": "Ventas en Negativo",
+   "model": "stock.quant",
+   "domain": [
+    ["location_id.usage", "=", "internal"],
+    ["quantity", "<", 0]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "product_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "inventory_value",
+     "id": "inventory_value"
+    }
+   ],
+   "sortedColumn": null,
+   "fieldMatching": {}
+  },
+  "3": {
+   "type": "ODOO",
+   "id": "3",
+   "formulaId": "3",
+   "name": "Compras en Tránsito",
+   "model": "purchase.order.line",
+   "domain": [
+    ["order_id.state", "in", ["purchase", "done"]],
+    ["qty_to_be_received", ">", 0]
+   ],
+   "context": {},
+   "columns": [],
+   "rows": [
+    {
+     "fieldName": "partner_id"
+    }
+   ],
+   "measures": [
+    {
+     "fieldName": "price_subtotal",
+     "id": "price_subtotal"
+    }
+   ],
+   "sortedColumn": null,
+   "fieldMatching": {}
+  }
+ },
+ "pivotNextId": 4,
+ "lists": {
+  "1": {
+   "id": "1",
+   "name": "Clientes con Entregas Reservadas / Pendientes",
+   "model": "stock.picking",
+   "domain": [
+    ["picking_type_id.code", "=", "outgoing"],
+    ["state", "in", ["assigned", "waiting"]]
+   ],
+   "columns": ["name", "partner_id", "create_date", "state"],
+   "orderBy": [
+    {
+     "name": "create_date",
+     "asc": true
+    }
+   ]
+  },
+  "2": {
+   "id": "2",
+   "name": "Proveedores con Órdenes en Tránsito",
+   "model": "purchase.order.line",
+   "domain": [
+    ["order_id.state", "in", ["purchase", "done"]],
+    ["qty_to_be_received", ">", 0]
+   ],
+   "columns": ["order_id", "partner_id", "product_id", "qty_to_be_received", "price_subtotal"],
+   "orderBy": [
+    {
+     "name": "price_subtotal",
+     "asc": false
+    }
+   ]
+  }
+ },
+ "listNextId": 3,
+ "sheets": [
+  {
+   "id": "sheet1",
+   "name": "Inventario & Tránsito",
+   "colNumber": 12,
+   "rowNumber": 40,
+   "cells": {
+    "A2": {
+     "content": "Tablero de Inventario Operativo & Tránsito",
+     "style": 1
+    },
+    "A3": {
+     "content": "Gestión integral de mercadería física, ventas adelantadas en negativo y compras por recibir | MBA Consultings",
+     "style": 2
+    },
+
+    "A5": {
+     "content": "Físico en Bodega (Stock > 0)",
+     "style": 3
+    },
+    "A6": {
+     "content": "=ODOO.PIVOT.HEADER(1, \"inventory_value\")",
+     "style": 7,
+     "format": 1
+    },
+
+    "D5": {
+     "content": "Déficit Vtas. Negativas",
+     "style": 3
+    },
+    "D6": {
+     "content": "=ODOO.PIVOT.HEADER(2, \"inventory_value\")",
+     "style": 8,
+     "format": 1
+    },
+
+    "G5": {
+     "content": "Compras en Tránsito",
+     "style": 3
+    },
+    "G6": {
+     "content": "=ODOO.PIVOT.HEADER(3, \"price_subtotal\")",
+     "style": 9,
+     "format": 1
+    },
+
+    "J5": {
+     "content": "Inv. Operativo Proyectado",
+     "style": 3
+    },
+    "J6": {
+     "content": "=A6 - ABS(D6) + G6",
+     "style": 7,
+     "format": 1
+    },
+
+    "A9": {
+     "content": "Clientes en Espera (Entregas Reservadas / Parciales)",
+     "style": 3
+    },
+    "A10": {
+     "content": "Referencia"
+    },
+    "B10": {
+     "content": "Cliente"
+    },
+    "C10": {
+     "content": "Fecha Creación"
+    },
+    "D10": {
+     "content": "Estado"
+    },
+    "A11": {
+     "content": "=ODOO.LIST(1, 1, \"name\")"
+    },
+    "B11": {
+     "content": "=ODOO.LIST(1, 1, \"partner_id\")"
+    },
+    "C11": {
+     "content": "=ODOO.LIST(1, 1, \"create_date\")"
+    },
+    "D11": {
+     "content": "=ODOO.LIST(1, 1, \"state\")"
+    },
+
+    "G9": {
+     "content": "Proveedores con Órdenes en Tránsito (Por Recibir)",
+     "style": 3
+    },
+    "G10": {
+     "content": "Orden Compra"
+    },
+    "H10": {
+     "content": "Proveedor"
+    },
+    "I10": {
+     "content": "Producto"
+    },
+    "J10": {
+     "content": "Cant. Pendiente"
+    },
+    "K10": {
+     "content": "Monto Subtotal"
+    },
+    "G11": {
+     "content": "=ODOO.LIST(2, 1, \"order_id\")"
+    },
+    "H11": {
+     "content": "=ODOO.LIST(2, 1, \"partner_id\")"
+    },
+    "I11": {
+     "content": "=ODOO.LIST(2, 1, \"product_id\")"
+    },
+    "J11": {
+     "content": "=ODOO.LIST(2, 1, \"qty_to_be_received\")"
+    },
+    "K11": {
+     "content": "=ODOO.LIST(2, 1, \"price_subtotal\")",
+     "format": 1
+    }
+   },
+   "styles": {
+    "A2": 1,
+    "A3": 2,
+    "A5": 3,
+    "A6": 7,
+    "D5": 3,
+    "D6": 8,
+    "G5": 3,
+    "G6": 9,
+    "J5": 3,
+    "J6": 7,
+    "A9": 3,
+    "G9": 3
+   },
+   "formats": {
+    "A6": 1,
+    "D6": 1,
+    "G6": 1,
+    "J6": 1,
+    "K11": 1
+   },
+   "borders": {
+    "A2:L2": 1,
+    "A5:C5": 1,
+    "D5:F5": 1,
+    "G5:I5": 1,
+    "J5:L5": 1,
+    "A9:E9": 1,
+    "G9:L9": 1
+   },
+   "conditionalFormats": [],
+   "figures": [],
+   "tables": [],
+   "areGridLinesVisible": false,
+   "isVisible": true,
+   "headerGroups": {
+    "ROW": [],
+    "COL": []
+   },
+   "dataValidationRules": [],
+   "comments": {}
+  }
+ ]
+}

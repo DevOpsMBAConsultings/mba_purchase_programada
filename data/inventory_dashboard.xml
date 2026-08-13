@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inventory_overview_dashboard" model="spreadsheet.dashboard">
+        <field name="name">Inventario Operativo &amp; Tránsito</field>
+        <field name="dashboard_group_id"
+               ref="spreadsheet_dashboard.spreadsheet_dashboard_group_logistics"/>
+        <field name="sequence">10</field>
+        <field name="spreadsheet_binary_data"
+               type="base64"
+               file="mba_finance_dashboard/data/files/inventory_dashboard.osheet.json"/>
+    </record>
+</odoo>
