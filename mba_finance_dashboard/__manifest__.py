@@ -1,20 +1,24 @@
 {
     'name': 'Tablero Financiero (MBA Consultings)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Accounting/Reporting',
-    'summary': 'Tablero financiero listo para usar: antigüedad, posición y resultado del año',
+    'summary': 'Tablero financiero e inventario listo para usar: antigüedad, posición, resultado del año e inventario operativo',
     'description': 'Tablero que se instala armado, con antigüedad de cuentas por '
                    'cobrar y por pagar, posición neta, estado de resultados del '
-                   'año y top de empresas con saldo vencido.',
+                   'año, inventario operativo, déficit de ventas y compras en tránsito.',
     'author': 'MBA Consultings, Brooks Gonzalez',
     'website': 'https://mbaconsultings.com',
     'depends': [
         'mba_account_aging',
         'spreadsheet_dashboard',
         'spreadsheet_account',
+        'spreadsheet_dashboard_stock',
+        'stock',
+        'purchase',
     ],
     'data': [
         'data/dashboard.xml',
+        'data/inventory_dashboard.xml',
     ],
     'demo': [],
     'installable': True,
