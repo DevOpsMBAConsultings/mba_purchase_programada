@@ -78,67 +78,35 @@
    "type": "ODOO",
    "id": "1",
    "formulaId": "1",
-   "name": "Inventario Físico Positivo",
-   "model": "stock.valuation.layer",
-   "domain": [
-    ["remaining_qty", ">", 0]
-   ],
+   "name": "Inventario Operativo & Tránsito",
+   "model": "mba.inventory.overview",
+   "domain": [],
    "context": {},
    "columns": [],
    "rows": [],
    "measures": [
     {
-     "fieldName": "remaining_value",
-     "id": "remaining_value"
-    }
-   ],
-   "sortedColumn": null,
-   "fieldMatching": {}
-  },
-  "2": {
-   "type": "ODOO",
-   "id": "2",
-   "formulaId": "2",
-   "name": "Ventas en Negativo",
-   "model": "stock.valuation.layer",
-   "domain": [
-    ["remaining_qty", "<", 0]
-   ],
-   "context": {},
-   "columns": [],
-   "rows": [],
-   "measures": [
+     "fieldName": "fisico_bruto",
+     "id": "fisico_bruto"
+    },
     {
-     "fieldName": "remaining_value",
-     "id": "remaining_value"
-    }
-   ],
-   "sortedColumn": null,
-   "fieldMatching": {}
-  },
-  "3": {
-   "type": "ODOO",
-   "id": "3",
-   "formulaId": "3",
-   "name": "Compras en Tránsito",
-   "model": "purchase.order.line",
-   "domain": [
-    ["order_id.state", "in", ["purchase", "done"]]
-   ],
-   "context": {},
-   "columns": [],
-   "rows": [],
-   "measures": [
+     "fieldName": "deficit_negativo",
+     "id": "deficit_negativo"
+    },
     {
-     "fieldName": "price_subtotal",
-     "id": "price_subtotal"
+     "fieldName": "compras_transito",
+     "id": "compras_transito"
+    },
+    {
+     "fieldName": "inventario_operativo",
+     "id": "inventario_operativo"
     }
    ],
    "sortedColumn": null,
    "fieldMatching": {}
   }
  },
- "pivotNextId": 4,
+ "pivotNextId": 2,
  "lists": {
   "1": {
    "id": "1",
@@ -194,7 +162,7 @@
      "style": 3
     },
     "A6": {
-     "content": "=PIVOT.VALUE(1,\"remaining_value\")",
+     "content": "=PIVOT.VALUE(1,\"fisico_bruto\")",
      "style": 7,
      "format": 1
     },
@@ -204,7 +172,7 @@
      "style": 3
     },
     "D6": {
-     "content": "=PIVOT.VALUE(2,\"remaining_value\")",
+     "content": "=-ABS(PIVOT.VALUE(1,\"deficit_negativo\"))",
      "style": 8,
      "format": 1
     },
@@ -214,7 +182,7 @@
      "style": 3
     },
     "G6": {
-     "content": "=PIVOT.VALUE(3,\"price_subtotal\")",
+     "content": "=PIVOT.VALUE(1,\"compras_transito\")",
      "style": 9,
      "format": 1
     },
@@ -224,7 +192,7 @@
      "style": 3
     },
     "J6": {
-     "content": "=A6-ABS(D6)+G6",
+     "content": "=PIVOT.VALUE(1,\"inventario_operativo\")",
      "style": 7,
      "format": 1
     },
