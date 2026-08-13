@@ -9,10 +9,10 @@ class MbaInventoryOverview(models.Model):
 
     name = fields.Char("Nombre", default="Inventario Operativo")
     company_id = fields.Many2one('res.company', string='Empresa', default=lambda self: self.env.company)
-    fisico_bruto = fields.Float("Físico en Bodega", compute="_compute_metrics", store=True)
-    deficit_negativo = fields.Float("Déficit Vtas. Negativas", compute="_compute_metrics", store=True)
-    compras_transito = fields.Float("Compras en Tránsito", compute="_compute_metrics", store=True)
-    inventario_operativo = fields.Float("Inv. Operativo Proyectado", compute="_compute_metrics", store=True)
+    fisico_bruto = fields.Float("Físico en Bodega", compute="_compute_metrics")
+    deficit_negativo = fields.Float("Déficit Vtas. Negativas", compute="_compute_metrics")
+    compras_transito = fields.Float("Compras en Tránsito", compute="_compute_metrics")
+    inventario_operativo = fields.Float("Inv. Operativo Proyectado", compute="_compute_metrics")
 
     @api.depends('company_id')
     def _compute_metrics(self):
