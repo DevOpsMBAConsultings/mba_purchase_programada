@@ -8,8 +8,9 @@
       <xpath expr="//field[@name='default_code']" position="attributes">
         <attribute name="placeholder">Referencia interna (obligatoria)</attribute>
       </xpath>
-      <xpath expr="//page[@name='general_information']//group[1]" position="inside">
-        <field name="is_dgi_generic" string="Es producto genérico (DGI)"/>
+      <xpath expr="//field[@name='is_storable']" position="after">
+        <field name="is_dgi_generic" class="ms-2"/>
+        <label for="is_dgi_generic" string="Es producto genérico (DGI)"/>
       </xpath>
       <xpath expr="//page[@name='general_information']/group" position="inside">
         <group string="DGI / Facturación Electrónica">
