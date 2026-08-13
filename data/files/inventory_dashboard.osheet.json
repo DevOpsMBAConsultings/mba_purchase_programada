@@ -79,18 +79,17 @@
    "id": "1",
    "formulaId": "1",
    "name": "Inventario Físico Positivo",
-   "model": "stock.quant",
+   "model": "stock.valuation.layer",
    "domain": [
-    ["location_id.usage", "=", "internal"],
-    ["quantity", ">", 0]
+    ["remaining_qty", ">", 0]
    ],
    "context": {},
    "columns": [],
    "rows": [],
    "measures": [
     {
-     "fieldName": "value",
-     "id": "value"
+     "fieldName": "remaining_value",
+     "id": "remaining_value"
     }
    ],
    "sortedColumn": null,
@@ -101,18 +100,17 @@
    "id": "2",
    "formulaId": "2",
    "name": "Ventas en Negativo",
-   "model": "stock.quant",
+   "model": "stock.valuation.layer",
    "domain": [
-    ["location_id.usage", "=", "internal"],
-    ["quantity", "<", 0]
+    ["remaining_qty", "<", 0]
    ],
    "context": {},
    "columns": [],
    "rows": [],
    "measures": [
     {
-     "fieldName": "value",
-     "id": "value"
+     "fieldName": "remaining_value",
+     "id": "remaining_value"
     }
    ],
    "sortedColumn": null,
@@ -196,7 +194,7 @@
      "style": 3
     },
     "A6": {
-     "content": "=PIVOT.VALUE(1, \"value\")",
+     "content": "=PIVOT.VALUE(1,\"remaining_value\")",
      "style": 7,
      "format": 1
     },
@@ -206,7 +204,7 @@
      "style": 3
     },
     "D6": {
-     "content": "=PIVOT.VALUE(2, \"value\")",
+     "content": "=PIVOT.VALUE(2,\"remaining_value\")",
      "style": 8,
      "format": 1
     },
@@ -216,7 +214,7 @@
      "style": 3
     },
     "G6": {
-     "content": "=PIVOT.VALUE(3, \"price_subtotal\")",
+     "content": "=PIVOT.VALUE(3,\"price_subtotal\")",
      "style": 9,
      "format": 1
     },
@@ -226,7 +224,7 @@
      "style": 3
     },
     "J6": {
-     "content": "=A6 - ABS(D6) + G6",
+     "content": "=A6-ABS(D6)+G6",
      "style": 7,
      "format": 1
     },
@@ -248,16 +246,16 @@
      "content": "Estado"
     },
     "A11": {
-     "content": "=ODOO.LIST(1, 1, \"name\")"
+     "content": "=ODOO.LIST(1,1,\"name\")"
     },
     "B11": {
-     "content": "=ODOO.LIST(1, 1, \"partner_id\")"
+     "content": "=ODOO.LIST(1,1,\"partner_id\")"
     },
     "C11": {
-     "content": "=ODOO.LIST(1, 1, \"create_date\")"
+     "content": "=ODOO.LIST(1,1,\"create_date\")"
     },
     "D11": {
-     "content": "=ODOO.LIST(1, 1, \"state\")"
+     "content": "=ODOO.LIST(1,1,\"state\")"
     },
 
     "G9": {
@@ -280,19 +278,19 @@
      "content": "Monto Subtotal"
     },
     "G11": {
-     "content": "=ODOO.LIST(2, 1, \"order_id\")"
+     "content": "=ODOO.LIST(2,1,\"order_id\")"
     },
     "H11": {
-     "content": "=ODOO.LIST(2, 1, \"partner_id\")"
+     "content": "=ODOO.LIST(2,1,\"partner_id\")"
     },
     "I11": {
-     "content": "=ODOO.LIST(2, 1, \"product_id\")"
+     "content": "=ODOO.LIST(2,1,\"product_id\")"
     },
     "J11": {
-     "content": "=ODOO.LIST(2, 1, \"product_qty\")"
+     "content": "=ODOO.LIST(2,1,\"product_qty\")"
     },
     "K11": {
-     "content": "=ODOO.LIST(2, 1, \"price_subtotal\")",
+     "content": "=ODOO.LIST(2,1,\"price_subtotal\")",
      "format": 1
     }
    },
