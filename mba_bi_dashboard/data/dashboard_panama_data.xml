@@ -410,7 +410,7 @@
         <field name="chart_type">kpi</field>
         <field name="model_id" ref="stock.model_stock_quant"/>
         <field name="data_type">sum</field>
-        <field name="domain">[('location_id.usage', '=', 'internal'), ('quantity', '<', 0)]</field>
+        <field name="domain">[('location_id.usage', '=', 'internal'), ('quantity', '&lt;', 0)]</field>
         <field name="layout_type">layout1</field>
         <field name="background_color">#e06d53</field>
         <field name="font_color">#ffffff</field>
