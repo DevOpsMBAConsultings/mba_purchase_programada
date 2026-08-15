@@ -3,7 +3,7 @@
 <templates xml:space="preserve">
     <t t-name="mba_bi_dashboard.DashboardAmcharts">
         <section class="row container-fluid py-2 bg-view border-bottom border-top m-0 align-items-center" style="min-height: 48px;">
-            <div class="left-panel col-md-6 d-flex gap-2 align-items-center">
+            <div class="left-panel col-12 col-md-6 d-flex flex-wrap gap-2 align-items-center">
                 <h4 class="mb-0 me-3"><strong t-out="state.name"></strong></h4>
                 <button t-if="!state.editMode &amp;&amp; state.charts.length" class="btn btn-sm btn-secondary" title="Imprimir Tablero (PDF)" t-on-click="onPrintDashboard">
                     <i class="fa fa-print me-1" /> Imprimir
@@ -30,14 +30,14 @@
                     </t>
                 </button>
             </div>
-            <div class="right-panel col-md-6 d-flex justify-content-end gap-2">
+            <div class="right-panel col-12 col-md-6 d-flex flex-wrap justify-content-end gap-2">
                 <button t-if="!state.editMode &amp;&amp; !dashboard_user" class="btn btn-sm btn-primary" t-on-click="onAddLayout">
                     <i class="fa fa-plus me-1" /> Agregar Gráfico / KPI
                 </button>
             </div>
         </section>
-        <main style="height: calc(100vh - 110px); padding: 8px 12px; overflow: auto;">
-            <div style="overflow: auto; max-height: 98%;">
+        <main style="height: calc(100dvh - 110px); padding: 8px 12px; overflow: auto;">
+            <div>
                 <div class="grid-stack m-1" gs-w="36">
                     <t t-foreach="state.charts" t-as="chart" t-key="chart.id">
                         <div class="grid-stack-item m-1" t-att-data-chart-id="chart.id" t-att-gs-w="chart.w" t-att-gs-h="chart.h" t-att-gs-min-h="chart.minh" t-att-gs-x="chart.x" t-att-gs-y="chart.y">
