@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mba_purchase_programada_wizard_user,access_mba_purchase_programada_wizard_user,model_mba_purchase_programada_wizard,purchase.group_purchase_user,1,1,1,1
-access_mba_purchase_programada_line_user,access_mba_purchase_programada_line_user,model_mba_purchase_programada_line,purchase.group_purchase_user,1,1,1,1
