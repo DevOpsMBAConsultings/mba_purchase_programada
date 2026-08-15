@@ -591,16 +591,15 @@ class Dashboard(models.Model):
 
     def unlink(self):
         """
-        Delete dashboard menu
+        Delete dashboard and its dynamically created menu, action, and cron
         """
         for rec in self:
             if rec.created_menu_id:
-                raise ValidationError(
-                    _(
-                        "To delete selected dashboard, kindly click on Delete Menu first!"
-                    )
-                )
-            # rec.action_delete_menu()
+                rec.created_menu_id.unlink()
+            if rec.created_action_id:
+                rec.created_action_id.unlink()
+            if rec.mail_cron_id:
+                rec.mail_cron_id.unlink()
         return super(Dashboard, self).unlink()
 
     def action_view_charts(self):
