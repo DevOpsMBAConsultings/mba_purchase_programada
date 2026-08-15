@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mba_product_sales_history_user,mba.product.sales.history user,model_mba_product_sales_history,stock.group_stock_user,1,0,0,0
-access_mba_product_sales_history_manager,mba.product.sales.history manager,model_mba_product_sales_history,stock.group_stock_manager,1,1,1,1
