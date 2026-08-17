@@ -115,4 +115,7 @@ class PurchaseOrder(models.Model):
             'res_id': wizard.id,
             'view_mode': 'form',
             'target': 'new',
+            'context': {
+                'dialog_size': 'extra-large',
+            },
         }
