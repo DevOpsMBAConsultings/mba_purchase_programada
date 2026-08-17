@@ -1,6 +1,6 @@
 {
     'name': 'MBA - Compras Programadas (MBA Consultings)',
-    'version': '18.0.1.0.8',
+    'version': '18.0.1.0.9',
     'category': 'Purchases',
     'summary': 'Órdenes de compra mensuales/recurrentes por proveedor, con selección manual de sus productos configurados',
     'description': """

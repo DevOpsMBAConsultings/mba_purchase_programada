@@ -1,25 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Formulario del wizard: la lista de productos va embebida en un
-         campo one2many (line_ids), no como acción de lista suelta -así
-         no aparecen checkboxes de selección (esos son propios de las
-         vistas de lista de nivel superior, no de un x2many dentro de un
-         formulario)-. El botón "Agregar productos" va en el <footer>,
-         que siempre está disponible sin depender de ninguna selección:
-         revisa todas las filas y agrega solo las que tengan Cantidad a
-         pedir > 0 (ver PurchaseProgramadaWizard.action_add_to_order). -->
+    <!-- Formulario del wizard de compras programadas:
+         - Ancho ultra espacioso (96vw / 85vh)
+         - Cabecera fija (Sticky thead th) que se mantiene arriba al hacer scroll
+         - Agrega solo productos con cantidad > 0 -->
     <record id="view_purchase_programada_wizard_form" model="ir.ui.view">
         <field name="name">mba.purchase.programada.wizard.form</field>
         <field name="model">mba.purchase.programada.wizard</field>
         <field name="arch" type="xml">
             <form string="Seleccionar productos del proveedor" class="o_purchase_programada_wizard_form">
+                <style>
+                    /* Forzar modal ultra ancho y alto en desktop */
+                    .modal-dialog:has(.o_purchase_programada_wizard_form) {
+                        max-width: 96vw !important;
+                        width: 96vw !important;
+                        margin: 1rem auto !important;
+                    }
+                    .modal-dialog:has(.o_purchase_programada_wizard_form) .modal-content {
+                        max-height: 90vh !important;
+                        height: 90vh !important;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .modal-dialog:has(.o_purchase_programada_wizard_form) .modal-body {
+                        max-height: calc(90vh - 120px) !important;
+                        overflow-y: auto !important;
+                        padding: 0 !important;
+                    }
+                    .modal-dialog:has(.o_purchase_programada_wizard_form) .o_form_renderer {
+                        max-width: 100% !important;
+                    }
+
+                    /* Cabecera Fija (Sticky Header) para los títulos de las columnas */
+                    .o_purchase_programada_wizard_form .o_list_table thead {
+                        position: sticky !important;
+                        top: 0 !important;
+                        z-index: 1000 !important;
+                    }
+                    .o_purchase_programada_wizard_form .o_list_table thead th {
+                        position: sticky !important;
+                        top: 0 !important;
+                        z-index: 1000 !important;
+                        background-color: #f1f3f5 !important;
+                        border-bottom: 2px solid #ced4da !important;
+                        padding-top: 10px !important;
+                        padding-bottom: 10px !important;
+                    }
+                </style>
                 <field name="order_id" invisible="1"/>
                 <field name="line_ids">
                     <list editable="bottom" create="false" delete="false">
                         <field name="mba_reference" string="Referencia" readonly="1"/>
                         <field name="product_id" string="Descripción" readonly="1"
-                               context="{'display_default_code': False}"/>
+                                context="{'display_default_code': False}"/>
                         <field name="qty_to_order" string="Cantidad a pedir"/>
                         <field name="price_unit" string="Precio unitario"/>
                         <field name="mba_qty_on_hand" string="A la mano" readonly="1"/>
