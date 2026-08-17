@@ -61,7 +61,7 @@
                 </style>
                 <field name="order_id" invisible="1"/>
                 <field name="line_ids">
-                    <list editable="bottom" create="false" delete="false">
+                    <list editable="bottom" create="false" delete="false" limit="1000">
                         <field name="mba_reference" string="Referencia" readonly="1"/>
                         <field name="product_id" string="Descripción" readonly="1"
                                 context="{'display_default_code': False}"/>
