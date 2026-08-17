@@ -2,7 +2,8 @@
 <odoo>
 
     <!-- Formulario del wizard de compras programadas:
-         - Ancho ultra espacioso (96vw / 85vh)
+         - Ancho ultra espacioso (96vw / 92vh)
+         - Scroll contenido en o_list_renderer para garantizar cabecera fija
          - Cabecera fija (Sticky thead th) que se mantiene arriba al hacer scroll
          - Agrega solo productos con cantidad > 0 -->
     <record id="view_purchase_programada_wizard_form" model="ir.ui.view">
@@ -11,41 +12,51 @@
         <field name="arch" type="xml">
             <form string="Seleccionar productos del proveedor" class="o_purchase_programada_wizard_form">
                 <style>
-                    /* Forzar modal ultra ancho y alto en desktop */
-                    .modal-dialog:has(.o_purchase_programada_wizard_form) {
+                    /* 1. Modal ancho y alto */
+                    .modal:has(.o_purchase_programada_wizard_form) .modal-dialog {
                         max-width: 96vw !important;
                         width: 96vw !important;
                         margin: 1rem auto !important;
                     }
-                    .modal-dialog:has(.o_purchase_programada_wizard_form) .modal-content {
-                        max-height: 90vh !important;
-                        height: 90vh !important;
-                        display: flex;
-                        flex-direction: column;
+                    .modal:has(.o_purchase_programada_wizard_form) .modal-content {
+                        max-height: 92vh !important;
+                        height: 92vh !important;
                     }
-                    .modal-dialog:has(.o_purchase_programada_wizard_form) .modal-body {
-                        max-height: calc(90vh - 120px) !important;
-                        overflow-y: auto !important;
+                    .modal:has(.o_purchase_programada_wizard_form) .modal-body {
                         padding: 0 !important;
+                        overflow: hidden !important;
                     }
-                    .modal-dialog:has(.o_purchase_programada_wizard_form) .o_form_renderer {
+                    .o_purchase_programada_wizard_form {
+                        height: 100% !important;
+                    }
+                    .o_purchase_programada_wizard_form .o_form_renderer {
                         max-width: 100% !important;
+                        height: 100% !important;
+                    }
+                    .o_purchase_programada_wizard_form .o_field_x2many {
+                        height: 100% !important;
                     }
 
-                    /* Cabecera Fija (Sticky Header) para los títulos de las columnas */
+                    /* 2. El contenedor que hace scroll con altura acotada */
+                    .o_purchase_programada_wizard_form .o_list_renderer {
+                        max-height: calc(92vh - 120px) !important;
+                        overflow-y: auto !important;
+                        overflow-x: auto !important;
+                    }
+
+                    /* 3. Sticky Header 100% efectivo */
                     .o_purchase_programada_wizard_form .o_list_table thead {
                         position: sticky !important;
                         top: 0 !important;
-                        z-index: 1000 !important;
+                        z-index: 100 !important;
                     }
                     .o_purchase_programada_wizard_form .o_list_table thead th {
                         position: sticky !important;
                         top: 0 !important;
-                        z-index: 1000 !important;
+                        z-index: 100 !important;
                         background-color: #f1f3f5 !important;
                         border-bottom: 2px solid #ced4da !important;
-                        padding-top: 10px !important;
-                        padding-bottom: 10px !important;
+                        box-shadow: inset 0 -2px 0 #ced4da;
                     }
                 </style>
                 <field name="order_id" invisible="1"/>
