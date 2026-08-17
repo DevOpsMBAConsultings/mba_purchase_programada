@@ -1,0 +1,18 @@
+/* Cabecera fija (Sticky Header) para el wizard de compras programadas */
+.o_purchase_programada_sticky_table {
+    .o_list_renderer {
+        .o_list_table {
+            thead {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background-color: var(--o-view-background-color, #ffffff) !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+                th {
+                    background-color: inherit !important;
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 {
     'name': 'MBA - Compras Programadas (MBA Consultings)',
-    'version': '18.0.1.0.6',
+    'version': '18.0.1.0.7',
     'category': 'Purchases',
     'summary': 'Órdenes de compra mensuales/recurrentes por proveedor, con selección manual de sus productos configurados',
     'description': """
@@ -30,6 +30,11 @@ Programada) para poder distinguirlas y filtrarlas en reportes.
         'views/purchase_programada_line_views.xml',
         'views/purchase_order_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'mba_purchase_programada/static/src/scss/purchase_programada.scss',
+        ],
+    },
     'installable': True,
     'auto_install': False,
 }

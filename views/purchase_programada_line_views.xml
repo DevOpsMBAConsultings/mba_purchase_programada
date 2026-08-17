@@ -15,7 +15,7 @@
         <field name="arch" type="xml">
             <form string="Seleccionar productos del proveedor">
                 <field name="order_id" invisible="1"/>
-                <field name="line_ids">
+                <field name="line_ids" class="o_purchase_programada_sticky_table">
                     <list editable="bottom" create="false" delete="false">
                         <field name="mba_reference" string="Referencia" readonly="1"/>
                         <field name="product_id" string="Descripción" readonly="1"
